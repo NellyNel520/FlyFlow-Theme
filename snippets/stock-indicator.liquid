@@ -1,0 +1,28 @@
+{% comment %}
+  FlyFlow Theme - Stock Indicator Snippet
+  Purpose: Display stock level for a product variant (in stock, low stock, out of stock).
+  Dependencies: theme.css (stock-indicator classes)
+  Usage: {% render 'stock-indicator', variant: product.selected_or_first_available_variant %}
+  Last modified: 2026-02-17
+{% endcomment %}
+
+{% if settings.product_show_stock and variant %}
+  {% assign threshold = settings.product_stock_threshold | default: 5 %}
+
+  {% if variant.available == false %}
+    <div class="stock-indicator stock-indicator--out-of-stock">
+      <span class="stock-indicator__dot"></span>
+      {{ 'products.stock.out_of_stock' | t }}
+    </div>
+  {% elsif variant.inventory_management and variant.inventory_quantity <= threshold %}
+    <div class="stock-indicator stock-indicator--low-stock">
+      <span class="stock-indicator__dot"></span>
+      {{ 'products.stock.low_stock' | t: count: variant.inventory_quantity }}
+    </div>
+  {% else %}
+    <div class="stock-indicator stock-indicator--in-stock">
+      <span class="stock-indicator__dot"></span>
+      {{ 'products.stock.in_stock' | t }}
+    </div>
+  {% endif %}
+{% endif %}

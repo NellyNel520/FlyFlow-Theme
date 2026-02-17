@@ -1,0 +1,92 @@
+{% comment %}
+  FlyFlow Theme - Gift Card Template
+  Purpose: Gift card display page with code, QR, and Apple Wallet link.
+           Uses its own minimal layout (no header/footer needed).
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ 'gift_cards.issued.title' | t }} - {{ shop.name }}</title>
+
+  {{ 'gift-card.css' | shopify_asset_url | stylesheet_tag }}
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f9fafb;
+      color: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 1rem;
+    }
+    .gift-card {
+      max-width: 400px;
+      width: 100%;
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+    .gift-card__shop { font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em; color: #6b7280; margin-bottom: 0.5rem; }
+    .gift-card__amount { font-size: 2.5rem; font-weight: 700; margin: 1rem 0; }
+    .gift-card__code-wrapper { background: #f9fafb; border: 2px dashed #e5e7eb; border-radius: 8px; padding: 1rem; margin: 1.5rem 0; }
+    .gift-card__code { font-family: monospace; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.1em; word-break: break-all; }
+    .gift-card__expired { color: #ef4444; font-size: 0.875rem; font-weight: 600; }
+    .gift-card__qr { margin: 1.5rem auto; }
+    .gift-card__btn { display: inline-block; padding: 0.75rem 1.5rem; background: #1a1a1a; color: #fff; border-radius: 6px; text-decoration: none; font-size: 0.875rem; font-weight: 600; margin-top: 1rem; }
+    .gift-card__btn:hover { background: #333; }
+    .gift-card__print { margin-top: 1rem; font-size: 0.8125rem; color: #6b7280; cursor: pointer; background: none; border: none; text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="gift-card">
+    <p class="gift-card__shop">{{ shop.name }}</p>
+    <h1 style="font-size:1.5rem;margin-bottom:0.25rem">Gift Card</h1>
+
+    <p class="gift-card__amount">{{ gift_card.balance | money }}</p>
+
+    {% if gift_card.initial_value != gift_card.balance %}
+      <p style="font-size:0.8125rem;color:#6b7280">
+        Initial value: {{ gift_card.initial_value | money }}
+      </p>
+    {% endif %}
+
+    <div class="gift-card__code-wrapper">
+      <p class="gift-card__code" data-gift-card-code>{{ gift_card.code | format_code }}</p>
+    </div>
+
+    {% if gift_card.expired %}
+      <p class="gift-card__expired">This gift card has expired</p>
+    {% elsif gift_card.enabled %}
+      {% if gift_card.expires_on %}
+        <p style="font-size:0.8125rem;color:#6b7280">
+          Expires {{ gift_card.expires_on | date: '%B %d, %Y' }}
+        </p>
+      {% endif %}
+    {% else %}
+      <p class="gift-card__expired">This gift card is disabled</p>
+    {% endif %}
+
+    <div class="gift-card__qr">
+      {{ gift_card | qr_code: 200 }}
+    </div>
+
+    {% if gift_card.pass_url %}
+      <a href="{{ gift_card.pass_url }}" class="gift-card__btn">Add to Apple Wallet</a>
+    {% endif %}
+
+    <div>
+      <a href="{{ shop.url }}" class="gift-card__btn" style="background:#c8a97e">Shop Now</a>
+    </div>
+
+    <button class="gift-card__print" onclick="window.print()">Print this gift card</button>
+  </div>
+</body>
+</html>

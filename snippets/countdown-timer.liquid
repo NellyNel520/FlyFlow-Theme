@@ -1,0 +1,125 @@
+{% comment %}
+  FlyFlow Theme - Countdown Timer Snippet
+  Purpose: Countdown timer for sales, launches, and limited offers.
+           Uses Liquid for server-side rendering + JS for live updates.
+  Dependencies: None (self-contained)
+  Usage: {% render 'countdown-timer', end_date: '2026-03-01T00:00:00' %}
+  Last modified: 2026-02-17
+{% endcomment %}
+
+{% if end_date %}
+  <div
+    class="countdown-timer"
+    data-countdown="{{ end_date }}"
+    style="
+      display: inline-flex;
+      gap: var(--space-sm);
+      font-family: var(--font-heading);
+      text-align: center;
+    "
+    aria-label="Sale ends in"
+  >
+    <div class="countdown-timer__unit">
+      <span
+        class="countdown-timer__number"
+        data-countdown-days
+        style="
+          display: block;
+          font-size: clamp(1.5rem, 3vw, 2rem);
+          font-weight: 700;
+          line-height: 1;
+          min-width: 48px;
+          padding: var(--space-sm);
+          background: var(--color-surface);
+          border-radius: var(--border-radius);
+        "
+      >00</span>
+      <span style="font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--color-text-secondary);margin-top:4px;display:block">Days</span>
+    </div>
+    <span style="font-size:1.5rem;font-weight:700;align-self:flex-start;padding-top:var(--space-sm)">:</span>
+    <div class="countdown-timer__unit">
+      <span
+        class="countdown-timer__number"
+        data-countdown-hours
+        style="
+          display: block;
+          font-size: clamp(1.5rem, 3vw, 2rem);
+          font-weight: 700;
+          line-height: 1;
+          min-width: 48px;
+          padding: var(--space-sm);
+          background: var(--color-surface);
+          border-radius: var(--border-radius);
+        "
+      >00</span>
+      <span style="font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--color-text-secondary);margin-top:4px;display:block">Hours</span>
+    </div>
+    <span style="font-size:1.5rem;font-weight:700;align-self:flex-start;padding-top:var(--space-sm)">:</span>
+    <div class="countdown-timer__unit">
+      <span
+        class="countdown-timer__number"
+        data-countdown-mins
+        style="
+          display: block;
+          font-size: clamp(1.5rem, 3vw, 2rem);
+          font-weight: 700;
+          line-height: 1;
+          min-width: 48px;
+          padding: var(--space-sm);
+          background: var(--color-surface);
+          border-radius: var(--border-radius);
+        "
+      >00</span>
+      <span style="font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--color-text-secondary);margin-top:4px;display:block">Mins</span>
+    </div>
+    <span style="font-size:1.5rem;font-weight:700;align-self:flex-start;padding-top:var(--space-sm)">:</span>
+    <div class="countdown-timer__unit">
+      <span
+        class="countdown-timer__number"
+        data-countdown-secs
+        style="
+          display: block;
+          font-size: clamp(1.5rem, 3vw, 2rem);
+          font-weight: 700;
+          line-height: 1;
+          min-width: 48px;
+          padding: var(--space-sm);
+          background: var(--color-surface);
+          border-radius: var(--border-radius);
+        "
+      >00</span>
+      <span style="font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--color-text-secondary);margin-top:4px;display:block">Secs</span>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      var timers = document.querySelectorAll('[data-countdown]');
+      timers.forEach(function(timer) {
+        var end = new Date(timer.dataset.countdown).getTime();
+        function update() {
+          var now = Date.now();
+          var diff = end - now;
+          if (diff <= 0) {
+            timer.style.display = 'none';
+            return;
+          }
+          var d = Math.floor(diff / 86400000);
+          var h = Math.floor((diff % 86400000) / 3600000);
+          var m = Math.floor((diff % 3600000) / 60000);
+          var s = Math.floor((diff % 60000) / 1000);
+          var days = timer.querySelector('[data-countdown-days]');
+          var hours = timer.querySelector('[data-countdown-hours]');
+          var mins = timer.querySelector('[data-countdown-mins]');
+          var secs = timer.querySelector('[data-countdown-secs]');
+          if (days) days.textContent = String(d).padStart(2, '0');
+          if (hours) hours.textContent = String(h).padStart(2, '0');
+          if (mins) mins.textContent = String(m).padStart(2, '0');
+          if (secs) secs.textContent = String(s).padStart(2, '0');
+        }
+        update();
+        setInterval(update, 1000);
+      });
+    })();
+  </script>
+{% endif %}

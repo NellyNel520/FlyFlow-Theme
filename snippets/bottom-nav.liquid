@@ -1,0 +1,64 @@
+{% comment %}
+  FlyFlow Theme - Bottom Navigation Snippet
+  Purpose: Fixed bottom navigation bar for mobile with Home, Search,
+           Collections, Cart, and Account links.
+  Dependencies: theme.css (bottom-nav classes), theme.js (Navigation module)
+  Usage: Included in theme.liquid for mobile viewports
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<nav class="bottom-nav" data-bottom-nav aria-label="Mobile navigation">
+  <div class="bottom-nav__items">
+    <a href="/" class="bottom-nav__item{% if request.page_type == 'index' %} bottom-nav__item--active{% endif %}">
+      <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none" aria-hidden="true">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span>Home</span>
+    </a>
+
+    <a href="/search" class="bottom-nav__item{% if request.page_type == 'search' %} bottom-nav__item--active{% endif %}">
+      <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <span>Search</span>
+    </a>
+
+    <a href="/collections" class="bottom-nav__item{% if request.page_type == 'collection' or request.page_type == 'list-collections' %} bottom-nav__item--active{% endif %}">
+      <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none" aria-hidden="true">
+        <rect x="2" y="2" width="9" height="9" rx="1"/>
+        <rect x="13" y="2" width="9" height="9" rx="1"/>
+        <rect x="2" y="13" width="9" height="9" rx="1"/>
+        <rect x="13" y="13" width="9" height="9" rx="1"/>
+      </svg>
+      <span>Shop</span>
+    </a>
+
+    <button class="bottom-nav__item" data-cart-toggle>
+      <span style="position:relative">
+        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none" aria-hidden="true">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+        {% if cart.item_count > 0 %}
+          <span
+            class="header__cart-count"
+            data-cart-count
+            style="top:-4px;right:-8px;font-size:0.5625rem;min-width:16px;height:16px;line-height:16px"
+          >{{ cart.item_count }}</span>
+        {% endif %}
+      </span>
+      <span>Cart</span>
+    </button>
+
+    <a href="/account" class="bottom-nav__item">
+      <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span>Account</span>
+    </a>
+  </div>
+</nav>

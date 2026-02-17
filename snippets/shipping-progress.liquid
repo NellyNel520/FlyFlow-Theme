@@ -1,0 +1,28 @@
+{% comment %}
+  FlyFlow Theme - Shipping Progress Bar Snippet
+  Purpose: Visual progress bar toward free shipping threshold.
+  Dependencies: theme.css (shipping-bar classes)
+  Usage: {% render 'shipping-progress' %}
+  Last modified: 2026-02-17
+{% endcomment %}
+
+{% if settings.cart_show_shipping_bar and settings.cart_shipping_threshold != blank %}
+  {% assign threshold = settings.cart_shipping_threshold | times: 100 %}
+  {% assign total = cart.total_price %}
+  {% assign progress = total | times: 100 | divided_by: threshold %}
+  {% if progress > 100 %}{% assign progress = 100 %}{% endif %}
+  {% assign remaining = threshold | minus: total %}
+
+  <div class="shipping-bar{% if total >= threshold %} shipping-bar--qualified{% endif %}">
+    <p>
+      {% if total >= threshold %}
+        {{ 'cart.shipping_bar.qualified' | t }}
+      {% else %}
+        {{ 'cart.shipping_bar.spend_more' | t: amount: remaining | money }}
+      {% endif %}
+    </p>
+    <div class="shipping-bar__track">
+      <div class="shipping-bar__fill" style="width: {{ progress }}%"></div>
+    </div>
+  </div>
+{% endif %}

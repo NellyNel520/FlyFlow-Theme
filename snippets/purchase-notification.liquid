@@ -1,0 +1,94 @@
+{% comment %}
+  FlyFlow Theme - Purchase Notification Snippet
+  Purpose: Social proof pop-up showing recent purchases.
+           Configurable interval and duration via theme settings.
+  Dependencies: theme.css, settings (social_proof_*)
+  Usage: {% render 'purchase-notification' %}
+  Last modified: 2026-02-17
+{% endcomment %}
+
+{% if settings.social_proof_notifications %}
+  <div
+    class="purchase-notification"
+    data-purchase-notification
+    aria-live="polite"
+    aria-atomic="true"
+    style="
+      position: fixed;
+      bottom: calc(70px + env(safe-area-inset-bottom));
+      left: var(--space-md);
+      max-width: 320px;
+      background: var(--color-background);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: var(--space-sm) var(--space-md);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      z-index: var(--z-notification);
+      transform: translateY(120%);
+      opacity: 0;
+      transition: all var(--transition-base);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    "
+  >
+    <div
+      data-notification-image
+      style="width:48px;height:60px;border-radius:2px;overflow:hidden;flex-shrink:0;background:var(--color-surface)"
+    ></div>
+    <div>
+      <p data-notification-text style="font-size:0.8125rem;line-height:1.4"></p>
+      <p data-notification-time style="font-size:0.6875rem;color:var(--color-text-secondary);margin-top:2px"></p>
+    </div>
+    <button
+      data-notification-close
+      aria-label="Dismiss"
+      style="position:absolute;top:4px;right:4px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--color-text-secondary);cursor:pointer;background:none;border:none"
+    >&times;</button>
+  </div>
+
+  <script>
+    (function() {
+      var interval = {{ settings.social_proof_interval | default: 30 }} * 1000;
+      var duration = {{ settings.social_proof_duration | default: 5 }} * 1000;
+      var notification = document.querySelector('[data-purchase-notification]');
+      if (!notification) return;
+
+      var textEl = notification.querySelector('[data-notification-text]');
+      var timeEl = notification.querySelector('[data-notification-time]');
+      var imageEl = notification.querySelector('[data-notification-image]');
+      var closeBtn = notification.querySelector('[data-notification-close]');
+
+      /* Sample data — in production, replace with real order data via metafields or app */
+      var names = ['Someone in New York', 'A shopper in LA', 'Someone in London', 'A customer in Paris', 'Someone in Tokyo', 'A shopper in Sydney'];
+      var times = ['2 minutes ago', '5 minutes ago', '8 minutes ago', '12 minutes ago', '15 minutes ago'];
+
+      function show() {
+        var name = names[Math.floor(Math.random() * names.length)];
+        var time = times[Math.floor(Math.random() * times.length)];
+
+        textEl.textContent = name + ' just made a purchase';
+        timeEl.textContent = time;
+        imageEl.innerHTML = '<div style="width:100%;height:100%;background:var(--color-accent);opacity:0.2"></div>';
+
+        notification.style.transform = 'translateY(0)';
+        notification.style.opacity = '1';
+
+        setTimeout(hide, duration);
+      }
+
+      function hide() {
+        notification.style.transform = 'translateY(120%)';
+        notification.style.opacity = '0';
+      }
+
+      closeBtn.addEventListener('click', hide);
+
+      /* Start after initial delay */
+      setTimeout(function() {
+        show();
+        setInterval(show, interval + duration);
+      }, interval);
+    })();
+  </script>
+{% endif %}
