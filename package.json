@@ -1,0 +1,33 @@
+{
+  "name": "flyflow-theme",
+  "version": "0.1.0",
+  "description": "High-performance, conversion-optimized Shopify 2.0 theme for fashion ecommerce",
+  "author": "Archform Labs",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "dev": "shopify theme dev",
+    "build": "npm run lint && npm run format:check",
+    "deploy": "shopify theme push",
+    "deploy:live": "shopify theme push --live",
+    "lint": "npm run lint:js && npm run lint:css",
+    "lint:js": "eslint assets/*.js",
+    "lint:css": "stylelint 'assets/*.css'",
+    "lint:fix": "eslint assets/*.js --fix && stylelint 'assets/*.css' --fix",
+    "format": "prettier --write 'assets/*.{js,css,json}'",
+    "format:check": "prettier --check 'assets/*.{js,css,json}'"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "stylelint": "^16.0.0",
+    "stylelint-config-standard": "^36.0.0",
+    "prettier": "^3.2.0"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "not dead",
+    "> 0.5%"
+  ]
+}
