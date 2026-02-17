@@ -76,13 +76,13 @@
 
     {%- comment -%} Header actions (search, dark mode, account, cart) {%- endcomment -%}
     <div class="header__actions">
-      {%- comment -%} Search toggle {%- endcomment -%}
-      <a href="/search" class="header__icon-btn" aria-label="{{ 'header.search_button' | t }}">
+      {%- comment -%} Search toggle — opens overlay {%- endcomment -%}
+      <button class="header__icon-btn" data-search-open aria-label="{{ 'header.search_button' | t }}">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="11" cy="11" r="8"/>
           <line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
-      </a>
+      </button>
 
       {%- comment -%} Dark mode toggle {%- endcomment -%}
       {% if settings.dark_mode_enabled %}

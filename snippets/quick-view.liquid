@@ -1,0 +1,122 @@
+{% comment %}
+  FlyFlow Theme - Quick View Modal Snippet
+  Purpose: Product quick view modal on collection pages. Shows image,
+           title, price, variant selector, and add to cart without
+           leaving the collection page.
+  Dependencies: theme.js (Modal, Cart modules)
+  Usage: Triggered via data attributes on product cards
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<div class="modal" id="quick-view-modal" role="dialog" aria-modal="true" aria-labelledby="quick-view-title" style="max-width:800px">
+  <div class="modal__header">
+    <h2 class="modal__title" id="quick-view-title" data-quick-view-title></h2>
+    <button class="modal__close" data-modal-close aria-label="{{ 'accessibility.close_modal' | t }}">
+      <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="1.5" fill="none" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="modal__body">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-xl)" class="quick-view__grid">
+      {%- comment -%} Product image {%- endcomment -%}
+      <div style="aspect-ratio:3/4;border-radius:var(--border-radius);overflow:hidden;background:var(--color-surface)">
+        <img
+          data-quick-view-image
+          src=""
+          alt=""
+          loading="lazy"
+          style="width:100%;height:100%;object-fit:cover"
+        >
+      </div>
+
+      {%- comment -%} Product info {%- endcomment -%}
+      <div>
+        <p class="product-info__vendor" data-quick-view-vendor></p>
+        <div class="product-info__price mt-sm mb-md">
+          <span data-quick-view-price style="font-size:1.25rem;font-weight:700"></span>
+          <span data-quick-view-compare style="text-decoration:line-through;color:var(--color-text-secondary);margin-left:var(--space-sm);display:none"></span>
+        </div>
+
+        <div data-quick-view-variants style="margin-bottom:var(--space-lg)"></div>
+
+        <div style="display:flex;gap:var(--space-sm)">
+          <button
+            class="btn btn--primary btn--full btn--lg"
+            data-quick-view-atc
+            data-add-to-cart
+          >
+            {{ 'products.add_to_cart' | t }}
+          </button>
+        </div>
+
+        <a
+          href=""
+          data-quick-view-link
+          class="text-accent text-sm mt-md"
+          style="display:inline-block;text-decoration:underline;text-underline-offset:2px"
+        >
+          View Full Details &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  @media (max-width: 767px) {
+    .quick-view__grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Quick View Module
+   * Fetches product data via Shopify AJAX API and populates the modal.
+   */
+  (function() {
+    document.addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-quick-view]');
+      if (!btn) return;
+      e.preventDefault();
+
+      var handle = btn.dataset.quickView;
+      if (!handle) return;
+
+      fetch('/products/' + handle + '.js')
+        .then(function(r) { return r.json(); })
+        .then(function(product) {
+          var title = document.querySelector('[data-quick-view-title]');
+          var image = document.querySelector('[data-quick-view-image]');
+          var vendor = document.querySelector('[data-quick-view-vendor]');
+          var price = document.querySelector('[data-quick-view-price]');
+          var compare = document.querySelector('[data-quick-view-compare]');
+          var link = document.querySelector('[data-quick-view-link]');
+          var atc = document.querySelector('[data-quick-view-atc]');
+
+          if (title) title.textContent = product.title;
+          if (image && product.featured_image) {
+            image.src = product.featured_image;
+            image.alt = product.title;
+          }
+          if (vendor) vendor.textContent = product.vendor;
+          if (price) price.textContent = FlyFlow.formatMoney(product.price);
+          if (compare) {
+            if (product.compare_at_price && product.compare_at_price > product.price) {
+              compare.textContent = FlyFlow.formatMoney(product.compare_at_price);
+              compare.style.display = '';
+            } else {
+              compare.style.display = 'none';
+            }
+          }
+          if (link) link.href = product.url;
+          if (atc) atc.dataset.variantId = product.variants[0].id;
+
+          FlyFlow.Modal.open('quick-view-modal');
+        });
+    });
+  })();
+</script>

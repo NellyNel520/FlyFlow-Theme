@@ -1,0 +1,168 @@
+{% comment %}
+  FlyFlow Theme - Predictive Search Overlay Section
+  Purpose: Full-screen search overlay with predictive results,
+           trending searches, and product thumbnails.
+  Dependencies: theme.js (Search module)
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<div
+  class="search-overlay"
+  data-search-overlay
+  role="dialog"
+  aria-modal="true"
+  aria-label="{{ 'search.title' | t }}"
+  style="
+    position: fixed;
+    inset: 0;
+    background-color: var(--color-background);
+    z-index: var(--z-modal);
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-base);
+    display: flex;
+    flex-direction: column;
+  "
+>
+  {%- comment -%} Search header {%- endcomment -%}
+  <div style="padding:var(--space-lg) var(--space-md);border-bottom:1px solid var(--color-border)">
+    <div class="container" style="max-width:800px">
+      <div class="predictive-search" data-predictive-search>
+        <form action="/search" method="get" role="search" style="display:flex;align-items:center;gap:var(--space-md)">
+          <div class="predictive-search__input-wrapper" style="flex:1">
+            <input
+              type="search"
+              name="q"
+              class="predictive-search__input"
+              placeholder="{{ 'search.placeholder' | t }}"
+              data-predictive-search-input
+              autocomplete="off"
+              autofocus
+              aria-label="{{ 'search.placeholder' | t }}"
+              style="border:none;border-bottom:2px solid var(--color-primary);border-radius:0;padding-left:0;font-size:1.25rem"
+            >
+          </div>
+          <button
+            type="button"
+            data-search-close
+            aria-label="{{ 'general.close' | t }}"
+            style="width:44px;height:44px;display:flex;align-items:center;justify-content:center"
+          >
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="1.5" fill="none" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </form>
+
+        <div class="predictive-search__results" data-predictive-search-results style="position:relative;top:0;border:none;max-height:none;margin-top:var(--space-md)"></div>
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Trending searches (shown when input is empty) {%- endcomment -%}
+  <div class="container" style="max-width:800px;padding-top:var(--space-xl)" data-search-trending>
+    <p class="predictive-search__trending-title" style="margin-bottom:var(--space-md)">
+      {{ 'search.trending' | t }}
+    </p>
+    <div class="predictive-search__trending-tags">
+      {% for block in section.blocks %}
+        {% if block.type == 'trending' %}
+          <a href="/search?q={{ block.settings.term | url_encode }}" class="predictive-search__trending-tag" {{ block.shopify_attributes }}>
+            {{ block.settings.term }}
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    {%- comment -%} Popular collections {%- endcomment -%}
+    {% if section.settings.show_popular_collections %}
+      <div style="margin-top:var(--space-2xl)">
+        <p class="predictive-search__trending-title" style="margin-bottom:var(--space-md)">Popular Collections</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:var(--space-md)">
+          {% for collection in collections limit: 6 %}
+            {% unless collection.handle == 'all' %}
+              <a href="{{ collection.url }}" style="text-align:center">
+                <div style="aspect-ratio:1;border-radius:var(--border-radius);overflow:hidden;background:var(--color-surface);margin-bottom:var(--space-xs)">
+                  {% if collection.image %}
+                    {{ collection.image | image_url: width: 300 | image_tag: alt: collection.title, loading: 'lazy', style: 'width:100%;height:100%;object-fit:cover' }}
+                  {% endif %}
+                </div>
+                <span class="text-sm" style="font-weight:500">{{ collection.title }}</span>
+              </a>
+            {% endunless %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  (function() {
+    var overlay = document.querySelector('[data-search-overlay]');
+    if (!overlay) return;
+
+    /* Open search overlay */
+    document.addEventListener('click', function(e) {
+      var openBtn = e.target.closest('[data-search-open]');
+      if (openBtn) {
+        e.preventDefault();
+        overlay.style.opacity = '1';
+        overlay.style.visibility = 'visible';
+        document.body.classList.add('drawer-open');
+        var input = overlay.querySelector('[data-predictive-search-input]');
+        if (input) setTimeout(function() { input.focus(); }, 100);
+      }
+
+      var closeBtn = e.target.closest('[data-search-close]');
+      if (closeBtn) {
+        e.preventDefault();
+        overlay.style.opacity = '0';
+        overlay.style.visibility = 'hidden';
+        document.body.classList.remove('drawer-open');
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && overlay.style.visibility === 'visible') {
+        overlay.style.opacity = '0';
+        overlay.style.visibility = 'hidden';
+        document.body.classList.remove('drawer-open');
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Predictive Search",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_popular_collections",
+      "label": "Show popular collections",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "trending",
+      "name": "Trending Search",
+      "limit": 8,
+      "settings": [
+        {
+          "type": "text",
+          "id": "term",
+          "label": "Search term",
+          "default": "New Arrivals"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Predictive Search"
+    }
+  ]
+}
+{% endschema %}

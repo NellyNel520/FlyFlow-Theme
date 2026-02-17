@@ -182,6 +182,12 @@
     {% section 'cart-drawer' %}
   {% endif %}
 
+  {%- comment -%} Predictive search overlay {%- endcomment -%}
+  {% section 'predictive-search' %}
+
+  {%- comment -%} Quick view modal {%- endcomment -%}
+  {% render 'quick-view' %}
+
   {%- comment -%} Mobile bottom navigation {%- endcomment -%}
   {% render 'bottom-nav' %}
 
