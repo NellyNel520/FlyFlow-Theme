@@ -1,0 +1,43 @@
+{% comment %}
+  FlyFlow Theme - Announcement Bar Section
+  Purpose: Top-of-page promotional banner with optional link.
+  Dependencies: None
+  Last modified: 2026-02-17
+{% endcomment %}
+
+{% if section.settings.show_announcement %}
+  <div class="announcement-bar" data-section-id="{{ section.id }}">
+    <div class="container">
+      {% if section.settings.link != blank %}
+        <a href="{{ section.settings.link }}">{{ section.settings.text }}</a>
+      {% else %}
+        <p>{{ section.settings.text }}</p>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Announcement Bar",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "Show announcement bar",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Announcement text",
+      "default": "Free shipping on orders over $75"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link (optional)"
+    }
+  ]
+}
+{% endschema %}

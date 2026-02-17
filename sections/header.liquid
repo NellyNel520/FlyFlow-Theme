@@ -1,0 +1,208 @@
+{% comment %}
+  FlyFlow Theme - Header Section
+  Purpose: Main header with logo, navigation, dark mode toggle, search, and cart.
+           Converts to hamburger + mobile menu on mobile viewports.
+  Dependencies: theme.js (Navigation module), dark-mode.js
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<header class="header" data-header data-section-id="{{ section.id }}">
+  <div class="header__inner container">
+    {%- comment -%} Mobile menu toggle (visible < 1024px) {%- endcomment -%}
+    <button
+      class="header__icon-btn hidden-desktop"
+      data-mobile-menu-toggle
+      aria-label="{{ 'accessibility.open_menu' | t }}"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+
+    {%- comment -%} Logo {%- endcomment -%}
+    <div class="header__logo">
+      <a href="/" aria-label="{{ shop.name }}">
+        {% if section.settings.logo %}
+          {{ section.settings.logo | image_url: width: 200 | image_tag:
+            alt: shop.name,
+            loading: 'eager',
+            width: section.settings.logo_width,
+            height: section.settings.logo_width | divided_by: section.settings.logo.aspect_ratio
+          }}
+        {% else %}
+          {{ shop.name }}
+        {% endif %}
+      </a>
+    </div>
+
+    {%- comment -%} Desktop navigation {%- endcomment -%}
+    <nav class="nav" aria-label="Main navigation">
+      {% for link in section.settings.menu.links %}
+        <div class="nav__item" {% if link.links.size > 0 %}aria-haspopup="true"{% endif %}>
+          <a
+            href="{{ link.url }}"
+            class="nav__link{% if link.active %} nav__link--active{% endif %}"
+          >
+            {{ link.title }}
+          </a>
+
+          {% if link.links.size > 0 %}
+            <div class="mega-menu" aria-label="{{ link.title }} submenu">
+              <div class="container">
+                <div class="mega-menu__grid">
+                  {% for child in link.links %}
+                    <a href="{{ child.url }}" class="mega-menu__category-card">
+                      {% if child.object.image %}
+                        {{ child.object.image | image_url: width: 400 | image_tag:
+                          class: 'mega-menu__category-image',
+                          alt: child.title,
+                          loading: 'lazy',
+                          width: 400,
+                          height: 533
+                        }}
+                      {% endif %}
+                      <span class="mega-menu__category-title">{{ child.title }}</span>
+                    </a>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </nav>
+
+    {%- comment -%} Header actions (search, dark mode, account, cart) {%- endcomment -%}
+    <div class="header__actions">
+      {%- comment -%} Search toggle {%- endcomment -%}
+      <a href="/search" class="header__icon-btn" aria-label="{{ 'header.search_button' | t }}">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </a>
+
+      {%- comment -%} Dark mode toggle {%- endcomment -%}
+      {% if settings.dark_mode_enabled %}
+        <button
+          class="header__icon-btn"
+          data-theme-toggle
+          aria-label="{{ 'accessibility.dark_mode_toggle' | t }}"
+        >
+          <svg data-icon-moon viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <svg data-icon-sun viewBox="0 0 24 24" aria-hidden="true" style="display:none">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </button>
+      {% endif %}
+
+      {%- comment -%} Account link {%- endcomment -%}
+      <a href="/account" class="header__icon-btn hidden-mobile" aria-label="{{ 'header.account' | t }}">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </a>
+
+      {%- comment -%} Cart toggle {%- endcomment -%}
+      <button class="header__icon-btn" data-cart-toggle aria-label="{{ 'accessibility.open_cart' | t }}">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+        <span
+          class="header__cart-count"
+          data-cart-count
+          {% if cart.item_count == 0 %}style="display:none"{% endif %}
+        >
+          {{ cart.item_count }}
+        </span>
+        <span class="sr-only" aria-live="polite" data-cart-count-sr>
+          {{ 'accessibility.cart_count' | t: count: cart.item_count }}
+        </span>
+      </button>
+    </div>
+  </div>
+</header>
+
+{%- comment -%} Mobile menu drawer {%- endcomment -%}
+<div class="mobile-menu" data-mobile-menu aria-label="Mobile navigation">
+  <div class="mobile-menu__header">
+    <span class="header__logo">{{ shop.name }}</span>
+    <button class="header__icon-btn" data-mobile-menu-close aria-label="{{ 'accessibility.close_menu' | t }}">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <nav aria-label="Mobile navigation">
+    {% for link in section.settings.menu.links %}
+      <div class="mobile-menu__item">
+        {% if link.links.size > 0 %}
+          <button
+            class="mobile-menu__link"
+            data-submenu-toggle
+            aria-expanded="false"
+          >
+            {{ link.title }}
+            <svg class="accordion__icon" viewBox="0 0 24 24" aria-hidden="true" width="12" height="12">
+              <polyline points="6 9 12 15 18 9" fill="none" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </button>
+          <div class="mobile-menu__submenu">
+            {% for child in link.links %}
+              <a href="{{ child.url }}" class="mobile-menu__sublink">{{ child.title }}</a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <a href="{{ link.url }}" class="mobile-menu__link">{{ link.title }}</a>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </nav>
+</div>
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "header-section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo width (px)",
+      "min": 50,
+      "max": 300,
+      "step": 10,
+      "default": 120,
+      "unit": "px"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Navigation menu",
+      "default": "main-menu"
+    }
+  ]
+}
+{% endschema %}

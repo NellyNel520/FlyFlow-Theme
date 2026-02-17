@@ -1,0 +1,73 @@
+{% comment %}
+  FlyFlow Theme - Analytics Snippet
+  Purpose: Google Analytics 4 and Facebook Pixel integration.
+           Outputs tracking scripts based on theme settings.
+  Dependencies: None
+  Usage: {% render 'analytics' %}
+  Last modified: 2026-02-17
+{% endcomment %}
+
+{%- comment -%} Google Analytics 4 {%- endcomment -%}
+{% if settings.ga4_measurement_id != blank %}
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ settings.ga4_measurement_id }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', {{ settings.ga4_measurement_id | json }});
+
+    {% if request.page_type == 'product' %}
+      gtag('event', 'view_item', {
+        currency: {{ cart.currency.iso_code | json }},
+        value: {{ product.price | money_without_currency | remove: ',' }},
+        items: [{
+          item_id: {{ product.id | json }},
+          item_name: {{ product.title | json }},
+          item_brand: {{ product.vendor | json }},
+          price: {{ product.price | money_without_currency | remove: ',' }},
+          {% if product.collections.size > 0 %}
+            item_category: {{ product.collections.first.title | json }},
+          {% endif %}
+        }]
+      });
+    {% endif %}
+
+    {% if request.page_type == 'collection' %}
+      gtag('event', 'view_item_list', {
+        item_list_id: {{ collection.handle | json }},
+        item_list_name: {{ collection.title | json }}
+      });
+    {% endif %}
+  </script>
+{% endif %}
+
+{%- comment -%} Facebook Pixel {%- endcomment -%}
+{% if settings.facebook_pixel_id != blank %}
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+
+    fbq('init', {{ settings.facebook_pixel_id | json }});
+    fbq('track', 'PageView');
+
+    {% if request.page_type == 'product' %}
+      fbq('track', 'ViewContent', {
+        content_ids: [{{ product.id | json }}],
+        content_type: 'product',
+        content_name: {{ product.title | json }},
+        value: {{ product.price | money_without_currency | remove: ',' }},
+        currency: {{ cart.currency.iso_code | json }}
+      });
+    {% endif %}
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id={{ settings.facebook_pixel_id }}&ev=PageView&noscript=1"/>
+  </noscript>
+{% endif %}

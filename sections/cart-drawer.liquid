@@ -1,0 +1,189 @@
+{% comment %}
+  FlyFlow Theme - Cart Drawer Section
+  Purpose: Slide-out ajax cart with shipping bar, upsells, and trust badges.
+  Dependencies: theme.js (Cart module)
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<div class="cart-drawer" data-cart-drawer aria-label="{{ 'cart.title' | t }}" role="dialog" aria-modal="true">
+  {%- comment -%} Header {%- endcomment -%}
+  <div class="cart-drawer__header">
+    <h2 class="cart-drawer__title">{{ 'cart.title' | t }} ({{ cart.item_count }})</h2>
+    <button class="cart-drawer__close" data-cart-toggle aria-label="{{ 'accessibility.close_modal' | t }}">
+      <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="1.5" fill="none" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  {%- comment -%} Shipping progress bar {%- endcomment -%}
+  {% if settings.cart_show_shipping_bar and settings.cart_shipping_threshold != blank %}
+    {% assign threshold = settings.cart_shipping_threshold | times: 100 %}
+    {% assign cart_total = cart.total_price %}
+    {% assign progress = cart_total | times: 100 | divided_by: threshold %}
+    {% if progress > 100 %}{% assign progress = 100 %}{% endif %}
+
+    <div
+      class="shipping-bar{% if cart_total >= threshold %} shipping-bar--qualified{% endif %}"
+      data-shipping-bar
+      data-threshold="{{ settings.cart_shipping_threshold }}"
+      data-spend-message="{{ 'cart.shipping_bar.spend_more' | t: amount: '{amount}' }}"
+      data-qualified-message="{{ 'cart.shipping_bar.qualified' | t }}"
+    >
+      <p data-shipping-message>
+        {% if cart_total >= threshold %}
+          {{ 'cart.shipping_bar.qualified' | t }}
+        {% else %}
+          {% assign remaining = threshold | minus: cart_total %}
+          {{ 'cart.shipping_bar.spend_more' | t: amount: remaining | money }}
+        {% endif %}
+      </p>
+      <div class="shipping-bar__track">
+        <div class="shipping-bar__fill" data-shipping-fill style="width: {{ progress }}%"></div>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if cart.item_count > 0 %}
+    {%- comment -%} Cart items {%- endcomment -%}
+    <div class="cart-drawer__items" data-cart-items>
+      {% for item in cart.items %}
+        <div class="cart-item" data-cart-item="{{ item.key }}">
+          <a href="{{ item.url }}" class="cart-item__image">
+            {% if item.image %}
+              {{ item.image | image_url: width: 160 | image_tag:
+                alt: item.title,
+                loading: 'lazy',
+                width: 80,
+                height: 100
+              }}
+            {% endif %}
+          </a>
+
+          <div class="cart-item__details">
+            <a href="{{ item.url }}" class="cart-item__title">{{ item.product.title }}</a>
+            {% unless item.variant.title == 'Default Title' %}
+              <span class="cart-item__variant">{{ item.variant.title }}</span>
+            {% endunless %}
+
+            <div class="cart-item__bottom">
+              <div class="quantity-selector">
+                <button
+                  class="quantity-selector__btn"
+                  data-cart-qty="minus"
+                  data-line-key="{{ item.key }}"
+                  aria-label="{{ 'products.decrease_quantity' | t }}"
+                >
+                  &minus;
+                </button>
+                <input
+                  type="number"
+                  class="quantity-selector__input"
+                  value="{{ item.quantity }}"
+                  min="0"
+                  data-cart-qty-input
+                  aria-label="{{ 'products.quantity' | t }}"
+                >
+                <button
+                  class="quantity-selector__btn"
+                  data-cart-qty="plus"
+                  data-line-key="{{ item.key }}"
+                  aria-label="{{ 'products.increase_quantity' | t }}"
+                >
+                  &plus;
+                </button>
+              </div>
+
+              <div>
+                <span class="cart-item__price">{{ item.final_line_price | money }}</span>
+                <button
+                  class="cart-item__remove"
+                  data-cart-remove="{{ item.key }}"
+                  aria-label="{{ 'cart.remove' | t }}: {{ item.title }}"
+                >
+                  {{ 'cart.remove' | t }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {%- comment -%} Footer with subtotal and checkout {%- endcomment -%}
+    <div class="cart-drawer__footer">
+      <div class="cart-drawer__subtotal">
+        <span>{{ 'cart.subtotal' | t }}</span>
+        <span data-cart-subtotal>{{ cart.total_price | money }}</span>
+      </div>
+
+      <div class="cart-drawer__note">
+        <label for="cart-note" class="sr-only">{{ 'cart.note_placeholder' | t }}</label>
+        <textarea
+          id="cart-note"
+          name="note"
+          placeholder="{{ 'cart.note_placeholder' | t }}"
+        >{{ cart.note }}</textarea>
+      </div>
+
+      <a href="/checkout" class="btn btn--primary btn--full btn--lg">
+        {{ 'cart.checkout' | t }}
+      </a>
+
+      <a href="/collections/all" class="btn btn--secondary btn--full mt-sm">
+        {{ 'cart.continue_shopping' | t }}
+      </a>
+
+      {%- comment -%} Trust badges {%- endcomment -%}
+      {% if settings.cart_show_trust_badges %}
+        <div class="trust-badges">
+          <div class="trust-badges__item">
+            <svg class="trust-badges__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+              <line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+            <span>Secure Payment</span>
+          </div>
+          <div class="trust-badges__item">
+            <svg class="trust-badges__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span>Buyer Protection</span>
+          </div>
+          <div class="trust-badges__item">
+            <svg class="trust-badges__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polyline points="20 12 20 22 4 22 4 12"/>
+              <rect x="2" y="7" width="20" height="5"/>
+              <line x1="12" y1="22" x2="12" y2="7"/>
+              <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+              <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+            </svg>
+            <span>Free Returns</span>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+  {% else %}
+    {%- comment -%} Empty cart state {%- endcomment -%}
+    <div class="cart-drawer__empty" data-cart-items>
+      <svg class="cart-drawer__empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <path d="M16 10a4 4 0 0 1-8 0"/>
+      </svg>
+      <p class="mb-md">{{ 'cart.empty' | t }}</p>
+      <a href="/collections/all" class="btn btn--primary">
+        {{ 'cart.continue_shopping' | t }}
+      </a>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Cart Drawer",
+  "settings": []
+}
+{% endschema %}

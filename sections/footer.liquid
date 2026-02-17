@@ -1,0 +1,124 @@
+{% comment %}
+  FlyFlow Theme - Footer Section
+  Purpose: Site footer with multiple link columns, newsletter signup,
+           social links, and copyright.
+  Dependencies: None
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<footer class="footer" data-section-id="{{ section.id }}">
+  <div class="container">
+    <div class="footer__grid">
+      {%- comment -%} Brand / Newsletter column {%- endcomment -%}
+      <div class="footer__column">
+        <h3 class="footer__heading">{{ shop.name }}</h3>
+        <p class="text-secondary text-sm">{{ section.settings.footer_description }}</p>
+
+        {% if section.settings.show_newsletter %}
+          <div class="newsletter" aria-label="{{ 'newsletter.title' | t }}">
+            <p class="text-sm mt-md">{{ 'newsletter.title' | t }}</p>
+            {% form 'customer', class: 'newsletter__form' %}
+              <input
+                type="email"
+                name="contact[email]"
+                class="newsletter__input"
+                placeholder="{{ 'newsletter.placeholder' | t }}"
+                required
+                autocomplete="email"
+                aria-label="{{ 'newsletter.placeholder' | t }}"
+              >
+              <input type="hidden" name="contact[tags]" value="newsletter">
+              <button type="submit" class="btn btn--primary btn--sm">
+                {{ 'newsletter.submit' | t }}
+              </button>
+            {% endform %}
+          </div>
+        {% endif %}
+      </div>
+
+      {%- comment -%} Link columns from blocks {%- endcomment -%}
+      {% for block in section.blocks %}
+        {% if block.type == 'link_column' %}
+          <div class="footer__column" {{ block.shopify_attributes }}>
+            <h3 class="footer__heading">{{ block.settings.heading }}</h3>
+            {% if block.settings.menu != blank %}
+              <nav aria-label="{{ block.settings.heading }}">
+                {% for link in block.settings.menu.links %}
+                  <a href="{{ link.url }}" class="footer__link">{{ link.title }}</a>
+                {% endfor %}
+              </nav>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="footer__bottom">
+      <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "class": "footer-section",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "footer_description",
+      "label": "Brand description",
+      "default": "Curated fashion for the modern wardrobe."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_newsletter",
+      "label": "Show newsletter signup",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "link_column",
+      "name": "Link Column",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Quick Links"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 3,
+  "default": {
+    "blocks": [
+      {
+        "type": "link_column",
+        "settings": {
+          "heading": "Shop"
+        }
+      },
+      {
+        "type": "link_column",
+        "settings": {
+          "heading": "Help"
+        }
+      },
+      {
+        "type": "link_column",
+        "settings": {
+          "heading": "About"
+        }
+      }
+    ]
+  }
+}
+{% endschema %}

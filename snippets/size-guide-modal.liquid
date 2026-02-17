@@ -1,0 +1,53 @@
+{% comment %}
+  FlyFlow Theme - Size Guide Modal Snippet
+  Purpose: Modal popup displaying size chart with measurements.
+           Supports both inches and centimeters.
+  Dependencies: theme.js (Modal module)
+  Usage: {% render 'size-guide-modal' %}
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<div class="modal" id="size-guide-modal" role="dialog" aria-modal="true" aria-labelledby="size-guide-title">
+  <div class="modal__header">
+    <h2 class="modal__title" id="size-guide-title">{{ 'products.size_guide.title' | t }}</h2>
+    <button class="modal__close" data-modal-close aria-label="{{ 'accessibility.close_modal' | t }}">
+      <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="1.5" fill="none" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="modal__body">
+    <p class="text-sm text-secondary mb-md">
+      All measurements are in inches. For the best fit, take your measurements
+      and compare them to the size chart below.
+    </p>
+
+    <table class="size-guide__table">
+      <thead>
+        <tr>
+          <th>Size</th>
+          <th>US</th>
+          <th>Bust</th>
+          <th>Waist</th>
+          <th>Hips</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>XS</td><td>0-2</td><td>31-32</td><td>24-25</td><td>34-35</td></tr>
+        <tr><td>S</td><td>4-6</td><td>33-34</td><td>26-27</td><td>36-37</td></tr>
+        <tr><td>M</td><td>8-10</td><td>35-36</td><td>28-29</td><td>38-39</td></tr>
+        <tr><td>L</td><td>12-14</td><td>37-39</td><td>30-32</td><td>40-42</td></tr>
+        <tr><td>XL</td><td>16-18</td><td>40-42</td><td>33-35</td><td>43-45</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="mt-lg mb-sm" style="font-size:0.9375rem">{{ 'products.size_guide.how_to_measure' | t }}</h3>
+    <ul style="font-size:0.875rem;color:var(--color-text-secondary);padding-left:1.25rem;list-style:disc">
+      <li style="margin-bottom:0.25rem"><strong>Bust:</strong> Measure around the fullest part of your chest.</li>
+      <li style="margin-bottom:0.25rem"><strong>Waist:</strong> Measure around your natural waistline.</li>
+      <li style="margin-bottom:0.25rem"><strong>Hips:</strong> Measure around the fullest part of your hips.</li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,136 @@
+{% comment %}
+  FlyFlow Theme - Product Card Snippet
+  Purpose: Reusable product card component for collection grids,
+           search results, and recommendation sections.
+  Dependencies: theme.css (product-card classes)
+  Usage: {% render 'product-card', product: product %}
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<article class="product-card" data-product-card>
+  {%- comment -%} Product image with badges and quick buy {%- endcomment -%}
+  <div class="product-card__media">
+    {%- comment -%} Badges {%- endcomment -%}
+    {% if settings.collection_show_badges %}
+      <div class="product-card__badges">
+        {% if product.available == false %}
+          <span class="badge badge--sold-out">{{ 'products.sold_out' | t }}</span>
+        {% else %}
+          {% if product.compare_at_price > product.price %}
+            {% assign discount = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price %}
+            <span class="badge badge--sale">-{{ discount }}%</span>
+          {% endif %}
+
+          {% assign now_ts = 'now' | date: '%s' | plus: 0 %}
+          {% assign created_ts = product.created_at | date: '%s' | plus: 0 %}
+          {% assign diff_days = now_ts | minus: created_ts | divided_by: 86400 %}
+          {% if diff_days <= settings.collection_new_days %}
+            <span class="badge badge--new">{{ 'products.new' | t }}</span>
+          {% endif %}
+
+          {% if product.tags contains 'limited-edition' %}
+            <span class="badge badge--limited">{{ 'products.limited_edition' | t }}</span>
+          {% endif %}
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {%- comment -%} Product image {%- endcomment -%}
+    {% if product.featured_image %}
+      <a href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+        {{ product.featured_image | image_url: width: 800 | image_tag:
+          class: 'product-card__image',
+          alt: product.featured_image.alt | default: product.title,
+          loading: 'lazy',
+          widths: '375, 750',
+          sizes: '(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw',
+          width: 400,
+          height: 533
+        }}
+
+        {%- comment -%} Second image on hover {%- endcomment -%}
+        {% if product.images.size > 1 %}
+          {{ product.images[1] | image_url: width: 800 | image_tag:
+            class: 'product-card__image product-card__image--hover',
+            alt: product.images[1].alt | default: product.title,
+            loading: 'lazy',
+            widths: '375, 750',
+            sizes: '(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw',
+            width: 400,
+            height: 533
+          }}
+        {% endif %}
+      </a>
+    {% else %}
+      <a href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+        {{ 'product-1' | placeholder_svg_tag: 'product-card__image' }}
+      </a>
+    {% endif %}
+
+    {%- comment -%} Quick buy button {%- endcomment -%}
+    {% if settings.collection_quick_buy and product.available %}
+      {% if product.variants.size == 1 %}
+        <div class="product-card__quick-buy">
+          <button
+            class="btn btn--primary btn--full btn--sm"
+            data-add-to-cart
+            data-variant-id="{{ product.first_available_variant.id }}"
+            data-add-text="{{ 'products.quick_buy' | t }}"
+          >
+            {{ 'products.quick_buy' | t }}
+          </button>
+        </div>
+      {% else %}
+        <div class="product-card__quick-buy">
+          <a href="{{ product.url }}" class="btn btn--primary btn--full btn--sm">
+            {{ 'products.view_product' | t }}
+          </a>
+        </div>
+      {% endif %}
+    {% endif %}
+  </div>
+
+  {%- comment -%} Product info {%- endcomment -%}
+  <div class="product-card__info">
+    {% if product.vendor != blank %}
+      <p class="product-card__vendor">{{ product.vendor }}</p>
+    {% endif %}
+
+    <h3 class="product-card__title">
+      <a href="{{ product.url }}">{{ product.title }}</a>
+    </h3>
+
+    <div class="product-card__price{% if product.compare_at_price > product.price %} product-card__price--on-sale{% endif %}">
+      {% if product.compare_at_price > product.price %}
+        <span class="product-card__price--sale">{{ product.price | money }}</span>
+        <span class="product-card__price--compare">{{ product.compare_at_price | money }}</span>
+      {% else %}
+        <span>{{ product.price | money }}</span>
+      {% endif %}
+
+      {% if product.price_varies %}
+        <span class="text-secondary text-xs">{{ 'products.from_price' | t: price: product.price_min | money }}</span>
+      {% endif %}
+    </div>
+
+    {%- comment -%} Color swatches {%- endcomment -%}
+    {% assign color_option = product.options_by_name['Color'] %}
+    {% if color_option %}
+      <div class="product-card__swatches" aria-label="Available colors">
+        {% for value in color_option.values %}
+          {% if forloop.index <= 5 %}
+            <span
+              class="product-card__swatch"
+              style="background-color: {{ value | handleize }}"
+              title="{{ value }}"
+              aria-label="{{ value }}"
+            ></span>
+          {% endif %}
+        {% endfor %}
+        {% if color_option.values.size > 5 %}
+          <span class="text-xs text-secondary">+{{ color_option.values.size | minus: 5 }}</span>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</article>
