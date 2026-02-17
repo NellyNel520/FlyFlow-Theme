@@ -1,0 +1,448 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "FlyFlow",
+    "theme_version": "0.1.0",
+    "theme_author": "Archform Labs",
+    "theme_documentation_url": "https://github.com/archform-labs/flyflow-theme",
+    "theme_support_url": "https://github.com/archform-labs/flyflow-theme/issues"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Light Mode Colors"
+      },
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary color",
+        "default": "#1a1a1a",
+        "info": "Used for primary buttons, headings, and key UI elements"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary",
+        "label": "Secondary color",
+        "default": "#6b7280",
+        "info": "Used for secondary text and subtle UI elements"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Accent color",
+        "default": "#c8a97e",
+        "info": "Used for highlights, links, and call-to-action elements"
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Background color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_surface",
+        "label": "Surface color",
+        "default": "#f9fafb",
+        "info": "Used for cards, modals, and elevated surfaces"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Text color",
+        "default": "#1a1a1a"
+      },
+      {
+        "type": "color",
+        "id": "color_text_secondary",
+        "label": "Secondary text color",
+        "default": "#6b7280"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Border color",
+        "default": "#e5e7eb"
+      },
+      {
+        "type": "color",
+        "id": "color_sale",
+        "label": "Sale price color",
+        "default": "#dc2626"
+      },
+      {
+        "type": "color",
+        "id": "color_success",
+        "label": "Success color",
+        "default": "#10b981"
+      },
+      {
+        "type": "color",
+        "id": "color_error",
+        "label": "Error color",
+        "default": "#ef4444"
+      },
+      {
+        "type": "header",
+        "content": "Dark Mode Colors"
+      },
+      {
+        "type": "checkbox",
+        "id": "dark_mode_enabled",
+        "label": "Enable dark mode toggle",
+        "default": true,
+        "info": "Show a light/dark theme toggle in the header"
+      },
+      {
+        "type": "color",
+        "id": "color_dark_background",
+        "label": "Dark mode background",
+        "default": "#0f0f0f"
+      },
+      {
+        "type": "color",
+        "id": "color_dark_surface",
+        "label": "Dark mode surface",
+        "default": "#1a1a1a"
+      },
+      {
+        "type": "color",
+        "id": "color_dark_text",
+        "label": "Dark mode text",
+        "default": "#f5f5f5"
+      },
+      {
+        "type": "color",
+        "id": "color_dark_text_secondary",
+        "label": "Dark mode secondary text",
+        "default": "#9ca3af"
+      },
+      {
+        "type": "color",
+        "id": "color_dark_border",
+        "label": "Dark mode border",
+        "default": "#2d2d2d"
+      },
+      {
+        "type": "color",
+        "id": "color_dark_accent",
+        "label": "Dark mode accent",
+        "default": "#d4b896"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "font_heading",
+        "label": "Heading font",
+        "default": "assistant_n4",
+        "info": "Used for all headings (H1-H6)"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_body",
+        "label": "Body font",
+        "default": "assistant_n4",
+        "info": "Used for body text, buttons, and UI"
+      },
+      {
+        "type": "range",
+        "id": "font_size_base",
+        "label": "Base font size (px)",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "default": 16,
+        "unit": "px"
+      },
+      {
+        "type": "select",
+        "id": "font_scale",
+        "label": "Type scale ratio",
+        "options": [
+          { "value": "1.2", "label": "Minor Third (1.2)" },
+          { "value": "1.25", "label": "Major Third (1.25)" },
+          { "value": "1.333", "label": "Perfect Fourth (1.333)" }
+        ],
+        "default": "1.25",
+        "info": "Controls the size progression between heading levels"
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "range",
+        "id": "page_width",
+        "label": "Page width (px)",
+        "min": 1200,
+        "max": 1600,
+        "step": 40,
+        "default": 1440,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "section_spacing",
+        "label": "Section spacing (px)",
+        "min": 24,
+        "max": 80,
+        "step": 4,
+        "default": 48,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "border_radius",
+        "label": "Border radius (px)",
+        "min": 0,
+        "max": 16,
+        "step": 2,
+        "default": 4,
+        "unit": "px"
+      },
+      {
+        "type": "select",
+        "id": "grid_columns_desktop",
+        "label": "Products per row (desktop)",
+        "options": [
+          { "value": "3", "label": "3 columns" },
+          { "value": "4", "label": "4 columns" },
+          { "value": "5", "label": "5 columns" }
+        ],
+        "default": "4"
+      },
+      {
+        "type": "select",
+        "id": "grid_columns_mobile",
+        "label": "Products per row (mobile)",
+        "options": [
+          { "value": "1", "label": "1 column" },
+          { "value": "2", "label": "2 columns" }
+        ],
+        "default": "2"
+      }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_type",
+        "label": "Cart type",
+        "options": [
+          { "value": "drawer", "label": "Slide-out drawer" },
+          { "value": "page", "label": "Dedicated cart page" }
+        ],
+        "default": "drawer"
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_show_shipping_bar",
+        "label": "Show free shipping progress bar",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "cart_shipping_threshold",
+        "label": "Free shipping threshold",
+        "default": "75",
+        "info": "Amount in store currency. Leave empty to disable."
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_show_trust_badges",
+        "label": "Show trust badges in cart",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_enable_upsells",
+        "label": "Enable cart upsells",
+        "default": true,
+        "info": "Show recommended products in the cart drawer"
+      },
+      {
+        "type": "collection",
+        "id": "cart_upsell_collection",
+        "label": "Upsell collection",
+        "info": "Products from this collection will appear as cart recommendations"
+      }
+    ]
+  },
+  {
+    "name": "Product Pages",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "product_sticky_atc",
+        "label": "Enable sticky Add to Cart",
+        "default": true,
+        "info": "Shows a fixed Add to Cart bar when scrolled past the main button"
+      },
+      {
+        "type": "checkbox",
+        "id": "product_image_zoom",
+        "label": "Enable image zoom",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "product_variant_style",
+        "label": "Variant selector style",
+        "options": [
+          { "value": "swatches", "label": "Visual swatches" },
+          { "value": "buttons", "label": "Button pills" },
+          { "value": "dropdown", "label": "Dropdown" }
+        ],
+        "default": "swatches"
+      },
+      {
+        "type": "checkbox",
+        "id": "product_show_stock",
+        "label": "Show stock indicator",
+        "default": true,
+        "info": "Shows 'Only X left' when inventory is low"
+      },
+      {
+        "type": "range",
+        "id": "product_stock_threshold",
+        "label": "Low stock threshold",
+        "min": 1,
+        "max": 20,
+        "step": 1,
+        "default": 5,
+        "info": "Show low stock message when inventory is at or below this number"
+      },
+      {
+        "type": "checkbox",
+        "id": "product_back_in_stock",
+        "label": "Enable back-in-stock notifications",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Collection Pages",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "collection_quick_buy",
+        "label": "Enable quick buy on collection pages",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "collection_pagination",
+        "label": "Pagination style",
+        "options": [
+          { "value": "paginated", "label": "Numbered pages" },
+          { "value": "load_more", "label": "Load more button" },
+          { "value": "infinite", "label": "Infinite scroll" }
+        ],
+        "default": "load_more"
+      },
+      {
+        "type": "checkbox",
+        "id": "collection_grid_toggle",
+        "label": "Show grid/list view toggle",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "collection_show_badges",
+        "label": "Show product badges",
+        "default": true,
+        "info": "New, Sale, Sold Out, Limited Edition badges"
+      },
+      {
+        "type": "range",
+        "id": "collection_new_days",
+        "label": "Days to show 'New' badge",
+        "min": 7,
+        "max": 60,
+        "step": 7,
+        "default": 30
+      }
+    ]
+  },
+  {
+    "name": "Social Proof",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "social_proof_notifications",
+        "label": "Enable purchase notifications",
+        "default": false,
+        "info": "Show recent purchase pop-ups (configure timing below)"
+      },
+      {
+        "type": "range",
+        "id": "social_proof_interval",
+        "label": "Notification interval (seconds)",
+        "min": 10,
+        "max": 60,
+        "step": 5,
+        "default": 30
+      },
+      {
+        "type": "range",
+        "id": "social_proof_duration",
+        "label": "Notification display time (seconds)",
+        "min": 3,
+        "max": 10,
+        "step": 1,
+        "default": 5
+      }
+    ]
+  },
+  {
+    "name": "Analytics & SEO",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Analytics"
+      },
+      {
+        "type": "text",
+        "id": "ga4_measurement_id",
+        "label": "Google Analytics 4 Measurement ID",
+        "info": "Format: G-XXXXXXXXXX"
+      },
+      {
+        "type": "text",
+        "id": "facebook_pixel_id",
+        "label": "Facebook Pixel ID",
+        "info": "Your Facebook Pixel ID for conversion tracking"
+      },
+      {
+        "type": "header",
+        "content": "SEO"
+      },
+      {
+        "type": "text",
+        "id": "seo_title_separator",
+        "label": "Title separator",
+        "default": "|",
+        "info": "Character between page title and store name"
+      },
+      {
+        "type": "header",
+        "content": "Social Media"
+      },
+      {
+        "type": "image_picker",
+        "id": "og_default_image",
+        "label": "Default social sharing image",
+        "info": "Used when a page doesn't have its own image. Recommended: 1200x630px"
+      }
+    ]
+  }
+]

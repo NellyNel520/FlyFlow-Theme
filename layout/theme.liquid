@@ -1,0 +1,205 @@
+{% comment %}
+  FlyFlow Theme - Base Layout
+  Purpose: Main layout wrapper for all pages. Handles document structure,
+           CSS custom properties, dark mode initialization, analytics,
+           critical CSS, and global sections (header/footer).
+  Dependencies: theme.css, theme.js, dark-mode.js
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<!doctype html>
+<html
+  class="no-js"
+  lang="{{ request.locale.iso_code }}"
+  dir="{{ settings.text_direction | default: 'ltr' }}"
+  data-theme="light"
+>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  {%- comment -%} Preconnect to Shopify CDN and fonts {%- endcomment -%}
+  <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+
+  {%- comment -%} Page title with SEO separator {%- endcomment -%}
+  <title>
+    {{- page_title -}}
+    {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+    {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+    {%- unless page_title contains shop.name %} {{ settings.seo_title_separator | default: '|' }} {{ shop.name }}{% endunless -%}
+  </title>
+
+  {%- comment -%} Meta tags {%- endcomment -%}
+  {% if page_description %}
+    <meta name="description" content="{{ page_description | escape }}">
+  {% endif %}
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  {%- comment -%} Open Graph / Social sharing {%- endcomment -%}
+  <meta property="og:site_name" content="{{ shop.name }}">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:title" content="{{ page_title | escape }}">
+  <meta property="og:type" content="website">
+  {% if page_description %}
+    <meta property="og:description" content="{{ page_description | escape }}">
+  {% endif %}
+  {% if settings.og_default_image %}
+    <meta property="og:image" content="{{ settings.og_default_image | image_url: width: 1200 }}">
+  {% endif %}
+  <meta name="twitter:card" content="summary_large_image">
+
+  {%- comment -%} Favicon {%- endcomment -%}
+  {% if settings.favicon != blank %}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+  {% endif %}
+
+  {%- comment -%} CSS Custom Properties — dynamically set from theme settings {%- endcomment -%}
+  {% style %}
+    :root {
+      /* Colors - Light Mode */
+      --color-primary: {{ settings.color_primary }};
+      --color-secondary: {{ settings.color_secondary }};
+      --color-accent: {{ settings.color_accent }};
+      --color-background: {{ settings.color_background }};
+      --color-surface: {{ settings.color_surface }};
+      --color-text: {{ settings.color_text }};
+      --color-text-secondary: {{ settings.color_text_secondary }};
+      --color-border: {{ settings.color_border }};
+      --color-sale: {{ settings.color_sale }};
+      --color-success: {{ settings.color_success }};
+      --color-error: {{ settings.color_error }};
+
+      /* Typography */
+      --font-heading: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
+      --font-heading-weight: {{ settings.font_heading.weight }};
+      --font-heading-style: {{ settings.font_heading.style }};
+      --font-body: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
+      --font-body-weight: {{ settings.font_body.weight }};
+      --font-body-style: {{ settings.font_body.style }};
+      --font-size-base: {{ settings.font_size_base }}px;
+      --font-scale: {{ settings.font_scale }};
+
+      /* Layout */
+      --page-width: {{ settings.page_width }}px;
+      --section-spacing: {{ settings.section_spacing }}px;
+      --border-radius: {{ settings.border_radius }}px;
+      --grid-columns-desktop: {{ settings.grid_columns_desktop }};
+      --grid-columns-mobile: {{ settings.grid_columns_mobile }};
+
+      /* Spacing scale */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2rem;
+      --space-2xl: 3rem;
+      --space-3xl: 4rem;
+
+      /* Transitions */
+      --transition-fast: 150ms ease;
+      --transition-base: 300ms ease;
+      --transition-slow: 500ms ease;
+
+      /* Z-index scale */
+      --z-dropdown: 100;
+      --z-sticky: 200;
+      --z-overlay: 300;
+      --z-drawer: 400;
+      --z-modal: 500;
+      --z-notification: 600;
+    }
+
+    /* Dark Mode Colors */
+    :root[data-theme="dark"] {
+      --color-background: {{ settings.color_dark_background }};
+      --color-surface: {{ settings.color_dark_surface }};
+      --color-text: {{ settings.color_dark_text }};
+      --color-text-secondary: {{ settings.color_dark_text_secondary }};
+      --color-border: {{ settings.color_dark_border }};
+      --color-accent: {{ settings.color_dark_accent }};
+      --color-primary: {{ settings.color_dark_text }};
+    }
+  {% endstyle %}
+
+  {%- comment -%} Theme font declarations {%- endcomment -%}
+  {{ settings.font_heading | font_face: font_display: 'swap' }}
+  {{ settings.font_body | font_face: font_display: 'swap' }}
+
+  {%- comment -%} Critical CSS — inlined for performance {%- endcomment -%}
+  <style>
+    /* Critical above-the-fold styles */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: var(--font-size-base); scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body { font-family: var(--font-body); font-weight: var(--font-body-weight); color: var(--color-text); background-color: var(--color-background); line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transition: background-color var(--transition-base), color var(--transition-base); }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: inherit; text-decoration: none; }
+    .container { width: 100%; max-width: var(--page-width); margin-inline: auto; padding-inline: var(--space-md); }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+  </style>
+
+  {%- comment -%} Main stylesheet — loaded non-blocking {%- endcomment -%}
+  <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="{{ 'theme.css' | asset_url }}"></noscript>
+
+  {%- comment -%} Dark mode init — runs before paint to prevent flash {%- endcomment -%}
+  <script>
+    (function() {
+      var saved = localStorage.getItem('flyflow-theme-preference');
+      if (saved) {
+        document.documentElement.setAttribute('data-theme', saved);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+      document.documentElement.classList.remove('no-js');
+      document.documentElement.classList.add('js');
+    })();
+  </script>
+
+  {{ content_for_header }}
+</head>
+
+<body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}-{{ template.suffix }}{% endif %}">
+  <a href="#main-content" class="skip-to-content sr-only">
+    {{ 'accessibility.skip_to_content' | t }}
+  </a>
+
+  {%- comment -%} Announcement bar + Header section group {%- endcomment -%}
+  {% sections 'header-group' %}
+
+  {%- comment -%} Main content area {%- endcomment -%}
+  <main id="main-content" role="main" tabindex="-1">
+    {{ content_for_layout }}
+  </main>
+
+  {%- comment -%} Footer section group {%- endcomment -%}
+  {% sections 'footer-group' %}
+
+  {%- comment -%} Cart drawer (rendered globally for ajax cart) {%- endcomment -%}
+  {% if settings.cart_type == 'drawer' %}
+    {% section 'cart-drawer' %}
+  {% endif %}
+
+  {%- comment -%} Overlay for drawers and modals {%- endcomment -%}
+  <div class="overlay" data-overlay aria-hidden="true"></div>
+
+  {%- comment -%} Live region for screen reader announcements {%- endcomment -%}
+  <div id="sr-live-region" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  {%- comment -%} Core JavaScript — deferred for performance {%- endcomment -%}
+  <script src="{{ 'theme.js' | asset_url }}" defer></script>
+
+  {%- comment -%} Dark mode toggle logic {%- endcomment -%}
+  {% if settings.dark_mode_enabled %}
+    <script src="{{ 'dark-mode.js' | asset_url }}" defer></script>
+  {% endif %}
+
+  {%- comment -%} JSON-LD Structured Data {%- endcomment -%}
+  {% render 'json-ld' %}
+
+  {%- comment -%} Analytics {%- endcomment -%}
+  {% render 'analytics' %}
+</body>
+</html>

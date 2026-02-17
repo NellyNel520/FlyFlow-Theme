@@ -1,0 +1,59 @@
+{
+  "current": {
+    "color_primary": "#1a1a1a",
+    "color_secondary": "#6b7280",
+    "color_accent": "#c8a97e",
+    "color_background": "#ffffff",
+    "color_surface": "#f9fafb",
+    "color_text": "#1a1a1a",
+    "color_text_secondary": "#6b7280",
+    "color_border": "#e5e7eb",
+    "color_sale": "#dc2626",
+    "color_success": "#10b981",
+    "color_error": "#ef4444",
+    "dark_mode_enabled": true,
+    "color_dark_background": "#0f0f0f",
+    "color_dark_surface": "#1a1a1a",
+    "color_dark_text": "#f5f5f5",
+    "color_dark_text_secondary": "#9ca3af",
+    "color_dark_border": "#2d2d2d",
+    "color_dark_accent": "#d4b896",
+    "font_size_base": 16,
+    "font_scale": "1.25",
+    "page_width": 1440,
+    "section_spacing": 48,
+    "border_radius": 4,
+    "grid_columns_desktop": "4",
+    "grid_columns_mobile": "2",
+    "cart_type": "drawer",
+    "cart_show_shipping_bar": true,
+    "cart_shipping_threshold": "75",
+    "cart_show_trust_badges": true,
+    "cart_enable_upsells": true,
+    "product_sticky_atc": true,
+    "product_image_zoom": true,
+    "product_variant_style": "swatches",
+    "product_show_stock": true,
+    "product_stock_threshold": 5,
+    "product_back_in_stock": true,
+    "collection_quick_buy": true,
+    "collection_pagination": "load_more",
+    "collection_grid_toggle": true,
+    "collection_show_badges": true,
+    "collection_new_days": 30,
+    "social_proof_notifications": false,
+    "social_proof_interval": 30,
+    "social_proof_duration": 5,
+    "seo_title_separator": "|",
+    "sections": {
+      "header": {
+        "type": "header",
+        "settings": {}
+      },
+      "footer": {
+        "type": "footer",
+        "settings": {}
+      }
+    }
+  }
+}
