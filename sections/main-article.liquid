@@ -1,0 +1,70 @@
+{% comment %}
+  FlyFlow Theme - Main Article Section
+  Purpose: Single blog article with featured image, content, and author info.
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container" style="max-width:800px">
+    <header class="text-center mb-xl">
+      <p class="text-xs text-secondary mb-sm" style="text-transform:uppercase;letter-spacing:0.05em">
+        {{ article.published_at | date: '%B %d, %Y' }}
+        {% if article.author %} &middot; {{ article.author }}{% endif %}
+      </p>
+      <h1>{{ article.title }}</h1>
+    </header>
+
+    {% if article.image %}
+      <div style="margin-bottom:var(--space-2xl);border-radius:var(--border-radius);overflow:hidden">
+        {{ article.image | image_url: width: 1200 | image_tag:
+          alt: article.title,
+          loading: 'eager',
+          widths: '375, 750, 1100',
+          sizes: '(min-width: 800px) 800px, 100vw'
+        }}
+      </div>
+    {% endif %}
+
+    <div class="rte">{{ article.content }}</div>
+
+    {% if article.tags.size > 0 %}
+      <div class="mt-xl" style="display:flex;flex-wrap:wrap;gap:var(--space-sm)">
+        {% for tag in article.tags %}
+          <a href="{{ blog.url }}/tagged/{{ tag | handleize }}" class="badge badge--new">{{ tag }}</a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if blog.comments_enabled? %}
+      <div class="mt-2xl" style="border-top:1px solid var(--color-border);padding-top:var(--space-xl)">
+        <h2 class="mb-lg" style="font-size:1.25rem">Comments ({{ article.comments_count }})</h2>
+
+        {% for comment in article.comments %}
+          <div style="padding:var(--space-md) 0;border-bottom:1px solid var(--color-border)">
+            <p style="font-weight:600;font-size:0.875rem">{{ comment.author }}</p>
+            <p class="text-xs text-secondary mb-sm">{{ comment.created_at | date: '%B %d, %Y' }}</p>
+            <div class="text-sm">{{ comment.content }}</div>
+          </div>
+        {% endfor %}
+
+        {% form 'new_comment', article %}
+          <div class="mt-lg">
+            <h3 class="mb-md" style="font-size:1rem">Leave a comment</h3>
+            {% if form.errors %}<p class="text-sale text-sm mb-md">{{ form.errors | default_errors }}</p>{% endif %}
+            <div class="form__group"><label class="form__label" for="comment-author">Name</label><input type="text" id="comment-author" name="comment[author]" class="form__input" required></div>
+            <div class="form__group"><label class="form__label" for="comment-email">Email</label><input type="email" id="comment-email" name="comment[email]" class="form__input" required></div>
+            <div class="form__group"><label class="form__label" for="comment-body">Comment</label><textarea id="comment-body" name="comment[body]" class="form__input" rows="4" required style="resize:vertical"></textarea></div>
+            <button type="submit" class="btn btn--primary">Post Comment</button>
+          </div>
+        {% endform %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Blog Article",
+  "settings": []
+}
+{% endschema %}

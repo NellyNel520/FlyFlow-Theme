@@ -1,0 +1,109 @@
+{% comment %}
+  FlyFlow Theme - Hero Banner Section
+  Purpose: Full-width hero with background image/video, heading, subheading, and CTA.
+  Dependencies: theme.css
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="hero-banner section" data-section-id="{{ section.id }}">
+  <div class="hero-banner__inner" style="
+    {% if section.settings.image %}
+      background-image: url('{{ section.settings.image | image_url: width: 1920 }}');
+    {% endif %}
+    background-size: cover;
+    background-position: center;
+    min-height: {{ section.settings.height }}vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  ">
+    {%- comment -%} Overlay {%- endcomment -%}
+    <div style="
+      position: absolute; inset: 0;
+      background-color: rgba(0,0,0,{{ section.settings.overlay_opacity | divided_by: 100.0 }});
+    "></div>
+
+    <div class="container" style="position:relative;z-index:1;text-align:center;color:#fff">
+      {% if section.settings.heading != blank %}
+        <h1 style="font-size:clamp(2rem,5vw,3.5rem);margin-bottom:var(--space-md)">
+          {{ section.settings.heading }}
+        </h1>
+      {% endif %}
+
+      {% if section.settings.subheading != blank %}
+        <p style="font-size:clamp(1rem,2vw,1.25rem);max-width:640px;margin-inline:auto;margin-bottom:var(--space-xl);opacity:0.9">
+          {{ section.settings.subheading }}
+        </p>
+      {% endif %}
+
+      {% if section.settings.button_text != blank %}
+        <a href="{{ section.settings.button_link }}" class="btn btn--accent btn--lg">
+          {{ section.settings.button_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero Banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background image",
+      "info": "Recommended: 1920x1080px or larger"
+    },
+    {
+      "type": "range",
+      "id": "height",
+      "label": "Banner height",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "default": 80,
+      "unit": "vh"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "default": 30,
+      "unit": "%"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "New Season Arrivals"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Discover the latest in contemporary fashion"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Banner"
+    }
+  ]
+}
+{% endschema %}

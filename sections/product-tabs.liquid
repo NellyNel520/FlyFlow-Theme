@@ -1,0 +1,178 @@
+{% comment %}
+  FlyFlow Theme - Product Tabs Section
+  Purpose: Tabbed content (desktop) / accordion (mobile) for product details,
+           size guide, reviews, and shipping info.
+  Dependencies: theme.js (Accordion module)
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="product-tabs section" data-section-id="{{ section.id }}">
+  <div class="container">
+    {%- comment -%} Desktop tabs {%- endcomment -%}
+    <div class="product-tabs__nav" role="tablist">
+      {% for block in section.blocks %}
+        <button
+          class="product-tabs__btn{% if forloop.first %} product-tabs__btn--active{% endif %}"
+          role="tab"
+          aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+          aria-controls="tab-panel-{{ block.id }}"
+          id="tab-{{ block.id }}"
+          data-tab-btn="{{ block.id }}"
+          {{ block.shopify_attributes }}
+        >
+          {% case block.type %}
+            {% when 'description' %}{{ 'products.tabs.description' | t }}
+            {% when 'size-guide' %}{{ 'products.tabs.size_guide' | t }}
+            {% when 'reviews' %}{{ 'products.tabs.reviews' | t }}
+            {% when 'shipping' %}{{ 'products.tabs.shipping' | t }}
+            {% when 'custom' %}{{ block.settings.title }}
+          {% endcase %}
+        </button>
+      {% endfor %}
+    </div>
+
+    {%- comment -%} Tab panels (desktop) {%- endcomment -%}
+    {% for block in section.blocks %}
+      <div
+        class="product-tabs__content{% if forloop.first %} product-tabs__content--active{% endif %} hidden-mobile"
+        role="tabpanel"
+        id="tab-panel-{{ block.id }}"
+        aria-labelledby="tab-{{ block.id }}"
+        data-tab-panel="{{ block.id }}"
+      >
+        {% case block.type %}
+          {% when 'description' %}
+            <div class="rte">{{ product.description }}</div>
+          {% when 'size-guide' %}
+            <p class="text-sm text-secondary mb-md">Find your perfect fit with our size guide.</p>
+            <button class="btn btn--secondary btn--sm" data-modal-open="size-guide-modal">
+              {{ 'products.size_guide.title' | t }}
+            </button>
+          {% when 'reviews' %}
+            <div id="product-reviews">
+              <p class="text-sm text-secondary">Reviews integration point — connect your preferred reviews app here.</p>
+            </div>
+          {% when 'shipping' %}
+            <div class="rte text-sm">{{ block.settings.content }}</div>
+          {% when 'custom' %}
+            <div class="rte text-sm">{{ block.settings.content }}</div>
+        {% endcase %}
+      </div>
+    {% endfor %}
+
+    {%- comment -%} Accordion (mobile) {%- endcomment -%}
+    {% for block in section.blocks %}
+      <div class="accordion" {{ block.shopify_attributes }}>
+        <button
+          class="accordion__trigger"
+          data-accordion-trigger
+          aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
+          aria-controls="accordion-{{ block.id }}"
+        >
+          {% case block.type %}
+            {% when 'description' %}{{ 'products.tabs.description' | t }}
+            {% when 'size-guide' %}{{ 'products.tabs.size_guide' | t }}
+            {% when 'reviews' %}{{ 'products.tabs.reviews' | t }}
+            {% when 'shipping' %}{{ 'products.tabs.shipping' | t }}
+            {% when 'custom' %}{{ block.settings.title }}
+          {% endcase %}
+          <svg class="accordion__icon" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9" fill="none" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </button>
+        <div class="accordion__content{% if forloop.first %} accordion__content--open{% endif %}" id="accordion-{{ block.id }}">
+          <div class="accordion__body text-sm">
+            {% case block.type %}
+              {% when 'description' %}
+                <div class="rte">{{ product.description }}</div>
+              {% when 'size-guide' %}
+                <button class="btn btn--secondary btn--sm" data-modal-open="size-guide-modal">
+                  {{ 'products.size_guide.title' | t }}
+                </button>
+              {% when 'reviews' %}
+                <p class="text-secondary">Reviews integration point.</p>
+              {% when 'shipping' %}
+                <div class="rte">{{ block.settings.content }}</div>
+              {% when 'custom' %}
+                <div class="rte">{{ block.settings.content }}</div>
+            {% endcase %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<script>
+  /* Tab switching logic */
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-tab-btn]');
+    if (!btn) return;
+    var id = btn.dataset.tabBtn;
+    var section = btn.closest('.product-tabs');
+    section.querySelectorAll('[data-tab-btn]').forEach(function(b) {
+      b.classList.remove('product-tabs__btn--active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    section.querySelectorAll('[data-tab-panel]').forEach(function(p) {
+      p.classList.remove('product-tabs__content--active');
+    });
+    btn.classList.add('product-tabs__btn--active');
+    btn.setAttribute('aria-selected', 'true');
+    var panel = section.querySelector('[data-tab-panel="' + id + '"]');
+    if (panel) panel.classList.add('product-tabs__content--active');
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Product Tabs",
+  "blocks": [
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1
+    },
+    {
+      "type": "size-guide",
+      "name": "Size Guide",
+      "limit": 1
+    },
+    {
+      "type": "reviews",
+      "name": "Reviews",
+      "limit": 1
+    },
+    {
+      "type": "shipping",
+      "name": "Shipping & Returns",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Free standard shipping on orders over $75. Express shipping available at checkout.</p><p>Returns accepted within 30 days of purchase. Items must be unworn with tags attached.</p>"
+        }
+      ]
+    },
+    {
+      "type": "custom",
+      "name": "Custom Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Tab title",
+          "default": "Custom Tab"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

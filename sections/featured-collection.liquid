@@ -1,0 +1,75 @@
+{% comment %}
+  FlyFlow Theme - Featured Collection Section
+  Purpose: Display a grid of products from a selected collection.
+  Dependencies: snippets/product-card.liquid, theme.css
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container">
+    {% if section.settings.heading != blank %}
+      <div class="collection-header" style="padding-bottom:var(--space-xl)">
+        <h2 class="collection-header__title">{{ section.settings.heading }}</h2>
+        {% if section.settings.collection %}
+          <a href="{{ section.settings.collection.url }}" class="text-accent text-sm mt-sm" style="display:inline-block">
+            {{ 'general.view_all' | t }} &rarr;
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="product-grid">
+      {% if section.settings.collection %}
+        {% for product in section.settings.collection.products limit: section.settings.products_to_show %}
+          {% render 'product-card', product: product %}
+        {% endfor %}
+      {% else %}
+        {% for i in (1..section.settings.products_to_show) %}
+          <div class="product-card">
+            <div class="product-card__media">
+              {{ 'product-' | append: forloop.index | placeholder_svg_tag: 'product-card__image' }}
+            </div>
+            <div class="product-card__info">
+              <p class="product-card__vendor">Brand</p>
+              <h3 class="product-card__title">Sample Product {{ forloop.index }}</h3>
+              <div class="product-card__price"><span>$0.00</span></div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured Collection",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Featured Collection"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Collection"
+    }
+  ]
+}
+{% endschema %}

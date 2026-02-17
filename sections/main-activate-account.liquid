@@ -1,0 +1,23 @@
+{% comment %}
+  FlyFlow Theme - Account Activation Section
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="section">
+  <div class="container" style="max-width:480px">
+    <h1 class="text-center mb-xl">Activate Your Account</h1>
+    <p class="text-center text-secondary mb-lg">Create a password to activate your account.</p>
+    {% form 'activate_customer_password' %}
+      <div class="form__group"><label class="form__label" for="activate-pw">Password</label><input type="password" id="activate-pw" name="customer[password]" class="form__input" required></div>
+      <div class="form__group"><label class="form__label" for="activate-pw2">Confirm password</label><input type="password" id="activate-pw2" name="customer[password_confirmation]" class="form__input" required></div>
+      <button type="submit" class="btn btn--primary btn--full btn--lg">Activate Account</button>
+    {% endform %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Activate Account",
+  "settings": []
+}
+{% endschema %}

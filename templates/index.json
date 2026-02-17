@@ -1,0 +1,46 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-banner",
+      "settings": {
+        "heading": "New Season Arrivals",
+        "subheading": "Discover the latest in contemporary fashion",
+        "button_text": "Shop Now",
+        "button_link": "/collections/all"
+      }
+    },
+    "featured-collection": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "Featured Collection",
+        "products_to_show": 8
+      }
+    },
+    "shop-the-look": {
+      "type": "shop-the-look",
+      "settings": {
+        "heading": "Shop the Look"
+      }
+    },
+    "recently-viewed": {
+      "type": "recently-viewed",
+      "settings": {
+        "heading": "Recently Viewed"
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "heading": "Join the FlyFlow Community",
+        "subheading": "Be the first to know about new arrivals, sales, and exclusive offers."
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "featured-collection",
+    "shop-the-look",
+    "recently-viewed",
+    "newsletter"
+  ]
+}

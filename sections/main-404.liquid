@@ -1,0 +1,29 @@
+{% comment %}
+  FlyFlow Theme - 404 Page Section
+  Purpose: Custom 404 page with search and popular collections.
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container text-center" style="max-width:640px;padding:var(--space-3xl) 0">
+    <h1 style="font-size:clamp(4rem,10vw,8rem);font-weight:700;line-height:1;color:var(--color-border)">404</h1>
+    <h2 class="mt-md mb-sm">Page not found</h2>
+    <p class="text-secondary mb-xl">The page you're looking for doesn't exist or has been moved.</p>
+
+    <form action="/search" method="get" style="max-width:400px;margin-inline:auto;margin-bottom:var(--space-xl)">
+      <div class="flex flex--gap-sm">
+        <input type="search" name="q" class="form__input" placeholder="{{ 'search.placeholder' | t }}" aria-label="Search">
+        <button type="submit" class="btn btn--primary">{{ 'general.search' | t }}</button>
+      </div>
+    </form>
+
+    <a href="/" class="btn btn--secondary">Back to Home</a>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "404 Page",
+  "settings": []
+}
+{% endschema %}

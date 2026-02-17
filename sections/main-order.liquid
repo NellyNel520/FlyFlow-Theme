@@ -1,0 +1,58 @@
+{% comment %}
+  FlyFlow Theme - Customer Order Detail Section
+  Purpose: Single order detail view.
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container" style="max-width:960px">
+    <a href="/account" class="text-sm text-accent mb-md" style="display:inline-block;text-decoration:underline">&larr; Back to Account</a>
+    <h1 class="mb-xl">Order {{ order.name }}</h1>
+
+    <p class="text-sm text-secondary mb-lg">
+      Placed on {{ order.created_at | date: '%B %d, %Y' }} &middot;
+      {{ order.fulfillment_status_label }}
+    </p>
+
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:0.875rem">
+        <thead>
+          <tr style="border-bottom:2px solid var(--color-border);text-align:left">
+            <th style="padding:var(--space-sm)">Product</th>
+            <th style="padding:var(--space-sm)">Quantity</th>
+            <th style="padding:var(--space-sm);text-align:right">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for line_item in order.line_items %}
+            <tr style="border-bottom:1px solid var(--color-border)">
+              <td style="padding:var(--space-sm)">
+                <p style="font-weight:600">{{ line_item.title }}</p>
+                {% unless line_item.variant.title == 'Default Title' %}
+                  <p class="text-xs text-secondary">{{ line_item.variant.title }}</p>
+                {% endunless %}
+              </td>
+              <td style="padding:var(--space-sm)">{{ line_item.quantity }}</td>
+              <td style="padding:var(--space-sm);text-align:right">{{ line_item.final_line_price | money }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div style="text-align:right;padding:var(--space-lg) 0;border-top:1px solid var(--color-border);margin-top:var(--space-md)">
+      <p class="text-sm">Subtotal: {{ order.subtotal_price | money }}</p>
+      {% for shipping_method in order.shipping_methods %}
+        <p class="text-sm">Shipping ({{ shipping_method.title }}): {{ shipping_method.price | money }}</p>
+      {% endfor %}
+      <p style="font-size:1.125rem;font-weight:700;margin-top:var(--space-sm)">Total: {{ order.total_price | money }}</p>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Order Detail",
+  "settings": []
+}
+{% endschema %}

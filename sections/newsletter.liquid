@@ -1,0 +1,65 @@
+{% comment %}
+  FlyFlow Theme - Newsletter Section
+  Purpose: Email signup section with Shopify customer form.
+  Dependencies: None
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="section" data-section-id="{{ section.id }}" style="background-color:var(--color-surface)">
+  <div class="container text-center" style="max-width:640px">
+    {% if section.settings.heading != blank %}
+      <h2 class="mb-sm">{{ section.settings.heading }}</h2>
+    {% endif %}
+    {% if section.settings.subheading != blank %}
+      <p class="text-secondary text-sm mb-lg">{{ section.settings.subheading }}</p>
+    {% endif %}
+
+    {% form 'customer', class: 'newsletter__form', style: 'max-width:480px;margin-inline:auto' %}
+      {% if form.posted_successfully? %}
+        <p class="text-accent" style="font-weight:600">{{ 'newsletter.success' | t }}</p>
+      {% else %}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <input
+          type="email"
+          name="contact[email]"
+          class="newsletter__input"
+          placeholder="{{ 'newsletter.placeholder' | t }}"
+          required
+          autocomplete="email"
+          aria-label="{{ 'newsletter.placeholder' | t }}"
+        >
+        <button type="submit" class="btn btn--primary">
+          {{ 'newsletter.submit' | t }}
+        </button>
+        {% if form.errors %}
+          <p class="text-sale text-sm mt-sm">{{ form.errors.messages['email'] }}</p>
+        {% endif %}
+      {% endif %}
+    {% endform %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Join the FlyFlow Community"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Be the first to know about new arrivals, sales, and exclusive offers."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter"
+    }
+  ]
+}
+{% endschema %}

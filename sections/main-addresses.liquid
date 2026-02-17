@@ -1,0 +1,59 @@
+{% comment %}
+  FlyFlow Theme - Customer Addresses Section
+  Purpose: Address management with add/edit/delete forms.
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container" style="max-width:640px">
+    <a href="/account" class="text-sm text-accent mb-md" style="display:inline-block;text-decoration:underline">&larr; Back to Account</a>
+    <h1 class="mb-xl">{{ 'customer.account.addresses' | t }}</h1>
+
+    {% for address in customer.addresses %}
+      <div style="padding:var(--space-md);border:1px solid var(--color-border);border-radius:var(--border-radius);margin-bottom:var(--space-md)">
+        {% if address == customer.default_address %}
+          <span class="badge badge--new mb-sm" style="display:inline-block">Default</span>
+        {% endif %}
+        <p style="font-weight:600">{{ address.name }}</p>
+        <p class="text-sm text-secondary">{{ address | format_address }}</p>
+        <div class="flex flex--gap-sm mt-md">
+          <a href="/account/addresses/{{ address.id }}/edit" class="btn btn--secondary btn--sm">Edit</a>
+          {% form 'customer_address', address %}
+            <input type="hidden" name="_method" value="delete">
+            <button type="submit" class="btn btn--secondary btn--sm" onclick="return confirm('Delete this address?')">Delete</button>
+          {% endform %}
+        </div>
+      </div>
+    {% endfor %}
+
+    <button class="btn btn--primary mt-md" onclick="document.getElementById('new-address-form').style.display='block';this.style.display='none'">
+      Add New Address
+    </button>
+
+    <div id="new-address-form" style="display:none;margin-top:var(--space-xl)">
+      <h2 class="mb-md" style="font-size:1.125rem">New Address</h2>
+      {% form 'customer_address', customer.new_address %}
+        <div class="form__group"><label class="form__label" for="addr-first">First name</label><input type="text" id="addr-first" name="address[first_name]" class="form__input"></div>
+        <div class="form__group"><label class="form__label" for="addr-last">Last name</label><input type="text" id="addr-last" name="address[last_name]" class="form__input"></div>
+        <div class="form__group"><label class="form__label" for="addr-address1">Address</label><input type="text" id="addr-address1" name="address[address1]" class="form__input" required></div>
+        <div class="form__group"><label class="form__label" for="addr-city">City</label><input type="text" id="addr-city" name="address[city]" class="form__input" required></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-md)">
+          <div class="form__group"><label class="form__label" for="addr-country">Country</label><select id="addr-country" name="address[country]" class="form__select" data-default="{{ form.country }}">{{ all_country_option_tags }}</select></div>
+          <div class="form__group"><label class="form__label" for="addr-zip">Zip/Postal</label><input type="text" id="addr-zip" name="address[zip]" class="form__input"></div>
+        </div>
+        <div class="form__group"><label class="form__label" for="addr-phone">Phone</label><input type="tel" id="addr-phone" name="address[phone]" class="form__input"></div>
+        <label style="display:flex;align-items:center;gap:var(--space-sm);margin-bottom:var(--space-md);font-size:0.875rem">
+          <input type="checkbox" name="address[default]" value="1"> Set as default address
+        </label>
+        <button type="submit" class="btn btn--primary">Save Address</button>
+      {% endform %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Customer Addresses",
+  "settings": []
+}
+{% endschema %}

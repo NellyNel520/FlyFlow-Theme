@@ -1,0 +1,46 @@
+{
+  "sections": {
+    "main-product": {
+      "type": "main-product",
+      "settings": {}
+    },
+    "product-tabs": {
+      "type": "product-tabs",
+      "blocks": {
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "size-guide": {
+          "type": "size-guide",
+          "settings": {}
+        },
+        "shipping": {
+          "type": "shipping",
+          "settings": {}
+        }
+      },
+      "block_order": ["description", "size-guide", "shipping"],
+      "settings": {}
+    },
+    "related-products": {
+      "type": "related-products",
+      "settings": {
+        "heading": "You May Also Like",
+        "products_to_show": 4
+      }
+    },
+    "recently-viewed": {
+      "type": "recently-viewed",
+      "settings": {
+        "heading": "Recently Viewed"
+      }
+    }
+  },
+  "order": [
+    "main-product",
+    "product-tabs",
+    "related-products",
+    "recently-viewed"
+  ]
+}

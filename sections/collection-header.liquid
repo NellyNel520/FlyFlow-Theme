@@ -1,0 +1,22 @@
+{% comment %}
+  FlyFlow Theme - Collection Header Section
+  Purpose: Collection title, description, and optional banner image.
+  Dependencies: None
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="collection-header section" data-section-id="{{ section.id }}">
+  <div class="container">
+    <h1 class="collection-header__title">{{ collection.title }}</h1>
+    {% if collection.description != blank %}
+      <div class="collection-header__description">{{ collection.description }}</div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection Header",
+  "settings": []
+}
+{% endschema %}

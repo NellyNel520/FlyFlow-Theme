@@ -1,0 +1,75 @@
+{% comment %}
+  FlyFlow Theme - Main Blog Section
+  Purpose: Blog listing page with article cards and pagination.
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container">
+    <h1 class="text-center mb-xl">{{ blog.title }}</h1>
+
+    {% paginate blog.articles by section.settings.posts_per_page %}
+      <div class="product-grid" style="--grid-columns-desktop:3">
+        {% for article in blog.articles %}
+          <article class="product-card">
+            {% if article.image %}
+              <div class="product-card__media" style="aspect-ratio:16/9">
+                <a href="{{ article.url }}">
+                  {{ article.image | image_url: width: 800 | image_tag:
+                    class: 'product-card__image',
+                    alt: article.title,
+                    loading: 'lazy',
+                    width: 400,
+                    height: 225
+                  }}
+                </a>
+              </div>
+            {% endif %}
+            <div class="product-card__info">
+              <p class="text-xs text-secondary mb-sm">
+                {{ article.published_at | date: '%B %d, %Y' }}
+              </p>
+              <h2 class="product-card__title" style="font-size:1.125rem">
+                <a href="{{ article.url }}">{{ article.title }}</a>
+              </h2>
+              <p class="text-sm text-secondary mt-sm">{{ article.excerpt_or_content | strip_html | truncate: 120 }}</p>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+
+      {% if paginate.pages > 1 %}
+        <nav class="pagination" aria-label="Blog pagination">
+          {% if paginate.previous %}<a href="{{ paginate.previous.url }}" class="pagination__link">&larr;</a>{% endif %}
+          {% for part in paginate.parts %}
+            {% if part.is_link %}
+              <a href="{{ part.url }}" class="pagination__link">{{ part.title }}</a>
+            {% elsif part.title == paginate.current_page %}
+              <span class="pagination__link pagination__link--active" aria-current="page">{{ part.title }}</span>
+            {% else %}
+              <span class="pagination__link">{{ part.title }}</span>
+            {% endif %}
+          {% endfor %}
+          {% if paginate.next %}<a href="{{ paginate.next.url }}" class="pagination__link">&rarr;</a>{% endif %}
+        </nav>
+      {% endif %}
+    {% endpaginate %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Blog Posts",
+  "settings": [
+    {
+      "type": "range",
+      "id": "posts_per_page",
+      "label": "Posts per page",
+      "min": 6,
+      "max": 24,
+      "step": 3,
+      "default": 12
+    }
+  ]
+}
+{% endschema %}

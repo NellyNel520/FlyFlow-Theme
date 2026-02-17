@@ -1,0 +1,90 @@
+{% comment %}
+  FlyFlow Theme - Main Search Section
+  Purpose: Search results page with predictive search input and product grid.
+  Dependencies: theme.js (Search module), snippets/product-card.liquid
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container" style="max-width:960px">
+    <h1 class="text-center mb-xl">{{ 'search.title' | t }}</h1>
+
+    <div class="predictive-search" data-predictive-search style="max-width:640px;margin-inline:auto;margin-bottom:var(--space-2xl)">
+      <form action="/search" method="get" role="search">
+        <div class="predictive-search__input-wrapper">
+          <input
+            type="search"
+            name="q"
+            class="predictive-search__input"
+            value="{{ search.terms | escape }}"
+            placeholder="{{ 'search.placeholder' | t }}"
+            data-predictive-search-input
+            autocomplete="off"
+            aria-label="{{ 'search.placeholder' | t }}"
+          >
+          <svg class="predictive-search__icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </div>
+        <div class="predictive-search__results" data-predictive-search-results></div>
+      </form>
+    </div>
+
+    {% if search.performed %}
+      {% if search.results.size > 0 %}
+        <p class="text-center text-secondary text-sm mb-lg">
+          {{ 'search.results_count' | t: count: search.results_count, query: search.terms }}
+        </p>
+        <div class="product-grid">
+          {% for result in search.results %}
+            {% if result.object_type == 'product' %}
+              {% render 'product-card', product: result %}
+            {% else %}
+              <article class="product-card">
+                <div class="product-card__info">
+                  <h3 class="product-card__title">
+                    <a href="{{ result.url }}">{{ result.title }}</a>
+                  </h3>
+                  <p class="text-sm text-secondary">{{ result.content | strip_html | truncate: 120 }}</p>
+                </div>
+              </article>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        {% paginate search.results by 12 %}
+          {% if paginate.pages > 1 %}
+            <nav class="pagination" aria-label="Search results pagination">
+              {% if paginate.previous %}
+                <a href="{{ paginate.previous.url }}" class="pagination__link">&larr;</a>
+              {% endif %}
+              {% for part in paginate.parts %}
+                {% if part.is_link %}
+                  <a href="{{ part.url }}" class="pagination__link">{{ part.title }}</a>
+                {% elsif part.title == paginate.current_page %}
+                  <span class="pagination__link pagination__link--active" aria-current="page">{{ part.title }}</span>
+                {% else %}
+                  <span class="pagination__link">{{ part.title }}</span>
+                {% endif %}
+              {% endfor %}
+              {% if paginate.next %}
+                <a href="{{ paginate.next.url }}" class="pagination__link">&rarr;</a>
+              {% endif %}
+            </nav>
+          {% endif %}
+        {% endpaginate %}
+      {% else %}
+        <div class="text-center" style="padding:var(--space-2xl) 0">
+          <p class="text-secondary">{{ 'search.no_results' | t: query: search.terms }}</p>
+        </div>
+      {% endif %}
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Search Results",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,19 @@
+{% comment %}
+  FlyFlow Theme - Main Page Section
+  Purpose: Generic page template for static/CMS pages.
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container" style="max-width:800px">
+    <h1 class="text-center mb-xl">{{ page.title }}</h1>
+    <div class="rte">{{ page.content }}</div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Page Content",
+  "settings": []
+}
+{% endschema %}

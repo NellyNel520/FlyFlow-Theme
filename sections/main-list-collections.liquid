@@ -1,0 +1,51 @@
+{% comment %}
+  FlyFlow Theme - Collections List Section
+  Purpose: Display all collections in a grid with images.
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container">
+    <h1 class="text-center mb-xl">{{ 'collections.title' | t }}</h1>
+    <div class="product-grid" style="--grid-columns-desktop:3">
+      {% for collection in collections %}
+        {% unless collection.handle == 'all' %}
+          <a href="{{ collection.url }}" class="product-card">
+            <div class="product-card__media">
+              {% if collection.image %}
+                {{ collection.image | image_url: width: 800 | image_tag:
+                  class: 'product-card__image',
+                  alt: collection.title,
+                  loading: 'lazy',
+                  width: 400,
+                  height: 533
+                }}
+              {% elsif collection.products.first.featured_image %}
+                {{ collection.products.first.featured_image | image_url: width: 800 | image_tag:
+                  class: 'product-card__image',
+                  alt: collection.title,
+                  loading: 'lazy',
+                  width: 400,
+                  height: 533
+                }}
+              {% else %}
+                {{ 'collection-1' | placeholder_svg_tag: 'product-card__image' }}
+              {% endif %}
+            </div>
+            <div class="product-card__info">
+              <h2 class="product-card__title" style="font-size:1.125rem">{{ collection.title }}</h2>
+              <p class="text-sm text-secondary">{{ collection.products_count }} products</p>
+            </div>
+          </a>
+        {% endunless %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collections List",
+  "settings": []
+}
+{% endschema %}

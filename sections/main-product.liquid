@@ -1,0 +1,243 @@
+{% comment %}
+  FlyFlow Theme - Main Product Section
+  Purpose: Complete product page with gallery, variant selectors, stock indicator,
+           add to cart, sticky ATC bar, and back-in-stock signup.
+  Dependencies: theme.js (VariantSelector, ProductGallery, StickyATC, Cart modules)
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container">
+    {%- comment -%} Breadcrumbs {%- endcomment -%}
+    <nav class="breadcrumbs mb-lg" aria-label="Breadcrumb" style="font-size:0.8125rem;color:var(--color-text-secondary)">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      {% if product.collections.size > 0 %}
+        <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+        <span aria-hidden="true">/</span>
+      {% endif %}
+      <span aria-current="page">{{ product.title }}</span>
+    </nav>
+
+    <div class="product">
+      {%- comment -%} Gallery {%- endcomment -%}
+      {% section 'product-gallery' %}
+
+      {%- comment -%} Product info {%- endcomment -%}
+      <div class="product-info">
+        {% if product.vendor != blank %}
+          <p class="product-info__vendor">{{ product.vendor }}</p>
+        {% endif %}
+
+        <h1 class="product-info__title">{{ product.title }}</h1>
+
+        {%- comment -%} Price {%- endcomment -%}
+        <div class="product-info__price{% if product.compare_at_price > product.price %} product-info__price--sale{% endif %}">
+          <span class="product-info__price-current" data-product-price>
+            {{ product.selected_or_first_available_variant.price | money }}
+          </span>
+          {% if product.compare_at_price > product.price %}
+            <span class="product-info__price-compare" data-product-compare-price>
+              {{ product.compare_at_price | money }}
+            </span>
+          {% endif %}
+        </div>
+
+        {%- comment -%} Stock indicator {%- endcomment -%}
+        {% if settings.product_show_stock %}
+          {% assign current_variant = product.selected_or_first_available_variant %}
+          <div
+            class="stock-indicator{% if current_variant.available == false %} stock-indicator--out-of-stock{% elsif current_variant.inventory_quantity <= settings.product_stock_threshold and current_variant.inventory_management %} stock-indicator--low-stock{% else %} stock-indicator--in-stock{% endif %}"
+            data-stock-indicator
+            data-threshold="{{ settings.product_stock_threshold }}"
+          >
+            <span class="stock-indicator__dot"></span>
+            {% if current_variant.available == false %}
+              {{ 'products.stock.out_of_stock' | t }}
+            {% elsif current_variant.inventory_quantity <= settings.product_stock_threshold and current_variant.inventory_management %}
+              {{ 'products.stock.low_stock' | t: count: current_variant.inventory_quantity }}
+            {% else %}
+              {{ 'products.stock.in_stock' | t }}
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {%- comment -%} Variant selectors {%- endcomment -%}
+        {% form 'product', product, data-product-form: '' %}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+          {% for option in product.options_with_values %}
+            <div class="variant-selector" data-option-group>
+              <div class="variant-selector__label">
+                <span>{{ option.name }}:</span>
+                <span class="variant-selector__selected" data-option-selected>
+                  {{ option.selected_value }}
+                </span>
+              </div>
+
+              <div class="variant-selector__options">
+                {% for value in option.values %}
+                  {% assign option_available = true %}
+                  {% comment %} Check if this option value has any available variants {% endcomment %}
+                  {% assign found_available = false %}
+                  {% for variant in product.variants %}
+                    {% if variant.available %}
+                      {% case option.position %}
+                        {% when 1 %}
+                          {% if variant.option1 == value %}{% assign found_available = true %}{% endif %}
+                        {% when 2 %}
+                          {% if variant.option2 == value %}{% assign found_available = true %}{% endif %}
+                        {% when 3 %}
+                          {% if variant.option3 == value %}{% assign found_available = true %}{% endif %}
+                      {% endcase %}
+                    {% endif %}
+                  {% endfor %}
+
+                  {% if option.name == 'Color' and settings.product_variant_style == 'swatches' %}
+                    <button
+                      type="button"
+                      class="swatch{% if option.selected_value == value %} swatch--active{% endif %}{% unless found_available %} swatch--sold-out{% endunless %}"
+                      style="background-color: {{ value | handleize }}"
+                      data-option-value="{{ value }}"
+                      data-option-name="{{ option.name }}"
+                      title="{{ value }}{% unless found_available %} - {{ 'products.sold_out' | t }}{% endunless %}"
+                      aria-label="{{ value }}{% unless found_available %} - {{ 'products.sold_out' | t }}{% endunless %}"
+                      {% unless found_available %}aria-disabled="true"{% endunless %}
+                    ></button>
+                  {% else %}
+                    <button
+                      type="button"
+                      class="size-btn{% if option.selected_value == value %} size-btn--active{% endif %}{% unless found_available %} size-btn--sold-out{% endunless %}"
+                      data-option-value="{{ value }}"
+                      data-option-name="{{ option.name }}"
+                      aria-label="{{ value }}{% unless found_available %} - {{ 'products.sold_out' | t }}{% endunless %}"
+                      {% unless found_available %}aria-disabled="true"{% endunless %}
+                    >
+                      {{ value }}
+                    </button>
+                  {% endif %}
+                {% endfor %}
+              </div>
+
+              {% if option.name == 'Size' %}
+                <button
+                  class="text-accent text-sm mt-sm"
+                  data-modal-open="size-guide-modal"
+                  style="background:none;border:none;cursor:pointer;text-decoration:underline;text-underline-offset:2px"
+                >
+                  {{ 'products.tabs.size_guide' | t }}
+                </button>
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          {%- comment -%} Quantity + Add to Cart {%- endcomment -%}
+          <div class="product-info__add-to-cart" data-add-to-cart-section>
+            <div class="quantity-selector">
+              <button type="button" class="quantity-selector__btn" data-qty-minus aria-label="{{ 'products.decrease_quantity' | t }}">
+                &minus;
+              </button>
+              <input
+                type="number"
+                class="quantity-selector__input"
+                name="quantity"
+                value="1"
+                min="1"
+                aria-label="{{ 'products.quantity' | t }}"
+              >
+              <button type="button" class="quantity-selector__btn" data-qty-plus aria-label="{{ 'products.increase_quantity' | t }}">
+                &plus;
+              </button>
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn--primary btn--lg"
+              data-add-to-cart
+              data-add-text="{{ 'products.add_to_cart' | t }}"
+              {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}
+            >
+              {% if product.selected_or_first_available_variant.available %}
+                {{ 'products.add_to_cart' | t }}
+              {% else %}
+                {{ 'products.sold_out' | t }}
+              {% endif %}
+            </button>
+          </div>
+        {% endform %}
+
+        {%- comment -%} Back-in-stock notification for sold-out variants {%- endcomment -%}
+        {% if settings.product_back_in_stock %}
+          {% unless product.available %}
+            <div class="back-in-stock mt-md" style="padding:var(--space-md);background:var(--color-surface);border-radius:var(--border-radius)">
+              <p class="text-sm" style="font-weight:600;margin-bottom:var(--space-sm)">
+                {{ 'products.stock.back_in_stock_title' | t }}
+              </p>
+              <form class="flex flex--gap-sm">
+                <input
+                  type="email"
+                  class="form__input"
+                  placeholder="your@email.com"
+                  required
+                  aria-label="Email for back-in-stock notification"
+                >
+                <button type="submit" class="btn btn--secondary btn--sm">
+                  {{ 'products.stock.back_in_stock_button' | t }}
+                </button>
+              </form>
+            </div>
+          {% endunless %}
+        {% endif %}
+
+        {%- comment -%} Short description {%- endcomment -%}
+        {% if product.description != blank %}
+          <div class="product-info__description mt-lg text-sm" style="color:var(--color-text-secondary);line-height:1.7">
+            {{ product.description | truncate: 200 }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Product JSON for variant selector JS {%- endcomment -%}
+  <script type="application/json" data-product-json>
+    {{ product | json }}
+  </script>
+
+  {%- comment -%} Size guide modal {%- endcomment -%}
+  {% render 'size-guide-modal' %}
+
+  {%- comment -%} Sticky add to cart bar {%- endcomment -%}
+  {% if settings.product_sticky_atc %}
+    <div class="sticky-atc" data-sticky-atc>
+      <div class="sticky-atc__inner container">
+        <div class="sticky-atc__info">
+          <span class="sticky-atc__title">{{ product.title }}</span>
+          <span class="sticky-atc__price" data-product-price>
+            {{ product.selected_or_first_available_variant.price | money }}
+          </span>
+        </div>
+        <button
+          class="btn btn--primary"
+          data-add-to-cart
+          data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+          data-add-text="{{ 'products.add_to_cart' | t }}"
+          {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}
+        >
+          {% if product.selected_or_first_available_variant.available %}
+            {{ 'products.add_to_cart' | t }}
+          {% else %}
+            {{ 'products.sold_out' | t }}
+          {% endif %}
+        </button>
+      </div>
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Product Page",
+  "settings": []
+}
+{% endschema %}

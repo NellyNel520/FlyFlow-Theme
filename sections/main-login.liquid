@@ -1,0 +1,53 @@
+{% comment %}
+  FlyFlow Theme - Customer Login Section
+  Purpose: Login form with password recovery toggle.
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container" style="max-width:480px">
+    <h1 class="text-center mb-xl">{{ 'customer.login.title' | t }}</h1>
+
+    {% form 'customer_login' %}
+      {% if form.errors %}
+        <div class="form__error mb-md" style="padding:var(--space-sm);background:var(--color-surface);border:1px solid var(--color-error);border-radius:var(--border-radius)">
+          {{ form.errors | default_errors }}
+        </div>
+      {% endif %}
+
+      <div class="form__group">
+        <label class="form__label" for="login-email">{{ 'customer.login.email' | t }}</label>
+        <input type="email" id="login-email" name="customer[email]" class="form__input" autocomplete="email" required>
+      </div>
+
+      <div class="form__group">
+        <label class="form__label" for="login-password">{{ 'customer.login.password' | t }}</label>
+        <input type="password" id="login-password" name="customer[password]" class="form__input" autocomplete="current-password" required>
+      </div>
+
+      <button type="submit" class="btn btn--primary btn--full btn--lg mb-md">
+        {{ 'customer.login.sign_in' | t }}
+      </button>
+
+      <div class="text-center">
+        <a href="#recover" class="text-accent text-sm" style="text-decoration:underline;text-underline-offset:2px">
+          {{ 'customer.login.forgot_password' | t }}
+        </a>
+      </div>
+    {% endform %}
+
+    <div class="text-center mt-xl" style="padding-top:var(--space-xl);border-top:1px solid var(--color-border)">
+      <p class="text-sm text-secondary mb-sm">Don't have an account?</p>
+      <a href="/account/register" class="btn btn--secondary btn--full">
+        {{ 'customer.login.create_account' | t }}
+      </a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Customer Login",
+  "settings": []
+}
+{% endschema %}

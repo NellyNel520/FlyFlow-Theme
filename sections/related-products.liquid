@@ -1,0 +1,61 @@
+{% comment %}
+  FlyFlow Theme - Related Products Section
+  Purpose: Display recommended/related products on product pages.
+  Dependencies: snippets/product-card.liquid
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container">
+    {% if section.settings.heading != blank %}
+      <h2 class="text-center mb-xl">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="product-grid">
+      {% assign related = product.collections.first.products %}
+      {% assign count = 0 %}
+      {% for item in related limit: section.settings.products_to_show %}
+        {% if item.id != product.id and count < section.settings.products_to_show %}
+          {% render 'product-card', product: item %}
+          {% assign count = count | plus: 1 %}
+        {% endif %}
+      {% endfor %}
+
+      {% if count == 0 %}
+        {% for item in collections.all.products limit: section.settings.products_to_show %}
+          {% if item.id != product.id %}
+            {% render 'product-card', product: item %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Related Products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "You May Also Like"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Related Products"
+    }
+  ]
+}
+{% endschema %}

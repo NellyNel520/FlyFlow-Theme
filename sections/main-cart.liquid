@@ -1,0 +1,64 @@
+{% comment %}
+  FlyFlow Theme - Main Cart Page Section
+  Purpose: Full cart page (used when cart_type is set to "page" instead of drawer).
+  Dependencies: theme.js (Cart module)
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container" style="max-width:960px">
+    <h1 class="text-center mb-xl">{{ 'cart.title' | t }}</h1>
+
+    {% if cart.item_count > 0 %}
+      <form action="/cart" method="post">
+        {% for item in cart.items %}
+          <div class="cart-item" style="display:flex;gap:var(--space-lg);padding:var(--space-lg) 0;border-bottom:1px solid var(--color-border)">
+            <a href="{{ item.url }}" style="flex-shrink:0;width:120px;height:150px;border-radius:var(--border-radius);overflow:hidden">
+              {% if item.image %}
+                {{ item.image | image_url: width: 240 | image_tag: alt: item.title, loading: 'lazy', width: 120, height: 150, style: 'width:100%;height:100%;object-fit:cover' }}
+              {% endif %}
+            </a>
+            <div style="flex:1;display:flex;flex-direction:column">
+              <a href="{{ item.url }}" class="cart-item__title" style="font-size:1rem">{{ item.product.title }}</a>
+              {% unless item.variant.title == 'Default Title' %}
+                <span class="cart-item__variant">{{ item.variant.title }}</span>
+              {% endunless %}
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:var(--space-md)">
+                <div class="quantity-selector">
+                  <button type="button" class="quantity-selector__btn" data-cart-qty="minus" data-line-key="{{ item.key }}" aria-label="{{ 'products.decrease_quantity' | t }}">&minus;</button>
+                  <input type="number" class="quantity-selector__input" name="updates[]" value="{{ item.quantity }}" min="0" data-cart-qty-input aria-label="{{ 'products.quantity' | t }}">
+                  <button type="button" class="quantity-selector__btn" data-cart-qty="plus" data-line-key="{{ item.key }}" aria-label="{{ 'products.increase_quantity' | t }}">&plus;</button>
+                </div>
+                <div style="text-align:right">
+                  <span style="font-weight:700">{{ item.final_line_price | money }}</span>
+                  <br>
+                  <button type="button" class="cart-item__remove" data-cart-remove="{{ item.key }}">{{ 'cart.remove' | t }}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+
+        <div style="padding:var(--space-xl) 0;text-align:right">
+          <div class="cart-drawer__subtotal" style="font-size:1.25rem;margin-bottom:var(--space-lg)">
+            <span>{{ 'cart.subtotal' | t }}</span>
+            <span>{{ cart.total_price | money }}</span>
+          </div>
+          <a href="/checkout" class="btn btn--primary btn--lg">{{ 'cart.checkout' | t }}</a>
+        </div>
+      </form>
+    {% else %}
+      <div class="text-center" style="padding:var(--space-3xl) 0">
+        <p class="text-secondary mb-lg">{{ 'cart.empty' | t }}</p>
+        <a href="/collections/all" class="btn btn--primary">{{ 'cart.continue_shopping' | t }}</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Cart Page",
+  "settings": []
+}
+{% endschema %}
