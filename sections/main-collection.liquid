@@ -44,17 +44,24 @@
 
         {%- comment -%} Grid/List toggle {%- endcomment -%}
         {% if settings.collection_grid_toggle %}
+          {% assign default_view = section.settings.default_view | default: 'grid' %}
           <div class="view-toggle" role="group" aria-label="View mode">
-            <button class="view-toggle__btn view-toggle__btn--active" data-view="grid" aria-label="{{ 'collections.grid_view' | t }}">
+            <button class="view-toggle__btn{% if default_view == 'grid' %} view-toggle__btn--active{% endif %}" data-view="grid" aria-label="{{ 'collections.grid_view' | t }}">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
                 <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
                 <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
               </svg>
             </button>
-            <button class="view-toggle__btn" data-view="list" aria-label="{{ 'collections.list_view' | t }}">
+            <button class="view-toggle__btn{% if default_view == 'list' %} view-toggle__btn--active{% endif %}" data-view="list" aria-label="{{ 'collections.list_view' | t }}">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
                 <rect x="3" y="4" width="18" height="3"/><rect x="3" y="10.5" width="18" height="3"/>
                 <rect x="3" y="17" width="18" height="3"/>
+              </svg>
+            </button>
+            <button class="view-toggle__btn{% if default_view == 'masonry' %} view-toggle__btn--active{% endif %}" data-view="masonry" aria-label="Masonry view">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                <rect x="3" y="3" width="5" height="8"/><rect x="10" y="3" width="5" height="5"/><rect x="17" y="3" width="4" height="10"/>
+                <rect x="3" y="13" width="5" height="8"/><rect x="10" y="10" width="5" height="11"/><rect x="17" y="15" width="4" height="6"/>
               </svg>
             </button>
           </div>
@@ -183,7 +190,8 @@
       {%- comment -%} Product grid {%- endcomment -%}
       <div>
         {% if collection.products.size > 0 %}
-          <div class="product-grid" id="product-grid">
+          {% assign default_view = section.settings.default_view | default: 'grid' %}
+          <div class="product-grid{% if default_view == 'list' %} product-grid--list{% elsif default_view == 'masonry' %} product-grid--masonry{% endif %}" id="product-grid" data-default-view="{{ default_view }}">
             {% paginate collection.products by section.settings.products_per_page %}
               {% for product in collection.products %}
                 {% render 'product-card', product: product %}
@@ -361,6 +369,17 @@
       "max": 24,
       "step": 4,
       "default": 12
+    },
+    {
+      "type": "select",
+      "id": "default_view",
+      "label": "Default collection view",
+      "options": [
+        { "value": "grid", "label": "Grid" },
+        { "value": "list", "label": "List" },
+        { "value": "masonry", "label": "Masonry" }
+      ],
+      "default": "grid"
     }
   ]
 }

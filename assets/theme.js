@@ -1250,6 +1250,62 @@ FlyFlow.Filters = (function () {
 })();
 
 /* ==========================================================================
+   Collection View Module
+   ========================================================================== */
+
+FlyFlow.CollectionView = (function () {
+  const STORAGE_KEY = 'flyflow_collection_view';
+  let productGrid;
+  let toggleButtons;
+
+  function init() {
+    productGrid = document.getElementById('product-grid');
+    toggleButtons = document.querySelectorAll('.view-toggle [data-view]');
+
+    if (!productGrid || !toggleButtons.length) {
+      return;
+    }
+
+    const defaultView = productGrid.dataset.defaultView || 'grid';
+    const storedView = window.localStorage.getItem(STORAGE_KEY);
+    const initialView = ['grid', 'list', 'masonry'].includes(storedView) ? storedView : defaultView;
+    setView(initialView);
+
+    document.addEventListener('click', function (e) {
+      const toggle = e.target.closest('.view-toggle [data-view]');
+      if (!toggle) {
+        return;
+      }
+
+      e.preventDefault();
+      setView(toggle.dataset.view);
+    });
+  }
+
+  function setView(view) {
+    if (!['grid', 'list', 'masonry'].includes(view) || !productGrid) {
+      return;
+    }
+
+    productGrid.classList.remove('product-grid--list', 'product-grid--masonry');
+
+    if (view === 'list') {
+      productGrid.classList.add('product-grid--list');
+    } else if (view === 'masonry') {
+      productGrid.classList.add('product-grid--masonry');
+    }
+
+    toggleButtons.forEach(function (btn) {
+      btn.classList.toggle('view-toggle__btn--active', btn.dataset.view === view);
+    });
+
+    window.localStorage.setItem(STORAGE_KEY, view);
+  }
+
+  return { init };
+})();
+
+/* ==========================================================================
    Lazy Load Module
    ========================================================================== */
 
@@ -1796,6 +1852,7 @@ document.addEventListener('DOMContentLoaded', function () {
   FlyFlow.StickyATC.init();
   FlyFlow.HeroMedia.init();
   FlyFlow.SwatchColors.init();
+  FlyFlow.CollectionView.init();
   FlyFlow.BackToTop.init();
   FlyFlow.NewsletterPopup.init();
   FlyFlow.Analytics.init();

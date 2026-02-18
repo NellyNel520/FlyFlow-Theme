@@ -36,7 +36,7 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - [x] Quick view modal
 - [x] Pagination support
 - [x] Material/style taxonomy filtering validation with real catalog data
-- [ ] Masonry layout option
+- [x] Masonry layout option
 - [ ] Infinite scroll option wiring (setting exists; UX path not finalized)
 
 ### Navigation & UX
@@ -110,3 +110,4 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - 2026-02-18: Added launch playbook document: `documentation/LAUNCH_RUNBOOK.md` covering pre-launch gates, UX regression checklist, deployment commands, rollback, and post-launch monitoring.
 - 2026-02-18: Completed JS lint cleanup pass (`assets/theme.js`, `assets/dark-mode.js`) and pushed commit `93b272d`; synced latest theme to live store.
 - 2026-02-18: Theme Check reduced to 2 expected `RemoteAsset` warnings in analytics snippets (GA4/Facebook pixel URLs); no actionable Liquid offenses remain.
+- 2026-02-18: Implemented functional collection view modes (grid/list/masonry) with persisted preference and section-level default view setting.
