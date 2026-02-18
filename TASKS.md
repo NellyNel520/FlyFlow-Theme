@@ -126,3 +126,4 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - 2026-02-18: Social UI refinement pass: removed circular chrome from floating rail icons, increased icon scale with motion hover treatment, replaced desktop PDP share row with share-trigger modal (icons + copy-link), and kept mobile inline share actions for fast access.
 - 2026-02-18: Enhanced desktop share modal motion quality: smooth backdrop fade, eased dialog rise/scale, and staggered share-action entrance with reduced-motion safeguards.
 - 2026-02-18: Corrected share UX breakpoint logic: share modal trigger now small-screen only (<750px) and full inline share links are shown on medium+ screens.
+- 2026-02-18: Refined PDP share responsiveness: standard mobile now shows full inline share icons, modal fallback only on ultra-small screens (<390px) with explicit "Share" trigger text; removed main-product description block from template flow and increased share-area spacing.
