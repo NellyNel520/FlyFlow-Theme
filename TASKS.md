@@ -58,8 +58,8 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 
 ## Brand Catalog Alignment (FlyFlow vibe)
 - [~] Replace off-vibe demo/sample catalog products in Shopify admin with luxe streetwear apparel/shoes/accessories: theme-level masking applied; admin catalog replacement still pending
-- [ ] Define canonical collection set (Sneakers, Apparel, Accessories, New Arrivals, Best Sellers)
-- [ ] Rebind homepage/featured/upsell sections to FlyFlow-aligned collections
+- [x] Define canonical collection set (Sneakers, Apparel, Accessories, New Arrivals, Best Sellers)
+- [x] Rebind homepage/featured/upsell sections to FlyFlow-aligned collections
 - [ ] Ensure product photography style consistency (editorial, high-contrast, premium)
 
 ## Execution Plan (Phased)
@@ -73,7 +73,7 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 
 ### Phase 2: Merchandising & Brand Fit
 - [ ] Catalog cleanup in Shopify admin to remove off-vibe products
-- [ ] Update section defaults/content copy to FlyFlow tone across templates
+- [x] Update section defaults/content copy to FlyFlow tone across templates
 - [ ] Validate collection filters against real catalog attributes (size/color/material/style)
 
 ### Phase 3: Optimization & Launch Hardening
@@ -97,3 +97,4 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - 2026-02-18: Added theme-level off-vibe product masking so snowboard items no longer surface in key storefront cards.
 - 2026-02-18: Completed Phase 1 UX additions: back-to-top, quick-links homepage utility section, and configurable newsletter popup/slide-in.
 - 2026-02-18: Completed remaining Phase 1 homepage features: hero video/carousel/parallax support and new Instagram feed section.
+- 2026-02-18: Phase 2 in-theme merchandising pass completed: canonical collection handles applied (`new-arrivals`, `best-sellers`, `sneakers`, `apparel`, `accessories`) and homepage/editorial/cart defaults rebound to these collections.

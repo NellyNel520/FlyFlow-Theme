@@ -2,7 +2,9 @@
   "sections": {
     "main-cart": {
       "type": "main-cart",
-      "settings": {}
+      "settings": {
+        "upsell_collection": "best-sellers"
+      }
     }
   },
   "order": ["main-cart"]

@@ -8,7 +8,7 @@
         "heading": "Elevate Your Style",
         "subheading": "Discover curated fashion, designer footwear, and statement accessories crafted for those who move with intention.",
         "button_text": "Explore the Collection",
-        "button_link": "/collections/all",
+        "button_link": "/collections/new-arrivals",
         "height": 90,
         "enable_parallax": true,
         "carousel_autoplay": true,
@@ -47,7 +47,7 @@
         "heading": "Built for movement. Styled for impact.",
         "text": "<p>FlyFlow blends utility and modern design so every look performs as hard as it looks. Curated drops, premium materials, and silhouettes engineered for everyday momentum.</p>",
         "primary_button_text": "Shop New Arrivals",
-        "primary_button_link": "/collections/all",
+        "primary_button_link": "/collections/new-arrivals",
         "secondary_button_text": "Read Our Story",
         "secondary_button_link": "/pages/about"
       }
@@ -60,15 +60,39 @@
           "settings": {
             "eyebrow": "Collection",
             "title": "New Arrivals",
-            "link": "/collections/all"
+            "link": "/collections/new-arrivals"
           }
         },
-        "about": {
+        "best-sellers": {
           "type": "link_item",
           "settings": {
-            "eyebrow": "Story",
-            "title": "About FlyFlow",
-            "link": "/pages/about"
+            "eyebrow": "Trending",
+            "title": "Best Sellers",
+            "link": "/collections/best-sellers"
+          }
+        },
+        "sneakers": {
+          "type": "link_item",
+          "settings": {
+            "eyebrow": "Footwear",
+            "title": "Sneakers",
+            "link": "/collections/sneakers"
+          }
+        },
+        "apparel": {
+          "type": "link_item",
+          "settings": {
+            "eyebrow": "Style",
+            "title": "Apparel",
+            "link": "/collections/apparel"
+          }
+        },
+        "accessories": {
+          "type": "link_item",
+          "settings": {
+            "eyebrow": "Finish",
+            "title": "Accessories",
+            "link": "/collections/accessories"
           }
         },
         "contact": {
@@ -80,7 +104,7 @@
           }
         }
       },
-      "block_order": ["new-arrivals", "about", "contact"],
+      "block_order": ["new-arrivals", "best-sellers", "sneakers", "apparel", "accessories", "contact"],
       "settings": {
         "overline": "Start Here",
         "heading": "Navigate FlyFlow"
@@ -96,15 +120,24 @@
       "blocks": {
         "sneakers": {
           "type": "collection_card",
-          "settings": { "title": "Sneakers" }
+          "settings": {
+            "collection": "sneakers",
+            "title": "Sneakers"
+          }
         },
         "accessories": {
           "type": "collection_card",
-          "settings": { "title": "Accessories" }
+          "settings": {
+            "collection": "accessories",
+            "title": "Accessories"
+          }
         },
         "apparel": {
           "type": "collection_card",
-          "settings": { "title": "Apparel" }
+          "settings": {
+            "collection": "apparel",
+            "title": "Apparel"
+          }
         }
       },
       "block_order": ["sneakers", "accessories", "apparel"]
@@ -113,6 +146,7 @@
       "type": "featured-collection",
       "settings": {
         "heading": "New Arrivals",
+        "collection": "new-arrivals",
         "products_to_show": 8
       }
     },
@@ -123,7 +157,7 @@
         "heading": "Designed to Move",
         "text": "<p>FlyFlow was born from the belief that fashion should move with you — not hold you back. Every piece in our collection is crafted with intention, blending contemporary design with timeless silhouettes.</p><p>From designer sneakers to statement accessories, we curate for those who refuse to stand still.</p>",
         "button_text": "Discover More",
-        "button_link": "/pages/about",
+        "button_link": "/collections/best-sellers",
         "reverse_layout": false
       }
     },

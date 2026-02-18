@@ -7,7 +7,7 @@
         "heading": "Stories in Motion",
         "subheading": "Design notes, campaign edits, and behind-the-scenes perspectives from the studio.",
         "button_text": "Explore Collections",
-        "button_link": "/collections/all",
+        "button_link": "/collections/new-arrivals",
         "height": 70,
         "overlay_opacity": 30
       }
@@ -43,7 +43,7 @@
         "heading": "Where utility, style, and culture intersect.",
         "text": "<p>Our editorial space documents how products are built, styled, and lived in. Use this template for brand storytelling pages, campaign narratives, and founder letters.</p>",
         "primary_button_text": "Shop Featured Pieces",
-        "primary_button_link": "/collections/all",
+        "primary_button_link": "/collections/best-sellers",
         "secondary_button_text": "Contact Us",
         "secondary_button_link": "/pages/contact"
       }

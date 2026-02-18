@@ -7,7 +7,7 @@
         "heading": "Engineered for Everyday Momentum",
         "subheading": "From concept to craftsmanship, every release blends utility, style, and movement.",
         "button_text": "Shop Collections",
-        "button_link": "/collections/all",
+        "button_link": "/collections/new-arrivals",
         "height": 75,
         "overlay_opacity": 35
       }
@@ -43,7 +43,7 @@
         "heading": "A brand built at the intersection of utility and expression.",
         "text": "<p>FlyFlow is a movement-first fashion label creating pieces that transition from commute to nightlife to weekend travel. We focus on long-wear silhouettes, premium materials, and expressive details.</p>",
         "primary_button_text": "View New Arrivals",
-        "primary_button_link": "/collections/all",
+        "primary_button_link": "/collections/new-arrivals",
         "secondary_button_text": "Contact Team",
         "secondary_button_link": "/pages/contact"
       }
