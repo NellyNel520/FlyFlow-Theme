@@ -52,62 +52,41 @@
         "secondary_button_link": "/pages/brand-story"
       }
     },
-    "quick-links": {
-      "type": "quick-links",
+    "brand-carousel": {
+      "type": "hero-banner",
       "blocks": {
-        "new-arrivals": {
-          "type": "link_item",
+        "slide-1": {
+          "type": "slide",
           "settings": {
-            "eyebrow": "Collection",
-            "title": "New Arrivals",
-            "link": "/collections/new-arrivals"
+            "image_position": "center center"
           }
         },
-        "best-sellers": {
-          "type": "link_item",
+        "slide-2": {
+          "type": "slide",
           "settings": {
-            "eyebrow": "Trending",
-            "title": "Best Sellers",
-            "link": "/collections/best-sellers"
+            "image_position": "center center"
           }
         },
-        "sneakers": {
-          "type": "link_item",
+        "slide-3": {
+          "type": "slide",
           "settings": {
-            "eyebrow": "Footwear",
-            "title": "Sneakers",
-            "link": "/collections/sneakers"
-          }
-        },
-        "apparel": {
-          "type": "link_item",
-          "settings": {
-            "eyebrow": "Style",
-            "title": "Apparel",
-            "link": "/collections/apparel"
-          }
-        },
-        "accessories": {
-          "type": "link_item",
-          "settings": {
-            "eyebrow": "Finish",
-            "title": "Accessories",
-            "link": "/collections/accessories"
-          }
-        },
-        "contact": {
-          "type": "link_item",
-          "settings": {
-            "eyebrow": "Support",
-            "title": "Contact Us",
-            "link": "/pages/contact"
+            "image_position": "center center"
           }
         }
       },
-      "block_order": ["new-arrivals", "best-sellers", "sneakers", "apparel", "accessories", "contact"],
+      "block_order": ["slide-1", "slide-2", "slide-3"],
       "settings": {
-        "overline": "Start Here",
-        "heading": "Navigate FlyFlow"
+        "media_mode": "carousel",
+        "overline": "Campaign Edit",
+        "heading": "Statement Looks in Motion",
+        "subheading": "Use this carousel for hero-grade campaign images and seasonal creative.",
+        "button_text": "Shop The Edit",
+        "button_link": "/collections/new-arrivals",
+        "height": 68,
+        "enable_parallax": true,
+        "carousel_autoplay": true,
+        "carousel_interval": 5,
+        "overlay_opacity": 30
       }
     },
     "collection-list": {
@@ -221,7 +200,7 @@
   "order": [
     "hero",
     "editorial-landing",
-    "quick-links",
+    "brand-carousel",
     "collection-list",
     "featured-collection",
     "image-with-text",
