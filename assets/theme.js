@@ -276,6 +276,15 @@ FlyFlow.Cart = (function () {
     }
 
     if (!variantId) {
+      if (form) {
+        form.submit();
+      }
+      return;
+    }
+
+    const parsedVariantId = parseInt(variantId, 10);
+    if (!Number.isFinite(parsedVariantId) || parsedVariantId <= 0) {
+      submitNativeAdd(variantId, quantity);
       return;
     }
 
@@ -287,7 +296,7 @@ FlyFlow.Cart = (function () {
       if (form) {
         const formData = new FormData(form);
         if (!formData.get('id')) {
-          formData.set('id', String(variantId));
+          formData.set('id', String(parsedVariantId));
         }
         formData.set('quantity', String(Math.max(1, quantity)));
 
@@ -309,7 +318,7 @@ FlyFlow.Cart = (function () {
         }
       } else {
         await FlyFlow.fetchAPI('/cart/add.js', {
-          id: parseInt(variantId, 10),
+          id: parsedVariantId,
           quantity: Math.max(1, quantity),
         });
       }
@@ -327,12 +336,36 @@ FlyFlow.Cart = (function () {
       btn.disabled = false;
       btn.textContent = btn.dataset.addText || originalText;
 
-      // Hard fallback to native cart add flow
-      const fallbackUrl = `/cart/add?id=${encodeURIComponent(variantId)}&quantity=${encodeURIComponent(
-        String(Math.max(1, quantity))
-      )}`;
-      window.location.href = fallbackUrl;
+      submitNativeAdd(parsedVariantId, quantity);
     }
+  }
+
+  /**
+   * Native add-to-cart fallback via standard form POST.
+   * This bypasses AJAX and guarantees Shopify cart add behavior.
+   * @param {number|string} variantId - Variant ID
+   * @param {number} quantity - Quantity
+   */
+  function submitNativeAdd(variantId, quantity) {
+    const fallbackForm = document.createElement('form');
+    fallbackForm.method = 'post';
+    fallbackForm.action = '/cart/add';
+    fallbackForm.style.display = 'none';
+
+    const idInput = document.createElement('input');
+    idInput.type = 'hidden';
+    idInput.name = 'id';
+    idInput.value = String(variantId);
+
+    const qtyInput = document.createElement('input');
+    qtyInput.type = 'hidden';
+    qtyInput.name = 'quantity';
+    qtyInput.value = String(Math.max(1, parseInt(quantity, 10) || 1));
+
+    fallbackForm.appendChild(idInput);
+    fallbackForm.appendChild(qtyInput);
+    document.body.appendChild(fallbackForm);
+    fallbackForm.submit();
   }
 
   /**

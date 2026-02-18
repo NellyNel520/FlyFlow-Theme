@@ -114,3 +114,4 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - 2026-02-18: Fixed add-to-cart reliability by refreshing full cart drawer section state (empty/non-empty transitions) and scoping PDP variant updates to the product section only.
 - 2026-02-18: Hardened add-to-cart requests across PDP/sticky/quick-view/quick-buy with FormData submission support and native `/cart/add` fallback redirect when AJAX add fails.
 - 2026-02-18: Unified mobile bottom nav with header mobile menu source, improved bottom-nav reappearance behavior during downward scroll, and parallelized cart refresh API calls to reduce update latency.
+- 2026-02-18: Added native POST `/cart/add` fail-safe fallback in cart JS so add-to-cart always completes even if AJAX path fails.
