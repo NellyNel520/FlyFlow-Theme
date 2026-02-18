@@ -16,15 +16,21 @@
     {% endfor %}
 
     {%- comment -%} Desktop tabs {%- endcomment -%}
+    {% assign first_tab_assigned = false %}
     <div class="product-tabs__nav" role="tablist">
       {% for block in section.blocks %}
         {% if block.type == '@app' %}
           {% continue %}
         {% endif %}
+        {% assign tab_active = false %}
+        {% if first_tab_assigned == false %}
+          {% assign tab_active = true %}
+          {% assign first_tab_assigned = true %}
+        {% endif %}
         <button
-          class="product-tabs__btn{% if forloop.first %} product-tabs__btn--active{% endif %}"
+          class="product-tabs__btn{% if tab_active %} product-tabs__btn--active{% endif %}"
           role="tab"
-          aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+          aria-selected="{% if tab_active %}true{% else %}false{% endif %}"
           aria-controls="tab-panel-{{ block.id }}"
           id="tab-{{ block.id }}"
           data-tab-btn="{{ block.id }}"
@@ -42,12 +48,18 @@
     </div>
 
     {%- comment -%} Tab panels (desktop) {%- endcomment -%}
+    {% assign first_panel_assigned = false %}
     {% for block in section.blocks %}
       {% if block.type == '@app' %}
         {% continue %}
       {% endif %}
+      {% assign panel_active = false %}
+      {% if first_panel_assigned == false %}
+        {% assign panel_active = true %}
+        {% assign first_panel_assigned = true %}
+      {% endif %}
       <div
-        class="product-tabs__content{% if forloop.first %} product-tabs__content--active{% endif %} hidden-mobile"
+        class="product-tabs__content{% if panel_active %} product-tabs__content--active{% endif %} hidden-mobile"
         role="tabpanel"
         id="tab-panel-{{ block.id }}"
         aria-labelledby="tab-{{ block.id }}"
@@ -84,15 +96,21 @@
     {% endfor %}
 
     {%- comment -%} Accordion (mobile) {%- endcomment -%}
+    {% assign first_accordion_assigned = false %}
     {% for block in section.blocks %}
       {% if block.type == '@app' %}
         {% continue %}
+      {% endif %}
+      {% assign accordion_open = false %}
+      {% if first_accordion_assigned == false %}
+        {% assign accordion_open = true %}
+        {% assign first_accordion_assigned = true %}
       {% endif %}
       <div class="accordion" {{ block.shopify_attributes }}>
         <button
           class="accordion__trigger"
           data-accordion-trigger
-          aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
+          aria-expanded="{% if accordion_open %}true{% else %}false{% endif %}"
           aria-controls="accordion-{{ block.id }}"
         >
           {% case block.type %}
@@ -106,7 +124,7 @@
             <polyline points="6 9 12 15 18 9" fill="none" stroke="currentColor" stroke-width="2"/>
           </svg>
         </button>
-        <div class="accordion__content{% if forloop.first %} accordion__content--open{% endif %}" id="accordion-{{ block.id }}">
+        <div class="accordion__content{% if accordion_open %} accordion__content--open{% endif %}" id="accordion-{{ block.id }}">
           <div class="accordion__body text-sm">
             {% case block.type %}
               {% when 'description' %}
