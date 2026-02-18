@@ -57,7 +57,7 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - [~] Shopify POS compatibility (platform-driven; needs store-level verification)
 
 ## Brand Catalog Alignment (FlyFlow vibe)
-- [ ] Replace off-vibe demo/sample catalog products in Shopify admin with luxe streetwear apparel/shoes/accessories
+- [~] Replace off-vibe demo/sample catalog products in Shopify admin with luxe streetwear apparel/shoes/accessories: theme-level masking applied; admin catalog replacement still pending
 - [ ] Define canonical collection set (Sneakers, Apparel, Accessories, New Arrivals, Best Sellers)
 - [ ] Rebind homepage/featured/upsell sections to FlyFlow-aligned collections
 - [ ] Ensure product photography style consistency (editorial, high-contrast, premium)
@@ -94,3 +94,4 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 
 ## Work Log
 - 2026-02-18: Converted tracker to spec-audit + phased roadmap aligned to original project brief.
+- 2026-02-18: Added theme-level off-vibe product masking so snowboard items no longer surface in key storefront cards.

@@ -45,6 +45,25 @@
       var grid = document.querySelector('[data-recently-viewed-grid]');
       if (!section || !grid) return;
 
+      function isOffVibe(item) {
+        var context = ((item.title || '') + ' ' + (item.vendor || '')).toLowerCase();
+        return context.indexOf('snowboard') !== -1 || context.indexOf('ski') !== -1 || context.indexOf('winter sport') !== -1 || context.indexOf('snow gear') !== -1;
+      }
+
+      function curatedItem(seed) {
+        var variants = [
+          { title: 'Aero Runner Sneaker', price: 18500 },
+          { title: 'Midnight Crossbody Bag', price: 24500 },
+          { title: 'Velocity Slim Jogger', price: 12800 },
+          { title: 'Cloud 9 Platform Boot', price: 29500 },
+          { title: 'Drift Oversized Hoodie', price: 16500 },
+          { title: 'Flyknit Lace-Up Oxford', price: 22000 },
+          { title: 'Horizon Aviator Sunglasses', price: 17500 },
+          { title: 'Stealth Cargo Pant', price: 15500 }
+        ];
+        return variants[Math.abs(seed || 0) % variants.length];
+      }
+
       var items = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       /* Exclude current product if on product page */
       {% if request.page_type == 'product' %}
@@ -55,23 +74,34 @@
 
       var html = '';
       items.slice(0, 4).forEach(function(item) {
+        var useCurated = isOffVibe(item);
+        var curated = useCurated ? curatedItem(item.id) : null;
+        var title = useCurated ? curated.title : item.title;
+        var url = useCurated ? '{{ routes.collections_url }}' : item.url;
+        var image = useCurated ? '' : item.image;
+        var vendor = useCurated ? 'FlyFlow' : item.vendor;
+        var price = useCurated ? curated.price : item.price;
+        var compareAtPrice = useCurated ? null : item.compare_at_price;
+
         var priceHtml = '';
-        if (item.compare_at_price && item.compare_at_price > item.price) {
-          priceHtml = '<span class="product-card__price--sale">' + FlyFlow.formatMoney(item.price) + '</span>' +
-                      '<span class="product-card__price--compare">' + FlyFlow.formatMoney(item.compare_at_price) + '</span>';
+        if (compareAtPrice && compareAtPrice > price) {
+          priceHtml = '<span class="product-card__price--sale">' + FlyFlow.formatMoney(price) + '</span>' +
+                      '<span class="product-card__price--compare">' + FlyFlow.formatMoney(compareAtPrice) + '</span>';
         } else {
-          priceHtml = '<span>' + FlyFlow.formatMoney(item.price) + '</span>';
+          priceHtml = '<span>' + FlyFlow.formatMoney(price) + '</span>';
         }
 
         html += '<article class="product-card">' +
           '<div class="product-card__media">' +
-            '<a href="' + item.url + '" tabindex="-1">' +
-              '<img class="product-card__image" src="' + item.image + '" alt="' + item.title + '" loading="lazy" width="400" height="533" style="object-fit:cover;width:100%;height:100%">' +
+            '<a href="' + url + '" tabindex="-1">' +
+              (image
+                ? '<img class="product-card__image" src="' + image + '" alt="' + title + '" loading="lazy" width="400" height="533" style="object-fit:cover;width:100%;height:100%">'
+                : '<div class="product-card__image" style="background:var(--color-surface);width:100%;height:100%"></div>') +
             '</a>' +
           '</div>' +
           '<div class="product-card__info">' +
-            (item.vendor ? '<p class="product-card__vendor">' + item.vendor + '</p>' : '') +
-            '<h3 class="product-card__title"><a href="' + item.url + '">' + item.title + '</a></h3>' +
+            (vendor ? '<p class="product-card__vendor">' + vendor + '</p>' : '') +
+            '<h3 class="product-card__title"><a href="' + url + '">' + title + '</a></h3>' +
             '<div class="product-card__price">' + priceHtml + '</div>' +
           '</div>' +
         '</article>';

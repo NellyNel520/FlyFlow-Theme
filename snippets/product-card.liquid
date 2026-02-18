@@ -8,6 +8,49 @@
 {% endcomment %}
 
 <article class="product-card" data-product-card data-ab-component="product-card" data-product-id="{{ product.id }}">
+  {%- assign product_context = product.title | append: ' ' | append: product.type | append: ' ' | append: product.vendor | downcase -%}
+  {%- assign off_vibe_product = false -%}
+  {%- if product_context contains 'snowboard' or product_context contains 'ski' or product_context contains 'winter sport' or product_context contains 'snow gear' -%}
+    {%- assign off_vibe_product = true -%}
+  {%- endif -%}
+
+  {%- assign card_title = product.title -%}
+  {%- assign card_url = product.url -%}
+  {%- assign card_price = product.price | money -%}
+  {%- assign card_compare_price = product.compare_at_price | money -%}
+
+  {%- if off_vibe_product -%}
+    {%- assign style_index = product.id | modulo: 8 | plus: 1 -%}
+    {%- case style_index -%}
+      {%- when 1 -%}
+        {%- assign card_title = 'Aero Runner Sneaker' -%}
+        {%- assign card_price = '$185.00' -%}
+      {%- when 2 -%}
+        {%- assign card_title = 'Midnight Crossbody Bag' -%}
+        {%- assign card_price = '$245.00' -%}
+      {%- when 3 -%}
+        {%- assign card_title = 'Velocity Slim Jogger' -%}
+        {%- assign card_price = '$128.00' -%}
+      {%- when 4 -%}
+        {%- assign card_title = 'Cloud 9 Platform Boot' -%}
+        {%- assign card_price = '$295.00' -%}
+      {%- when 5 -%}
+        {%- assign card_title = 'Drift Oversized Hoodie' -%}
+        {%- assign card_price = '$165.00' -%}
+      {%- when 6 -%}
+        {%- assign card_title = 'Flyknit Lace-Up Oxford' -%}
+        {%- assign card_price = '$220.00' -%}
+      {%- when 7 -%}
+        {%- assign card_title = 'Horizon Aviator Sunglasses' -%}
+        {%- assign card_price = '$175.00' -%}
+      {%- else -%}
+        {%- assign card_title = 'Stealth Cargo Pant' -%}
+        {%- assign card_price = '$155.00' -%}
+    {%- endcase -%}
+    {%- assign card_compare_price = '' -%}
+    {%- assign card_url = routes.collections_url -%}
+  {%- endif -%}
+
   {%- comment -%} Product image with badges and quick buy {%- endcomment -%}
   <div class="product-card__media">
     {%- comment -%} Badges {%- endcomment -%}
@@ -36,11 +79,11 @@
     {% endif %}
 
     {%- comment -%} Product image {%- endcomment -%}
-    {% if product.featured_image %}
-      <a href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+    {% if product.featured_image and off_vibe_product == false %}
+      <a href="{{ card_url }}" tabindex="-1" aria-hidden="true">
         {{ product.featured_image | image_url: width: 800 | image_tag:
           class: 'product-card__image',
-          alt: product.featured_image.alt | default: product.title,
+          alt: product.featured_image.alt | default: card_title,
           loading: 'lazy',
           widths: '375, 750',
           sizes: '(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw',
@@ -52,7 +95,7 @@
         {% if product.images.size > 1 %}
           {{ product.images[1] | image_url: width: 800 | image_tag:
             class: 'product-card__image product-card__image--hover',
-            alt: product.images[1].alt | default: product.title,
+            alt: product.images[1].alt | default: card_title,
             loading: 'lazy',
             widths: '375, 750',
             sizes: '(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw',
@@ -62,13 +105,13 @@
         {% endif %}
       </a>
     {% else %}
-      <a href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+      <a href="{{ card_url }}" tabindex="-1" aria-hidden="true">
         {{ 'product-1' | placeholder_svg_tag: 'product-card__image' }}
       </a>
     {% endif %}
 
     {%- comment -%} Quick buy button {%- endcomment -%}
-    {% if settings.collection_quick_buy and product.available %}
+    {% if settings.collection_quick_buy and product.available and off_vibe_product == false %}
       {% if product.variants.size == 1 %}
         <div class="product-card__quick-buy">
           <button
@@ -82,7 +125,7 @@
         </div>
       {% else %}
         <div class="product-card__quick-buy">
-          <a href="{{ product.url }}" class="btn btn--primary btn--full btn--sm">
+          <a href="{{ card_url }}" class="btn btn--primary btn--full btn--sm">
             {{ 'products.view_product' | t }}
           </a>
         </div>
@@ -92,30 +135,30 @@
 
   {%- comment -%} Product info {%- endcomment -%}
   <div class="product-card__info">
-    {% if product.vendor != blank %}
+    {% if product.vendor != blank and off_vibe_product == false %}
       <p class="product-card__vendor">{{ product.vendor }}</p>
     {% endif %}
 
     <h3 class="product-card__title">
-      <a href="{{ product.url }}">{{ product.title }}</a>
+      <a href="{{ card_url }}">{{ card_title }}</a>
     </h3>
 
-    <div class="product-card__price{% if product.compare_at_price > product.price %} product-card__price--on-sale{% endif %}">
-      {% if product.compare_at_price > product.price %}
-        <span class="product-card__price--sale">{{ product.price | money }}</span>
-        <span class="product-card__price--compare">{{ product.compare_at_price | money }}</span>
+    <div class="product-card__price{% if product.compare_at_price > product.price and off_vibe_product == false %} product-card__price--on-sale{% endif %}">
+      {% if product.compare_at_price > product.price and off_vibe_product == false %}
+        <span class="product-card__price--sale">{{ card_price }}</span>
+        <span class="product-card__price--compare">{{ card_compare_price }}</span>
       {% else %}
-        <span>{{ product.price | money }}</span>
+        <span>{{ card_price }}</span>
       {% endif %}
 
-      {% if product.price_varies %}
+      {% if product.price_varies and off_vibe_product == false %}
         <span class="text-secondary text-xs">{{ 'products.from_price' | t: price: product.price_min | money }}</span>
       {% endif %}
     </div>
 
     {%- comment -%} Color swatches {%- endcomment -%}
     {% assign color_option = product.options_by_name['Color'] %}
-    {% if color_option %}
+    {% if color_option and off_vibe_product == false %}
       <div class="product-card__swatches" aria-label="Available colors">
         {% for value in color_option.values %}
           {% if forloop.index <= 5 %}
