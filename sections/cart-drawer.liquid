@@ -28,7 +28,8 @@
       class="shipping-bar{% if cart_total >= threshold %} shipping-bar--qualified{% endif %}"
       data-shipping-bar
       data-threshold="{{ settings.cart_shipping_threshold }}"
-      data-spend-message="{{ 'cart.shipping_bar.spend_more' | t: amount: '{amount}' }}"
+      {%- capture spend_msg %}{{ 'cart.shipping_bar.spend_more' | t: amount: 'AMOUNT_PLACEHOLDER' }}{% endcapture -%}
+      data-spend-message="{{ spend_msg }}"
       data-qualified-message="{{ 'cart.shipping_bar.qualified' | t }}"
     >
       <p data-shipping-message>
