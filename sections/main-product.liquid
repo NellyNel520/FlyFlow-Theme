@@ -8,15 +8,17 @@
 
 <section class="section main-product-section" data-section-id="{{ section.id }}" style="--pdp-sticky-top: {{ section.settings.sticky_top_offset | default: 80 }}px;">
   <div class="container">
-    <nav class="breadcrumbs mb-lg" aria-label="Breadcrumb" style="font-size:0.8125rem;color:var(--color-text-secondary)">
-      <a href="{{ routes.root_url }}">Home</a>
-      <span aria-hidden="true">/</span>
-      {% if product.collections.size > 0 %}
-        <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+    {% if section.settings.show_product_breadcrumb %}
+      <nav class="breadcrumbs mb-lg" aria-label="Breadcrumb" style="font-size:0.8125rem;color:var(--color-text-secondary)">
+        <a href="{{ routes.root_url }}">Home</a>
         <span aria-hidden="true">/</span>
-      {% endif %}
-      <span aria-current="page">{{ product.title }}</span>
-    </nav>
+        {% if product.collections.size > 0 %}
+          <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+          <span aria-hidden="true">/</span>
+        {% endif %}
+        <span aria-current="page">{{ product.title }}</span>
+      </nav>
+    {% endif %}
 
     <div class="product">
       {% render 'product-gallery', product: product, parent_section_id: section.id %}
@@ -370,6 +372,12 @@
       "step": 4,
       "default": 80,
       "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_breadcrumb",
+      "label": "Show product breadcrumb",
+      "default": false
     },
     {
       "type": "checkbox",
