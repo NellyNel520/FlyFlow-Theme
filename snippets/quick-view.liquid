@@ -235,11 +235,13 @@
             html += '<button type="button" class="swatch' + (val === selectedVal ? ' swatch--active' : '') + (!available ? ' swatch--sold-out' : '') + '" '
               + 'style="background-color:' + val.toLowerCase().replace(/\s/g, '') + '" '
               + 'data-qv-option data-qv-option-name="' + optionName + '" data-qv-option-value="' + val + '" '
-              + 'title="' + val + '" aria-label="' + val + '"></button>';
+              + 'title="' + val + '" aria-label="' + val + '"'
+              + (!available ? ' aria-disabled="true"' : '') + '></button>';
           } else {
             html += '<button type="button" class="size-btn' + (val === selectedVal ? ' size-btn--active' : '') + (!available ? ' size-btn--sold-out' : '') + '" '
               + 'data-qv-option data-qv-option-name="' + optionName + '" data-qv-option-value="' + val + '" '
-              + 'aria-label="' + val + '">' + val + '</button>';
+              + 'aria-label="' + val + '"'
+              + (!available ? ' aria-disabled="true"' : '') + '>' + val + '</button>';
           }
         });
 
@@ -251,6 +253,7 @@
 
     function selectOption(btn) {
       if (!currentProduct || !currentProduct.variants) return;
+      if (btn.getAttribute('aria-disabled') === 'true') return;
       var name = btn.dataset.qvOptionName;
       var value = btn.dataset.qvOptionValue;
       selectedOptions[name] = value;
@@ -356,6 +359,14 @@
       if (isBusy) {
         atc.disabled = true;
         atc.textContent = 'Loading...';
+      } else {
+        var addText = atc.dataset.addText || 'Add to Bag';
+        if (!atc.dataset.variantId) {
+          atc.disabled = false;
+          atc.textContent = addText;
+          return;
+        }
+        atc.textContent = atc.disabled ? (atc.dataset.soldOutText || 'Sold Out') : addText;
       }
     }
   })();
