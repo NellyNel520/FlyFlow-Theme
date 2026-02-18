@@ -1,0 +1,71 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-banner",
+      "settings": {
+        "overline": "About FlyFlow",
+        "heading": "Engineered for Everyday Momentum",
+        "subheading": "From concept to craftsmanship, every release blends utility, style, and movement.",
+        "button_text": "Shop Collections",
+        "button_link": "/collections/all",
+        "height": 75,
+        "overlay_opacity": 35
+      }
+    },
+    "manifesto": {
+      "type": "editorial-landing",
+      "blocks": {
+        "point-1": {
+          "type": "feature",
+          "settings": {
+            "title": "Purpose-Driven Design",
+            "text": "Each piece solves for movement, comfort, and visual impact."
+          }
+        },
+        "point-2": {
+          "type": "feature",
+          "settings": {
+            "title": "Small Batch Mindset",
+            "text": "Curated launches focused on quality over excess."
+          }
+        },
+        "point-3": {
+          "type": "feature",
+          "settings": {
+            "title": "Culture-Led Styling",
+            "text": "Collections inspired by street, studio, and sport."
+          }
+        }
+      },
+      "block_order": ["point-1", "point-2", "point-3"],
+      "settings": {
+        "overline": "Manifesto",
+        "heading": "A brand built at the intersection of utility and expression.",
+        "text": "<p>FlyFlow is a movement-first fashion label creating pieces that transition from commute to nightlife to weekend travel. We focus on long-wear silhouettes, premium materials, and expressive details.</p>",
+        "primary_button_text": "View New Arrivals",
+        "primary_button_link": "/collections/all",
+        "secondary_button_text": "Contact Team",
+        "secondary_button_link": "/pages/contact"
+      }
+    },
+    "story-split": {
+      "type": "image-with-text",
+      "settings": {
+        "overline": "Our Process",
+        "heading": "Designed in iterations, refined in motion.",
+        "text": "<p>Every drop goes through material trials, movement checks, and real-world wear sessions before release. This keeps fit, function, and style aligned.</p><p>Use this section to tell your founder story, production standards, and mission.</p>",
+        "button_text": "Read Journal",
+        "button_link": "/blogs/news",
+        "reverse_layout": false
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "heading": "Join the FlyFlow Circle",
+        "subheading": "Get early access to drops, campaign stories, and members-only releases."
+      }
+    }
+  },
+  "order": ["hero", "manifesto", "story-split", "newsletter"]
+}

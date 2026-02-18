@@ -1,0 +1,46 @@
+{
+  "sections": {
+    "main-contact": {
+      "type": "main-contact",
+      "blocks": {
+        "support": {
+          "type": "contact_item",
+          "settings": {
+            "title": "Customer Support",
+            "text": "support@flyflow.com | Mon-Fri, 9am-6pm"
+          }
+        },
+        "wholesale": {
+          "type": "contact_item",
+          "settings": {
+            "title": "Wholesale",
+            "text": "wholesale@flyflow.com | Partnership inquiries welcome."
+          }
+        },
+        "press": {
+          "type": "contact_item",
+          "settings": {
+            "title": "Press",
+            "text": "press@flyflow.com | Campaign and media requests."
+          }
+        }
+      },
+      "block_order": ["support", "wholesale", "press"],
+      "settings": {
+        "overline": "Get in Touch",
+        "heading": "Contact FlyFlow",
+        "subheading": "Questions about sizing, orders, or collaborations? Send us a message and our team will get back to you.",
+        "show_page_content": true,
+        "button_text": "Send Message"
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "heading": "Stay in the Loop",
+        "subheading": "Get product drops, restock alerts, and editorial updates."
+      }
+    }
+  },
+  "order": ["main-contact", "newsletter"]
+}

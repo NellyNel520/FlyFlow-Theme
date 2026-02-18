@@ -1,0 +1,145 @@
+{% comment %}
+  FlyFlow Theme - Main Contact Section
+  Purpose: Structured contact page with support details and Shopify contact form.
+  Last modified: 2026-02-18
+{% endcomment %}
+
+<section class="section" data-section-id="{{ section.id }}">
+  <div class="container" style="max-width:1100px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-2xl)" class="contact-layout">
+      <div>
+        {% if section.settings.overline != blank %}
+          <p class="overline mb-sm">{{ section.settings.overline }}</p>
+        {% endif %}
+        {% if section.settings.heading != blank %}
+          <h1 class="mb-md">{{ section.settings.heading }}</h1>
+        {% endif %}
+        {% if section.settings.subheading != blank %}
+          <p class="text-secondary mb-xl" style="max-width:46ch;line-height:1.8">{{ section.settings.subheading }}</p>
+        {% endif %}
+
+        {% if section.settings.show_page_content and page.content != blank %}
+          <div class="rte text-secondary" style="margin-bottom:var(--space-xl)">
+            {{ page.content }}
+          </div>
+        {% endif %}
+
+        {% if section.blocks.size > 0 %}
+          <div style="display:grid;gap:var(--space-sm)">
+            {% for block in section.blocks %}
+              <article style="padding:var(--space-md);border:1px solid var(--color-border);border-radius:var(--border-radius);background:var(--color-surface)" {{ block.shopify_attributes }}>
+                <h2 style="font-size:0.875rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:var(--space-xs)">{{ block.settings.title }}</h2>
+                <p class="text-secondary" style="font-size:0.9375rem;line-height:1.7">{{ block.settings.text }}</p>
+              </article>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div style="padding:var(--space-lg);border:1px solid var(--color-border);border-radius:var(--border-radius);background:var(--color-background)">
+        {% form 'contact' %}
+          {% if form.posted_successfully? %}
+            <p style="padding:var(--space-sm);margin-bottom:var(--space-md);border-radius:var(--border-radius);background:color-mix(in srgb, var(--color-success) 16%, transparent);color:var(--color-text)">
+              Thanks for reaching out. We will get back to you shortly.
+            </p>
+          {% endif %}
+
+          {% if form.errors %}
+            <div style="padding:var(--space-sm);margin-bottom:var(--space-md);border-radius:var(--border-radius);background:color-mix(in srgb, var(--color-error) 14%, transparent)">
+              {{ form.errors | default_errors }}
+            </div>
+          {% endif %}
+
+          <div class="form__group">
+            <label class="form__label" for="ContactFormName">Name</label>
+            <input id="ContactFormName" class="form__input" type="text" name="contact[name]" value="{{ form.name }}" required>
+          </div>
+
+          <div class="form__group">
+            <label class="form__label" for="ContactFormEmail">Email</label>
+            <input id="ContactFormEmail" class="form__input" type="email" name="contact[email]" value="{{ form.email }}" required>
+          </div>
+
+          <div class="form__group">
+            <label class="form__label" for="ContactFormPhone">Phone (optional)</label>
+            <input id="ContactFormPhone" class="form__input" type="tel" name="contact[phone]" value="{{ form.phone }}">
+          </div>
+
+          <div class="form__group">
+            <label class="form__label" for="ContactFormMessage">Message</label>
+            <textarea id="ContactFormMessage" class="form__input" name="contact[body]" rows="6" required>{{ form.body }}</textarea>
+          </div>
+
+          <button type="submit" class="btn btn--primary btn--full">{{ section.settings.button_text }}</button>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  @media (max-width: 860px) {
+    .contact-layout {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Contact Page",
+  "settings": [
+    {
+      "type": "text",
+      "id": "overline",
+      "label": "Overline",
+      "default": "Get in Touch"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Contact FlyFlow"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Questions about sizing, orders, or collaborations? Send us a message and our team will get back to you."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_page_content",
+      "label": "Show page content above details",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Send Message"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "contact_item",
+      "name": "Contact Detail",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Customer Support"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "support@flyflow.com | Mon-Fri, 9am-6pm"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6
+}
+{% endschema %}
