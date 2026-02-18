@@ -279,20 +279,41 @@ FlyFlow.Cart = (function () {
       return;
     }
 
-    /* Prevent form submission */
-    if (form) {
-      const submitEvent = new Event('submit', { cancelable: true });
-      form.dispatchEvent(submitEvent);
-    }
-
     const originalText = btn.textContent;
     btn.disabled = true;
     btn.textContent = 'Adding...';
 
     try {
-      await FlyFlow.fetchAPI('/cart/add.js', {
-        items: [{ id: parseInt(variantId, 10), quantity: quantity }],
-      });
+      if (form) {
+        const formData = new FormData(form);
+        if (!formData.get('id')) {
+          formData.set('id', String(variantId));
+        }
+        formData.set('quantity', String(Math.max(1, quantity)));
+
+        const response = await fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          body: formData,
+        });
+
+        if (!response.ok) {
+          let errorMessage = `Request failed: ${response.status}`;
+          try {
+            const payload = await response.json();
+            errorMessage = payload.description || errorMessage;
+          } catch {
+            // Ignore parse errors and use default message
+          }
+          throw new Error(errorMessage);
+        }
+      } else {
+        await FlyFlow.fetchAPI('/cart/add.js', {
+          id: parseInt(variantId, 10),
+          quantity: Math.max(1, quantity),
+        });
+      }
+
       await refreshCart();
       open();
       FlyFlow.announce('Item added to bag');
@@ -305,7 +326,12 @@ FlyFlow.Cart = (function () {
     } catch {
       btn.disabled = false;
       btn.textContent = btn.dataset.addText || originalText;
-      FlyFlow.announce('Could not add item to bag');
+
+      // Hard fallback to native cart add flow
+      const fallbackUrl = `/cart/add?id=${encodeURIComponent(variantId)}&quantity=${encodeURIComponent(
+        String(Math.max(1, quantity))
+      )}`;
+      window.location.href = fallbackUrl;
     }
   }
 
