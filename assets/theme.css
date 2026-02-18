@@ -1833,6 +1833,118 @@ small {
   letter-spacing: 0.08em;
 }
 
+.template-product .pdp-tabs__shipping-accordion-group {
+  display: grid;
+  gap: 10px;
+  margin-top: var(--space-md);
+}
+
+.template-product .pdp-tabs__shipping-accordion {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.5);
+  overflow: clip;
+}
+
+.template-product .pdp-tabs__shipping-summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0.92rem 1rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.3;
+  transition: background-color 0.2s ease;
+}
+
+.template-product .pdp-tabs__shipping-summary:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.template-product .pdp-tabs__shipping-summary:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.35);
+  outline-offset: -2px;
+}
+
+.template-product .pdp-tabs__shipping-summary::-webkit-details-marker {
+  display: none;
+}
+
+.template-product .pdp-tabs__chevron {
+  width: 8px;
+  height: 8px;
+  border-right: 1.5px solid currentcolor;
+  border-bottom: 1.5px solid currentcolor;
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+  flex: 0 0 auto;
+}
+
+.template-product .pdp-tabs__shipping-accordion[open] .pdp-tabs__chevron {
+  transform: rotate(-135deg);
+}
+
+.template-product .pdp-tabs__shipping-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.24s ease;
+}
+
+.template-product .pdp-tabs__shipping-accordion[open] .pdp-tabs__shipping-content {
+  grid-template-rows: 1fr;
+}
+
+.template-product .pdp-tabs__shipping-content-inner {
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 1rem 1rem;
+}
+
+.template-product .pdp-tabs__shipping-content-inner p + p,
+.template-product .pdp-tabs__shipping-content-inner ul + p,
+.template-product .pdp-tabs__shipping-content-inner p + ul {
+  margin-top: 0.7rem;
+}
+
+.template-product .pdp-tabs__shipping-content-inner ul,
+.template-product .pdp-tabs__shipping-content-inner ol {
+  margin: 0.35rem 0 0;
+  padding-left: 1.15rem;
+}
+
+.template-product .pdp-tabs__shipping-content-inner li + li {
+  margin-top: 0.35rem;
+}
+
+.template-product .pdp-tabs__help-row--links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem 1.25rem;
+}
+
+.template-product .pdp-tabs__help-row--links a {
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.template-product .pdp-tabs__help-row--links a:hover,
+.template-product .pdp-tabs__help-row--links a:focus-visible {
+  border-color: currentcolor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .template-product .pdp-tabs__shipping-summary,
+  .template-product .pdp-tabs__chevron,
+  .template-product .pdp-tabs__shipping-content,
+  .template-product .pdp-tabs__help-row--links a {
+    transition: none;
+  }
+}
+
 .pdp-tabs__rating-summary {
   display: inline-flex;
   align-items: center;

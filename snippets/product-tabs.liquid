@@ -100,30 +100,51 @@
 {% assign size_measure_steps = section.settings.size_guide_measurement_steps | newline_to_br | split: '<br />' %}
 
 {% assign shipping_page = blank %}
-{% if section.settings.shipping_policy_page_handle != blank %}
-  {% assign shipping_page = pages[section.settings.shipping_policy_page_handle] %}
+{% if section.settings.shipping_page_handle != blank %}
+  {% assign shipping_page = pages[section.settings.shipping_page_handle] %}
 {% endif %}
 {% assign returns_page = blank %}
-{% if section.settings.returns_policy_page_handle != blank %}
-  {% assign returns_page = pages[section.settings.returns_policy_page_handle] %}
+{% if section.settings.returns_page_handle != blank %}
+  {% assign returns_page = pages[section.settings.returns_page_handle] %}
 {% endif %}
 
 {% assign shipping_content = '' %}
 {% if shipping_page != blank and shipping_page.content != blank %}
   {% assign shipping_content = shipping_page.content %}
-{% elsif shop.shipping_policy != blank and shop.shipping_policy.body != blank %}
-  {% assign shipping_content = shop.shipping_policy.body %}
+{% elsif section.settings.shipping_richtext != blank %}
+  {% assign shipping_content = section.settings.shipping_richtext %}
 {% else %}
-  {% assign shipping_content = section.settings.shipping_card_richtext %}
+  {% assign shipping_content = '<p>Shipping options and delivery estimates are shown at checkout.</p>' %}
 {% endif %}
 
 {% assign returns_content = '' %}
 {% if returns_page != blank and returns_page.content != blank %}
   {% assign returns_content = returns_page.content %}
-{% elsif shop.refund_policy != blank and shop.refund_policy.body != blank %}
-  {% assign returns_content = shop.refund_policy.body %}
+{% elsif section.settings.returns_richtext != blank %}
+  {% assign returns_content = section.settings.returns_richtext %}
 {% else %}
-  {% assign returns_content = section.settings.returns_card_richtext %}
+  {% assign returns_content = '<p>Returns are handled according to our return policy.</p>' %}
+{% endif %}
+
+{% assign faq_href = '' %}
+{% if section.settings.faq_page_handle != blank and pages[section.settings.faq_page_handle] != blank %}
+  {% assign faq_href = pages[section.settings.faq_page_handle].url %}
+{% elsif section.settings.faq_link != blank %}
+  {% assign faq_href = section.settings.faq_link %}
+{% endif %}
+
+{% assign return_policy_href = '' %}
+{% assign return_policy_source = section.settings.return_policy_link_source | default: 'shop_policy' %}
+{% if return_policy_source == 'shop_policy' %}
+  {% if shop.refund_policy != blank and shop.refund_policy.url != blank %}
+    {% assign return_policy_href = shop.refund_policy.url %}
+  {% endif %}
+{% elsif return_policy_source == 'page' %}
+  {% if section.settings.return_policy_page_handle != blank and pages[section.settings.return_policy_page_handle] != blank %}
+    {% assign return_policy_href = pages[section.settings.return_policy_page_handle].url %}
+  {% endif %}
+{% elsif return_policy_source == 'custom_url' and section.settings.return_policy_custom_url != blank %}
+  {% assign return_policy_href = section.settings.return_policy_custom_url %}
 {% endif %}
 
 {% assign rating_value = product.metafields.reviews.rating.value.rating | default: product.metafields.reviews.rating.value %}
@@ -452,22 +473,38 @@
         >
           {{ section.settings.shipping_returns_intro_richtext }}
 
-          <div class="pdp-tabs__policy-grid">
-            <article class="pdp-tabs__policy-card">
-              <h4>Shipping</h4>
-              <div>{{ shipping_content }}</div>
-            </article>
-            <article class="pdp-tabs__policy-card">
-              <h4>Returns</h4>
-              <div>{{ returns_content }}</div>
-            </article>
+          <div class="pdp-tabs__shipping-accordion-group">
+            <details class="pdp-tabs__shipping-accordion">
+              <summary class="pdp-tabs__shipping-summary">
+                <span>Shipping</span>
+                <span class="pdp-tabs__chevron" aria-hidden="true"></span>
+              </summary>
+              <div class="pdp-tabs__shipping-content">
+                <div class="pdp-tabs__shipping-content-inner">{{ shipping_content }}</div>
+              </div>
+            </details>
+
+            <details class="pdp-tabs__shipping-accordion">
+              <summary class="pdp-tabs__shipping-summary">
+                <span>Returns</span>
+                <span class="pdp-tabs__chevron" aria-hidden="true"></span>
+              </summary>
+              <div class="pdp-tabs__shipping-content">
+                <div class="pdp-tabs__shipping-content-inner">{{ returns_content }}</div>
+              </div>
+            </details>
           </div>
 
           {{ section.settings.order_processing_note_richtext }}
 
-          {% if section.settings.shipping_returns_help_link != blank %}
-            <div class="pdp-tabs__help-row">
-              <a href="{{ section.settings.shipping_returns_help_link }}">{{ section.settings.shipping_returns_help_label | default: 'Need help with your order?' }}</a>
+          {% if faq_href != blank or return_policy_href != blank %}
+            <div class="pdp-tabs__help-row pdp-tabs__help-row--links">
+              {% if faq_href != blank %}
+                <a href="{{ faq_href }}">{{ section.settings.faq_link_label | default: 'Read FAQ' }}</a>
+              {% endif %}
+              {% if return_policy_href != blank %}
+                <a href="{{ return_policy_href }}">{{ section.settings.return_policy_link_label | default: 'View return policy' }}</a>
+              {% endif %}
             </div>
           {% endif %}
         </section>

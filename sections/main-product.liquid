@@ -514,26 +514,26 @@
     },
     {
       "type": "text",
-      "id": "shipping_policy_page_handle",
-      "label": "Shipping policy page handle",
+      "id": "shipping_page_handle",
+      "label": "Shipping page handle",
       "info": "Optional. Example: shipping-policy"
     },
     {
       "type": "text",
-      "id": "returns_policy_page_handle",
-      "label": "Returns policy page handle",
+      "id": "returns_page_handle",
+      "label": "Returns page handle",
       "info": "Optional. Example: returns-policy"
     },
     {
       "type": "richtext",
-      "id": "shipping_card_richtext",
-      "label": "Shipping card fallback",
+      "id": "shipping_richtext",
+      "label": "Shipping fallback content",
       "default": "<p>Shipping options are calculated at checkout based on destination and selected service.</p>"
     },
     {
       "type": "richtext",
-      "id": "returns_card_richtext",
-      "label": "Returns card fallback",
+      "id": "returns_richtext",
+      "label": "Returns fallback content",
       "default": "<p>Returns are accepted according to your return policy. Review your policy page for full details.</p>"
     },
     {
@@ -544,14 +544,49 @@
     },
     {
       "type": "url",
-      "id": "shipping_returns_help_link",
-      "label": "Shipping & returns help link"
+      "id": "faq_link",
+      "label": "FAQ custom link"
     },
     {
       "type": "text",
-      "id": "shipping_returns_help_label",
-      "label": "Shipping & returns help label",
-      "default": "Need help with your order?"
+      "id": "faq_page_handle",
+      "label": "FAQ page handle",
+      "info": "Optional. Used before FAQ custom link."
+    },
+    {
+      "type": "text",
+      "id": "faq_link_label",
+      "label": "FAQ link label",
+      "default": "Read FAQ"
+    },
+    {
+      "type": "select",
+      "id": "return_policy_link_source",
+      "label": "Return policy link source",
+      "default": "shop_policy",
+      "options": [
+        { "value": "shop_policy", "label": "Shop refund policy" },
+        { "value": "page", "label": "Page handle" },
+        { "value": "custom_url", "label": "Custom URL" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "return_policy_page_handle",
+      "label": "Return policy page handle",
+      "info": "Used when source is Page handle."
+    },
+    {
+      "type": "url",
+      "id": "return_policy_custom_url",
+      "label": "Return policy custom URL",
+      "info": "Used when source is Custom URL."
+    },
+    {
+      "type": "text",
+      "id": "return_policy_link_label",
+      "label": "Return policy link label",
+      "default": "View return policy"
     }
   ],
   "blocks": [
