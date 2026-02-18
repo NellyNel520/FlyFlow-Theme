@@ -131,6 +131,8 @@
   {% assign faq_href = pages[section.settings.faq_page_handle].url %}
 {% elsif section.settings.faq_link != blank %}
   {% assign faq_href = section.settings.faq_link %}
+{% elsif pages.faq != blank %}
+  {% assign faq_href = pages.faq.url %}
 {% endif %}
 
 {% assign return_policy_href = '' %}
@@ -490,7 +492,14 @@
                 <span class="pdp-tabs__chevron" aria-hidden="true"></span>
               </summary>
               <div class="pdp-tabs__shipping-content">
-                <div class="pdp-tabs__shipping-content-inner">{{ returns_content }}</div>
+                <div class="pdp-tabs__shipping-content-inner">
+                  {{ returns_content }}
+                  {% if faq_href != blank %}
+                    <p class="pdp-tabs__returns-faq-link">
+                      <a href="{{ faq_href }}">{{ section.settings.faq_link_label | default: 'Read FAQ' }}</a>
+                    </p>
+                  {% endif %}
+                </div>
               </div>
             </details>
           </div>
