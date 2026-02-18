@@ -1,0 +1,75 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-banner",
+      "settings": {
+        "media_mode": "image",
+        "overline": "About FlyFlow",
+        "heading": "Built for Momentum. Designed for Presence.",
+        "subheading": "FlyFlow creates premium streetwear, footwear, and accessories engineered for everyday movement and elevated identity.",
+        "button_text": "Shop New Arrivals",
+        "button_link": "/collections/new-arrivals",
+        "height": 75,
+        "enable_parallax": true,
+        "carousel_autoplay": true,
+        "carousel_interval": 5,
+        "overlay_opacity": 35
+      }
+    },
+    "manifesto": {
+      "type": "editorial-landing",
+      "blocks": {
+        "point-1": {
+          "type": "feature",
+          "settings": {
+            "title": "Intentional Design",
+            "text": "Every silhouette is tested for movement, proportion, and daily wearability."
+          }
+        },
+        "point-2": {
+          "type": "feature",
+          "settings": {
+            "title": "Material Discipline",
+            "text": "Premium fabrics and durable trims selected for comfort and longevity."
+          }
+        },
+        "point-3": {
+          "type": "feature",
+          "settings": {
+            "title": "Curated Drops",
+            "text": "Focused capsule releases that prioritize quality over noise."
+          }
+        }
+      },
+      "block_order": ["point-1", "point-2", "point-3"],
+      "settings": {
+        "overline": "Our Manifesto",
+        "heading": "Performance utility meets modern luxury.",
+        "text": "<p>FlyFlow exists for people who move with intention. We design elevated essentials that transition seamlessly across the pace of real life: commute to studio, daytime to nightlife, weekday to travel.</p><p>Our standard is simple: if it does not improve fit, function, or confidence, it does not make the collection.</p>",
+        "primary_button_text": "Explore Collections",
+        "primary_button_link": "/collections/all",
+        "secondary_button_text": "Contact Us",
+        "secondary_button_link": "/pages/contact"
+      }
+    },
+    "process": {
+      "type": "image-with-text",
+      "settings": {
+        "overline": "Process",
+        "heading": "Prototyped in motion, refined in detail.",
+        "text": "<p>Before release, pieces pass wear sessions, movement checks, and fit iterations to ensure consistency across sizes and use cases.</p><p>This process lets us deliver product that looks sharp, feels premium, and performs under daily demand.</p>",
+        "button_text": "Read Journal",
+        "button_link": "/blogs/news",
+        "reverse_layout": false
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "heading": "Join the FlyFlow Circle",
+        "subheading": "Get early access to launches, editorial stories, and members-only releases."
+      }
+    }
+  },
+  "order": ["hero", "manifesto", "process", "newsletter"]
+}
