@@ -1,0 +1,348 @@
+{% comment %}
+  FlyFlow Theme - Premium Grid Carousel
+  Purpose: High-end editorial carousel showing 3 cards at once (desktop) with
+           autoplay + manual controls and linkable cards.
+{% endcomment %}
+
+<section class="section premium-grid-carousel premium-grid-carousel--{{ section.id }}" data-section-id="{{ section.id }}">
+  <div class="container">
+    {% if section.settings.overline != blank %}
+      <p class="overline">{{ section.settings.overline }}</p>
+    {% endif %}
+    {% if section.settings.heading != blank %}
+      <h2 class="premium-grid-carousel__heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+    {% if section.settings.subheading != blank %}
+      <p class="premium-grid-carousel__subheading text-secondary">{{ section.settings.subheading }}</p>
+    {% endif %}
+
+    <div
+      class="premium-grid-carousel__viewport"
+      data-premium-grid-carousel
+      data-autoplay="{{ section.settings.autoplay }}"
+      data-interval="{{ section.settings.autoplay_interval | times: 1000 }}"
+    >
+      <div class="premium-grid-carousel__track" data-premium-grid-track>
+        {% for block in section.blocks %}
+          {% assign card_link = block.settings.link | default: routes.collections_url %}
+          <article class="premium-grid-carousel__item" {{ block.shopify_attributes }}>
+            <a href="{{ card_link }}" class="premium-grid-carousel__card">
+              <div class="premium-grid-carousel__media">
+                {% if block.settings.image %}
+                  {{
+                    block.settings.image
+                    | image_url: width: 1400
+                    | image_tag:
+                      class: 'premium-grid-carousel__image',
+                      loading: 'lazy',
+                      sizes: '(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 85vw',
+                      widths: '480, 720, 960, 1200, 1400',
+                      alt: block.settings.title
+                  }}
+                {% else %}
+                  {{ 'lifestyle-1' | placeholder_svg_tag: 'premium-grid-carousel__image premium-grid-carousel__placeholder' }}
+                {% endif %}
+              </div>
+              <div class="premium-grid-carousel__overlay">
+                {% if block.settings.eyebrow != blank %}
+                  <span class="premium-grid-carousel__eyebrow">{{ block.settings.eyebrow }}</span>
+                {% endif %}
+                {% if block.settings.title != blank %}
+                  <h3 class="premium-grid-carousel__title">{{ block.settings.title }}</h3>
+                {% endif %}
+              </div>
+            </a>
+          </article>
+        {% endfor %}
+      </div>
+
+      <button class="premium-grid-carousel__control premium-grid-carousel__control--prev" type="button" data-premium-grid-prev aria-label="Previous">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </button>
+      <button class="premium-grid-carousel__control premium-grid-carousel__control--next" type="button" data-premium-grid-next aria-label="Next">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__heading {
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-sm);
+  }
+
+  .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__subheading {
+    margin-bottom: var(--space-lg);
+    max-width: 700px;
+  }
+
+  .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__viewport {
+    position: relative;
+  }
+
+  .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, calc((100% - (var(--space-md) * 2)) / 3));
+    gap: var(--space-md);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+
+  .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__item {
+    scroll-snap-align: start;
+  }
+
+  .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__card {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: var(--border-radius);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+  }
+
+  .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__media {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+  }
+
+  .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__card:hover .premium-grid-carousel__image {
+    transform: scale(1.06);
+  }
+
+  .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__overlay {
+    position: absolute;
+    inset: auto 0 0;
+    padding: var(--space-md);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0));
+    color: #fff;
+  }
+
+  .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__eyebrow {
+    display: block;
+    font-size: 0.625rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin-bottom: 4px;
+  }
+
+  .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__title {
+    font-size: 0.9375rem;
+    letter-spacing: 0.02em;
+    margin: 0;
+  }
+
+  .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    background: rgba(10, 10, 10, 0.66);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+
+  .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__control svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__control--prev {
+    left: 10px;
+  }
+
+  .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__control--next {
+    right: 10px;
+  }
+
+  @media (max-width: 1023px) {
+    .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__track {
+      grid-auto-columns: minmax(0, calc((100% - var(--space-md)) / 2));
+    }
+  }
+
+  @media (max-width: 767px) {
+    .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__track {
+      grid-auto-columns: 85%;
+    }
+
+    .premium-grid-carousel--{{ section.id }} .premium-grid-carousel__control {
+      width: 36px;
+      height: 36px;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    var root = document.querySelector('.premium-grid-carousel--{{ section.id }} [data-premium-grid-carousel]');
+    if (!root) return;
+
+    var track = root.querySelector('[data-premium-grid-track]');
+    var prev = root.querySelector('[data-premium-grid-prev]');
+    var next = root.querySelector('[data-premium-grid-next]');
+    if (!track || !prev || !next) return;
+
+    var autoplay = root.getAttribute('data-autoplay') === 'true';
+    var interval = parseInt(root.getAttribute('data-interval') || '4500', 10);
+    var timer = null;
+
+    function stepSize() {
+      return track.clientWidth;
+    }
+
+    function goNext() {
+      var max = track.scrollWidth - track.clientWidth - 2;
+      if (track.scrollLeft >= max) {
+        track.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        track.scrollBy({ left: stepSize(), behavior: 'smooth' });
+      }
+    }
+
+    function goPrev() {
+      if (track.scrollLeft <= 2) {
+        track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' });
+      } else {
+        track.scrollBy({ left: -stepSize(), behavior: 'smooth' });
+      }
+    }
+
+    function start() {
+      if (!autoplay) return;
+      stop();
+      timer = window.setInterval(goNext, interval);
+    }
+
+    function stop() {
+      if (timer) {
+        window.clearInterval(timer);
+        timer = null;
+      }
+    }
+
+    prev.addEventListener('click', function() { goPrev(); start(); });
+    next.addEventListener('click', function() { goNext(); start(); });
+    root.addEventListener('mouseenter', stop);
+    root.addEventListener('mouseleave', start);
+    root.addEventListener('focusin', stop);
+    root.addEventListener('focusout', start);
+
+    start();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Premium Grid Carousel",
+  "settings": [
+    {
+      "type": "text",
+      "id": "overline",
+      "label": "Overline",
+      "default": "Campaign Edit"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Statement Looks in Motion"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "A high-impact visual row designed to showcase hero imagery and route directly into product and collection pages."
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay carousel",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_interval",
+      "label": "Autoplay interval",
+      "min": 3,
+      "max": 8,
+      "step": 1,
+      "default": 5,
+      "unit": "s"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Image card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow",
+          "default": "New Drop"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "FlyFlow Editorial Look"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Card link"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "Premium Grid Carousel",
+      "blocks": [
+        { "type": "card" },
+        { "type": "card" },
+        { "type": "card" },
+        { "type": "card" },
+        { "type": "card" },
+        { "type": "card" },
+        { "type": "card" },
+        { "type": "card" },
+        { "type": "card" }
+      ]
+    }
+  ]
+}
+{% endschema %}

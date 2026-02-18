@@ -53,40 +53,88 @@
       }
     },
     "brand-carousel": {
-      "type": "hero-banner",
+      "type": "premium-grid-carousel",
       "blocks": {
         "slide-1": {
-          "type": "slide",
+          "type": "card",
           "settings": {
-            "image_position": "center center"
+            "eyebrow": "Footwear",
+            "title": "Runway Sneaker Edit",
+            "link": "/collections/sneakers"
           }
         },
         "slide-2": {
-          "type": "slide",
+          "type": "card",
           "settings": {
-            "image_position": "center center"
+            "eyebrow": "Apparel",
+            "title": "Oversized Layering System",
+            "link": "/collections/apparel"
           }
         },
         "slide-3": {
-          "type": "slide",
+          "type": "card",
           "settings": {
-            "image_position": "center center"
+            "eyebrow": "Accessories",
+            "title": "Signature Carry Collection",
+            "link": "/collections/accessories"
+          }
+        },
+        "slide-4": {
+          "type": "card",
+          "settings": {
+            "eyebrow": "New Arrivals",
+            "title": "Monochrome Utility Drop",
+            "link": "/collections/new-arrivals"
+          }
+        },
+        "slide-5": {
+          "type": "card",
+          "settings": {
+            "eyebrow": "Best Sellers",
+            "title": "Core Rotation Essentials",
+            "link": "/collections/best-sellers"
+          }
+        },
+        "slide-6": {
+          "type": "card",
+          "settings": {
+            "eyebrow": "Campaign",
+            "title": "Street Tailoring Capsule",
+            "link": "/collections/all"
+          }
+        },
+        "slide-7": {
+          "type": "card",
+          "settings": {
+            "eyebrow": "Studio",
+            "title": "Performance Knit Series",
+            "link": "/collections/apparel"
+          }
+        },
+        "slide-8": {
+          "type": "card",
+          "settings": {
+            "eyebrow": "Style Edit",
+            "title": "Night Transit Uniform",
+            "link": "/collections/new-arrivals"
+          }
+        },
+        "slide-9": {
+          "type": "card",
+          "settings": {
+            "eyebrow": "Archive",
+            "title": "Luxury Street Classics",
+            "link": "/collections/best-sellers"
           }
         }
       },
-      "block_order": ["slide-1", "slide-2", "slide-3"],
+      "block_order": ["slide-1", "slide-2", "slide-3", "slide-4", "slide-5", "slide-6", "slide-7", "slide-8", "slide-9"],
       "settings": {
-        "media_mode": "carousel",
         "overline": "Campaign Edit",
-        "heading": "Statement Looks in Motion",
-        "subheading": "Use this carousel for hero-grade campaign images and seasonal creative.",
-        "button_text": "Shop The Edit",
-        "button_link": "/collections/new-arrivals",
-        "height": 70,
-        "enable_parallax": true,
-        "carousel_autoplay": true,
-        "carousel_interval": 5,
-        "overlay_opacity": 30
+        "heading": "3-Up Runway Carousel",
+        "subheading": "Autoplay enabled with manual controls. Shows three premium cards at once on desktop.",
+        "autoplay": true,
+        "autoplay_interval": 5
       }
     },
     "collection-list": {
