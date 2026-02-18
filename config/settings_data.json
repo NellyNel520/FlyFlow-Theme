@@ -36,6 +36,7 @@
     "product_show_stock": true,
     "product_stock_threshold": 5,
     "product_back_in_stock": true,
+    "product_swatch_color_map": "Onyx: #0a0a0a\nCloud: #f5f4f2\nBone: #e7dfd1\nButter: #eadf9d\nSlate: #73767b\nOlive: #677056\nMidnight Stone: #2f3238\nJet Black: #0f0f10\nIvory: #f3eee4\nSand: #d5c4a1\nMocha: #6a5244\nSteel: #8c929a\nGraphite: #4d535b\nCement: #b9b8b3\nForest: #44513b\nGold: #c4a46a\nSilver: #bfc3c7",
     "collection_quick_buy": true,
     "collection_pagination": "load_more",
     "collection_grid_toggle": true,
