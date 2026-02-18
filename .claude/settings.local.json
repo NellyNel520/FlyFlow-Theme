@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(gh auth status:*)",
+      "Bash(gh repo create:*)",
+      "Bash(git push:*)",
+      "Bash(git rm:*)",
+      "Bash(npm install:*)",
+      "Bash(shopify version:*)",
+      "Bash(shopify theme dev:*)",
+      "Bash(git merge:*)",
+      "Bash(git reset:*)"
+    ]
+  }
+}

@@ -1,8 +1,8 @@
 {% comment %}
   FlyFlow Theme - Quick View Modal Snippet
   Purpose: Product quick view modal on collection pages. Shows image,
-           title, price, variant selector, and add to cart without
-           leaving the collection page.
+           title, price, variant selector, quantity, and add to cart
+           without leaving the collection page.
   Dependencies: theme.js (Modal, Cart modules)
   Usage: Triggered via data attributes on product cards
   Last modified: 2026-02-17
@@ -21,7 +21,7 @@
   <div class="modal__body">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-xl)" class="quick-view__grid">
       {%- comment -%} Product image {%- endcomment -%}
-      <div style="aspect-ratio:3/4;border-radius:var(--border-radius);overflow:hidden;background:var(--color-surface)">
+      <div style="aspect-ratio:3/4;overflow:hidden;background:var(--color-surface)">
         <img
           data-quick-view-image
           src=""
@@ -35,17 +35,33 @@
       <div>
         <p class="product-info__vendor" data-quick-view-vendor></p>
         <div class="product-info__price mt-sm mb-md">
-          <span data-quick-view-price style="font-size:1.25rem;font-weight:700"></span>
-          <span data-quick-view-compare style="text-decoration:line-through;color:var(--color-text-secondary);margin-left:var(--space-sm);display:none"></span>
+          <span data-quick-view-price style="font-size:1.125rem;letter-spacing:0.03em"></span>
+          <span data-quick-view-compare style="text-decoration:line-through;color:var(--color-text-secondary);margin-left:var(--space-sm);font-size:0.9375rem;display:none"></span>
         </div>
 
+        {%- comment -%} Stock indicator {%- endcomment -%}
+        <div data-quick-view-stock class="stock-indicator" style="display:none">
+          <span class="stock-indicator__dot"></span>
+          <span data-quick-view-stock-text></span>
+        </div>
+
+        {%- comment -%} Variant selectors (dynamically populated) {%- endcomment -%}
         <div data-quick-view-variants style="margin-bottom:var(--space-lg)"></div>
 
-        <div style="display:flex;gap:var(--space-sm)">
+        {%- comment -%} Quantity + Add to Cart {%- endcomment -%}
+        <div style="display:flex;gap:var(--space-sm);margin-bottom:var(--space-md)">
+          <div class="quantity-selector">
+            <button type="button" class="quantity-selector__btn" data-quick-view-qty-minus aria-label="{{ 'products.decrease_quantity' | t }}">&minus;</button>
+            <input type="number" class="quantity-selector__input" data-quick-view-qty value="1" min="1" aria-label="{{ 'products.quantity' | t }}">
+            <button type="button" class="quantity-selector__btn" data-quick-view-qty-plus aria-label="{{ 'products.increase_quantity' | t }}">&plus;</button>
+          </div>
+
           <button
-            class="btn btn--primary btn--full btn--lg"
+            class="btn btn--primary btn--lg"
+            style="flex:1"
             data-quick-view-atc
             data-add-to-cart
+            data-add-text="{{ 'products.add_to_cart' | t }}"
           >
             {{ 'products.add_to_cart' | t }}
           </button>
@@ -54,10 +70,10 @@
         <a
           href=""
           data-quick-view-link
-          class="text-accent text-sm mt-md"
-          style="display:inline-block;text-decoration:underline;text-underline-offset:2px"
+          class="text-accent"
+          style="display:inline-block;font-size:0.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px"
         >
-          View Full Details &rarr;
+          {{ 'products.view_product' | t }} &rarr;
         </a>
       </div>
     </div>
@@ -75,35 +91,65 @@
 <script>
   /**
    * Quick View Module
-   * Fetches product data via Shopify AJAX API and populates the modal.
+   * Fetches product data via Shopify AJAX API and populates the modal
+   * with image, price, variant selector, quantity, and add to cart.
    */
   (function() {
+    var currentProduct = null;
+    var selectedOptions = {};
+
     document.addEventListener('click', function(e) {
       var btn = e.target.closest('[data-quick-view]');
-      if (!btn) return;
-      e.preventDefault();
+      if (btn) {
+        e.preventDefault();
+        loadProduct(btn.dataset.quickView);
+        return;
+      }
 
-      var handle = btn.dataset.quickView;
+      /* Variant option click inside quick view */
+      var optBtn = e.target.closest('[data-qv-option]');
+      if (optBtn) {
+        e.preventDefault();
+        selectOption(optBtn);
+        return;
+      }
+
+      /* Quantity buttons */
+      var qtyMinus = e.target.closest('[data-quick-view-qty-minus]');
+      if (qtyMinus) {
+        e.preventDefault();
+        var input = document.querySelector('[data-quick-view-qty]');
+        if (input) input.value = Math.max(1, parseInt(input.value, 10) - 1);
+        return;
+      }
+
+      var qtyPlus = e.target.closest('[data-quick-view-qty-plus]');
+      if (qtyPlus) {
+        e.preventDefault();
+        var input = document.querySelector('[data-quick-view-qty]');
+        if (input) input.value = parseInt(input.value, 10) + 1;
+      }
+    });
+
+    function loadProduct(handle) {
       if (!handle) return;
 
       fetch('/products/' + handle + '.js')
         .then(function(r) { return r.json(); })
         .then(function(product) {
-          var title = document.querySelector('[data-quick-view-title]');
-          var image = document.querySelector('[data-quick-view-image]');
-          var vendor = document.querySelector('[data-quick-view-vendor]');
-          var price = document.querySelector('[data-quick-view-price]');
-          var compare = document.querySelector('[data-quick-view-compare]');
-          var link = document.querySelector('[data-quick-view-link]');
-          var atc = document.querySelector('[data-quick-view-atc]');
+          currentProduct = product;
+          selectedOptions = {};
 
-          if (title) title.textContent = product.title;
-          if (image && product.featured_image) {
-            image.src = product.featured_image;
-            image.alt = product.title;
-          }
-          if (vendor) vendor.textContent = product.vendor;
-          if (price) price.textContent = FlyFlow.formatMoney(product.price);
+          /* Set basic info */
+          setText('[data-quick-view-title]', product.title);
+          setAttr('[data-quick-view-image]', 'src', product.featured_image);
+          setAttr('[data-quick-view-image]', 'alt', product.title);
+          setText('[data-quick-view-vendor]', product.vendor);
+          setText('[data-quick-view-price]', FlyFlow.formatMoney(product.price));
+          setAttr('[data-quick-view-link]', 'href', product.url);
+
+          /* Compare at price */
+          var compare = document.querySelector('[data-quick-view-compare]');
           if (compare) {
             if (product.compare_at_price && product.compare_at_price > product.price) {
               compare.textContent = FlyFlow.formatMoney(product.compare_at_price);
@@ -112,11 +158,158 @@
               compare.style.display = 'none';
             }
           }
-          if (link) link.href = product.url;
-          if (atc) atc.dataset.variantId = product.variants[0].id;
 
+          /* Build variant selectors */
+          buildVariants(product);
+
+          /* Set initial variant */
+          var firstAvailable = product.variants.find(function(v) { return v.available; }) || product.variants[0];
+          updateVariant(firstAvailable);
+
+          /* Reset quantity */
+          var qtyInput = document.querySelector('[data-quick-view-qty]');
+          if (qtyInput) qtyInput.value = 1;
+
+          /* Open modal */
           FlyFlow.Modal.open('quick-view-modal');
         });
-    });
+    }
+
+    function buildVariants(product) {
+      var container = document.querySelector('[data-quick-view-variants]');
+      if (!container) return;
+
+      if (product.variants.length === 1 && product.variants[0].title === 'Default Title') {
+        container.innerHTML = '';
+        return;
+      }
+
+      var html = '';
+      product.options.forEach(function(optionName, idx) {
+        var values = [];
+        product.variants.forEach(function(v) {
+          var val = v.options[idx];
+          if (values.indexOf(val) === -1) values.push(val);
+        });
+
+        /* Pre-select first available */
+        var firstAvailable = product.variants.find(function(v) { return v.available; });
+        var selectedVal = firstAvailable ? firstAvailable.options[idx] : values[0];
+        selectedOptions[optionName] = selectedVal;
+
+        var isColor = optionName.toLowerCase() === 'color' || optionName.toLowerCase() === 'colour';
+
+        html += '<div class="variant-selector" style="margin-bottom:var(--space-md)">';
+        html += '<div class="variant-selector__label"><span>' + optionName + ':</span> <span class="variant-selector__selected" data-qv-selected="' + optionName + '">' + selectedVal + '</span></div>';
+        html += '<div class="variant-selector__options">';
+
+        values.forEach(function(val) {
+          /* Check availability for this value */
+          var available = product.variants.some(function(v) {
+            return v.options[idx] === val && v.available;
+          });
+
+          if (isColor) {
+            html += '<button type="button" class="swatch' + (val === selectedVal ? ' swatch--active' : '') + (!available ? ' swatch--sold-out' : '') + '" '
+              + 'style="background-color:' + val.toLowerCase().replace(/\s/g, '') + '" '
+              + 'data-qv-option data-qv-option-name="' + optionName + '" data-qv-option-value="' + val + '" '
+              + 'title="' + val + '" aria-label="' + val + '"></button>';
+          } else {
+            html += '<button type="button" class="size-btn' + (val === selectedVal ? ' size-btn--active' : '') + (!available ? ' size-btn--sold-out' : '') + '" '
+              + 'data-qv-option data-qv-option-name="' + optionName + '" data-qv-option-value="' + val + '" '
+              + 'aria-label="' + val + '">' + val + '</button>';
+          }
+        });
+
+        html += '</div></div>';
+      });
+
+      container.innerHTML = html;
+    }
+
+    function selectOption(btn) {
+      var name = btn.dataset.qvOptionName;
+      var value = btn.dataset.qvOptionValue;
+      selectedOptions[name] = value;
+
+      /* Update active states */
+      var group = btn.closest('.variant-selector');
+      if (group) {
+        group.querySelectorAll('[data-qv-option]').forEach(function(b) {
+          var isColor = b.classList.contains('swatch');
+          var cls = isColor ? 'swatch--active' : 'size-btn--active';
+          b.classList.toggle(cls, b.dataset.qvOptionValue === value);
+        });
+        var label = group.querySelector('[data-qv-selected]');
+        if (label) label.textContent = value;
+      }
+
+      /* Find matching variant */
+      var variant = currentProduct.variants.find(function(v) {
+        return currentProduct.options.every(function(optName, idx) {
+          return !selectedOptions[optName] || selectedOptions[optName] === v.options[idx];
+        });
+      });
+
+      if (variant) updateVariant(variant);
+    }
+
+    function updateVariant(variant) {
+      setText('[data-quick-view-price]', FlyFlow.formatMoney(variant.price));
+
+      var compare = document.querySelector('[data-quick-view-compare]');
+      if (compare) {
+        if (variant.compare_at_price && variant.compare_at_price > variant.price) {
+          compare.textContent = FlyFlow.formatMoney(variant.compare_at_price);
+          compare.style.display = '';
+        } else {
+          compare.style.display = 'none';
+        }
+      }
+
+      /* Update image if variant has one */
+      if (variant.featured_image) {
+        setAttr('[data-quick-view-image]', 'src', variant.featured_image.src);
+      }
+
+      /* Update stock */
+      var stockEl = document.querySelector('[data-quick-view-stock]');
+      var stockText = document.querySelector('[data-quick-view-stock-text]');
+      if (stockEl && stockText) {
+        stockEl.style.display = '';
+        if (!variant.available) {
+          stockEl.className = 'stock-indicator stock-indicator--low-stock';
+          stockText.textContent = 'Out of stock';
+        } else if (variant.inventory_management && variant.inventory_quantity <= 5) {
+          stockEl.className = 'stock-indicator stock-indicator--low-stock';
+          stockText.textContent = 'Only ' + variant.inventory_quantity + ' left';
+        } else {
+          stockEl.className = 'stock-indicator stock-indicator--in-stock';
+          stockText.textContent = 'In stock';
+        }
+      }
+
+      /* Update ATC button */
+      var atc = document.querySelector('[data-quick-view-atc]');
+      if (atc) {
+        atc.dataset.variantId = variant.id;
+        if (variant.available) {
+          atc.disabled = false;
+          atc.textContent = atc.dataset.addText || 'Add to Bag';
+        } else {
+          atc.disabled = true;
+          atc.textContent = 'Sold Out';
+        }
+      }
+    }
+
+    function setText(sel, text) {
+      var el = document.querySelector(sel);
+      if (el) el.textContent = text;
+    }
+    function setAttr(sel, attr, val) {
+      var el = document.querySelector(sel);
+      if (el) el.setAttribute(attr, val);
+    }
   })();
 </script>

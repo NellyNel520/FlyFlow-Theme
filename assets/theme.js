@@ -194,32 +194,52 @@ FlyFlow.Cart = (function () {
    */
   async function handleAddToCart(btn) {
     const form = btn.closest('form');
-    const variantId = form
-      ? form.querySelector('[name="id"]').value
-      : btn.dataset.variantId;
+    let variantId;
+    let quantity = 1;
+
+    if (form) {
+      const idInput = form.querySelector('[name="id"]');
+      const qtyInput = form.querySelector('[name="quantity"]');
+      variantId = idInput ? idInput.value : btn.dataset.variantId;
+      quantity = qtyInput ? parseInt(qtyInput.value, 10) || 1 : 1;
+    } else {
+      variantId = btn.dataset.variantId;
+      /* Check for quick-view quantity input */
+      const qvQty = document.querySelector('[data-quick-view-qty]');
+      if (qvQty && btn.closest('#quick-view-modal')) {
+        quantity = parseInt(qvQty.value, 10) || 1;
+      }
+    }
 
     if (!variantId) return;
 
+    /* Prevent form submission */
+    if (form) {
+      const submitEvent = new Event('submit', { cancelable: true });
+      form.dispatchEvent(submitEvent);
+    }
+
+    const originalText = btn.textContent;
     btn.disabled = true;
     btn.textContent = 'Adding...';
 
     try {
       await FlyFlow.fetchAPI('/cart/add.js', {
-        items: [{ id: parseInt(variantId, 10), quantity: 1 }],
+        items: [{ id: parseInt(variantId, 10), quantity: quantity }],
       });
       await refreshCart();
       open();
-      FlyFlow.announce('Item added to cart');
+      FlyFlow.announce('Item added to bag');
 
       btn.textContent = 'Added!';
       setTimeout(() => {
         btn.disabled = false;
-        btn.textContent = btn.dataset.addText || 'Add to Cart';
+        btn.textContent = btn.dataset.addText || originalText;
       }, 1500);
     } catch (error) {
       btn.disabled = false;
-      btn.textContent = btn.dataset.addText || 'Add to Cart';
-      FlyFlow.announce('Could not add item to cart');
+      btn.textContent = btn.dataset.addText || originalText;
+      FlyFlow.announce('Could not add item to bag');
     }
   }
 
