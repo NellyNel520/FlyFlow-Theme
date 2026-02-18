@@ -312,7 +312,7 @@
         if (!variant.available) {
           stockEl.className = 'stock-indicator stock-indicator--out-of-stock';
           stockText.textContent = 'Out of stock';
-        } else if (variant.inventory_management && variant.inventory_quantity <= 5) {
+        } else if (variant.inventory_management && variant.inventory_quantity > 0 && variant.inventory_quantity <= 5) {
           stockEl.className = 'stock-indicator stock-indicator--low-stock';
           stockText.textContent = 'Only ' + variant.inventory_quantity + ' left';
         } else {

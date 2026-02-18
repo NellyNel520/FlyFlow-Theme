@@ -1001,12 +1001,12 @@ FlyFlow.VariantSelector = (function () {
     if (!indicator) return;
 
     const threshold = parseInt(indicator.dataset.threshold, 10) || 5;
-    const qty = variant.inventory_quantity;
+    const qty = parseInt(variant.inventory_quantity || 0, 10);
 
     if (!variant.available) {
       indicator.className = 'stock-indicator stock-indicator--out-of-stock';
       indicator.innerHTML = '<span class="stock-indicator__dot"></span> Out of stock';
-    } else if (variant.inventory_management && qty <= threshold) {
+    } else if (variant.inventory_management && qty > 0 && qty <= threshold) {
       indicator.className = 'stock-indicator stock-indicator--low-stock';
       indicator.innerHTML = `<span class="stock-indicator__dot"></span> Only ${qty} left`;
     } else {

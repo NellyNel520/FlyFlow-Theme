@@ -47,14 +47,14 @@
         {% if settings.product_show_stock %}
           {% assign current_variant = product.selected_or_first_available_variant %}
           <div
-            class="stock-indicator{% if current_variant.available == false %} stock-indicator--out-of-stock{% elsif current_variant.inventory_quantity <= settings.product_stock_threshold and current_variant.inventory_management %} stock-indicator--low-stock{% else %} stock-indicator--in-stock{% endif %}"
+            class="stock-indicator{% if current_variant.available == false %} stock-indicator--out-of-stock{% elsif current_variant.inventory_management and current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= settings.product_stock_threshold %} stock-indicator--low-stock{% else %} stock-indicator--in-stock{% endif %}"
             data-stock-indicator
             data-threshold="{{ settings.product_stock_threshold }}"
           >
             <span class="stock-indicator__dot"></span>
             {% if current_variant.available == false %}
               {{ 'products.stock.out_of_stock' | t }}
-            {% elsif current_variant.inventory_quantity <= settings.product_stock_threshold and current_variant.inventory_management %}
+            {% elsif current_variant.inventory_management and current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= settings.product_stock_threshold %}
               {{ 'products.stock.low_stock' | t: count: current_variant.inventory_quantity }}
             {% else %}
               {{ 'products.stock.in_stock' | t }}

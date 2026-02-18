@@ -14,7 +14,7 @@
       <span class="stock-indicator__dot"></span>
       {{ 'products.stock.out_of_stock' | t }}
     </div>
-  {% elsif variant.inventory_management and variant.inventory_quantity <= threshold %}
+  {% elsif variant.inventory_management and variant.inventory_quantity > 0 and variant.inventory_quantity <= threshold %}
     <div class="stock-indicator stock-indicator--low-stock">
       <span class="stock-indicator__dot"></span>
       {{ 'products.stock.low_stock' | t: count: variant.inventory_quantity }}
