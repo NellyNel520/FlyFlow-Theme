@@ -1311,7 +1311,7 @@ small {
 
 .product-purchase-panel .product-block--quantity-selector,
 .product-purchase-panel .product-block--buy-buttons {
-  margin-top: var(--space-sm);
+  margin-top: var(--space-lg);
 }
 
 .variant-selector__label {
