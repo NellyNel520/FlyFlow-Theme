@@ -106,33 +106,56 @@
   (function() {
     var overlay = document.querySelector('[data-search-overlay]');
     if (!overlay) return;
+    var searchInput = overlay.querySelector('[data-predictive-search-input]');
+    var results = overlay.querySelector('[data-predictive-search-results]');
+    var trending = overlay.querySelector('[data-search-trending]');
+
+    function openOverlay() {
+      overlay.style.opacity = '1';
+      overlay.style.visibility = 'visible';
+      document.body.classList.add('drawer-open');
+      if (searchInput) setTimeout(function() { searchInput.focus(); }, 100);
+    }
+
+    function closeOverlay() {
+      overlay.style.opacity = '0';
+      overlay.style.visibility = 'hidden';
+      document.body.classList.remove('drawer-open');
+      if (searchInput && searchInput.value.trim().length === 0 && trending) {
+        trending.style.display = '';
+      }
+      if (results && searchInput && searchInput.value.trim().length === 0) {
+        results.classList.remove('predictive-search__results--open');
+      }
+    }
 
     /* Open search overlay */
     document.addEventListener('click', function(e) {
       var openBtn = e.target.closest('[data-search-open]');
       if (openBtn) {
         e.preventDefault();
-        overlay.style.opacity = '1';
-        overlay.style.visibility = 'visible';
-        document.body.classList.add('drawer-open');
-        var input = overlay.querySelector('[data-predictive-search-input]');
-        if (input) setTimeout(function() { input.focus(); }, 100);
+        openOverlay();
       }
 
       var closeBtn = e.target.closest('[data-search-close]');
       if (closeBtn) {
         e.preventDefault();
-        overlay.style.opacity = '0';
-        overlay.style.visibility = 'hidden';
-        document.body.classList.remove('drawer-open');
+        closeOverlay();
+        return;
+      }
+
+      if (overlay.style.visibility === 'visible') {
+        var clickedInsideSearch = e.target.closest('[data-predictive-search]');
+        var clickedOpenTrigger = e.target.closest('[data-search-open]');
+        if (!clickedInsideSearch && !clickedOpenTrigger) {
+          closeOverlay();
+        }
       }
     });
 
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && overlay.style.visibility === 'visible') {
-        overlay.style.opacity = '0';
-        overlay.style.visibility = 'hidden';
-        document.body.classList.remove('drawer-open');
+        closeOverlay();
       }
     });
   })();

@@ -24,6 +24,7 @@ Ship a production-ready Shopify theme with stable structure, complete core flows
 - [x] Add `sections/main-contact.liquid` and `templates/page.contact.json`
 - [x] Add `templates/page.brand-story.json` using modular narrative sections
 - [x] Harden quick view UX with loading/error handling and unavailable-option guards
+- [x] Improve predictive-search overlay close/reset behavior for cleaner live UX
 - [x] Harden predictive search results (race-safe cache/render, pages group, safer output)
 - [x] Improve quick view resilience (loading state, fetch error handling, unavailable variant handling)
 
@@ -40,4 +41,5 @@ Ship a production-ready Shopify theme with stable structure, complete core flows
 - 2026-02-18: Added a dedicated editorial page template with hero, narrative block, and newsletter CTA.
 - 2026-02-18: Added dedicated contact and brand-story templates, including a new main contact section with Shopify form handling.
 - 2026-02-18: Improved quick-view state handling (loading, fetch failure messaging, sold-out option guards).
+- 2026-02-18: Refined predictive-search overlay interactions (outside-click close and reset behavior).
 - 2026-02-18: Improved predictive search and quick view robustness for empty/error and variant edge cases.
