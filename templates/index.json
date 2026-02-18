@@ -53,88 +53,88 @@
       }
     },
     "brand-carousel": {
-      "type": "premium-grid-carousel",
+      "type": "premium-carousel",
       "blocks": {
         "slide-1": {
-          "type": "card",
+          "type": "slide",
           "settings": {
-            "eyebrow": "Footwear",
-            "title": "Runway Sneaker Edit",
+            "heading": "Runway Sneaker Edit",
+            "subheading": "Footwear",
             "link": "/collections/sneakers"
           }
         },
         "slide-2": {
-          "type": "card",
+          "type": "slide",
           "settings": {
-            "eyebrow": "Apparel",
-            "title": "Oversized Layering System",
+            "heading": "Oversized Layering System",
+            "subheading": "Apparel",
             "link": "/collections/apparel"
           }
         },
         "slide-3": {
-          "type": "card",
+          "type": "slide",
           "settings": {
-            "eyebrow": "Accessories",
-            "title": "Signature Carry Collection",
+            "heading": "Signature Carry Collection",
+            "subheading": "Accessories",
             "link": "/collections/accessories"
           }
         },
         "slide-4": {
-          "type": "card",
+          "type": "slide",
           "settings": {
-            "eyebrow": "New Arrivals",
-            "title": "Monochrome Utility Drop",
+            "heading": "Monochrome Utility Drop",
+            "subheading": "New Arrivals",
             "link": "/collections/new-arrivals"
           }
         },
         "slide-5": {
-          "type": "card",
+          "type": "slide",
           "settings": {
-            "eyebrow": "Best Sellers",
-            "title": "Core Rotation Essentials",
+            "heading": "Core Rotation Essentials",
+            "subheading": "Best Sellers",
             "link": "/collections/best-sellers"
           }
         },
         "slide-6": {
-          "type": "card",
+          "type": "slide",
           "settings": {
-            "eyebrow": "Campaign",
-            "title": "Street Tailoring Capsule",
+            "heading": "Street Tailoring Capsule",
+            "subheading": "Campaign",
             "link": "/collections/all"
           }
         },
         "slide-7": {
-          "type": "card",
+          "type": "slide",
           "settings": {
-            "eyebrow": "Studio",
-            "title": "Performance Knit Series",
+            "heading": "Performance Knit Series",
+            "subheading": "Studio",
             "link": "/collections/apparel"
           }
         },
         "slide-8": {
-          "type": "card",
+          "type": "slide",
           "settings": {
-            "eyebrow": "Style Edit",
-            "title": "Night Transit Uniform",
+            "heading": "Night Transit Uniform",
+            "subheading": "Style Edit",
             "link": "/collections/new-arrivals"
           }
         },
         "slide-9": {
-          "type": "card",
+          "type": "slide",
           "settings": {
-            "eyebrow": "Archive",
-            "title": "Luxury Street Classics",
+            "heading": "Luxury Street Classics",
+            "subheading": "Archive",
             "link": "/collections/best-sellers"
           }
         }
       },
       "block_order": ["slide-1", "slide-2", "slide-3", "slide-4", "slide-5", "slide-6", "slide-7", "slide-8", "slide-9"],
       "settings": {
-        "overline": "Campaign Edit",
-        "heading": "3-Up Runway Carousel",
-        "subheading": "Autoplay enabled with manual controls. Shows three premium cards at once on desktop.",
         "autoplay": true,
-        "autoplay_interval": 5
+        "autoplay_speed": 5,
+        "background_color": "#ffffff",
+        "padding_top": 56,
+        "padding_bottom": 56
       }
     },
     "collection-list": {
