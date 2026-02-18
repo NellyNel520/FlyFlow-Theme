@@ -3,12 +3,16 @@
     "hero": {
       "type": "hero-banner",
       "settings": {
+        "media_mode": "image",
         "overline": "New Collection",
         "heading": "Elevate Your Style",
         "subheading": "Discover curated fashion, designer footwear, and statement accessories crafted for those who move with intention.",
         "button_text": "Explore the Collection",
         "button_link": "/collections/all",
         "height": 90,
+        "enable_parallax": true,
+        "carousel_autoplay": true,
+        "carousel_interval": 5,
         "overlay_opacity": 35
       }
     },
@@ -129,6 +133,43 @@
         "heading": "Style Edit"
       }
     },
+    "instagram-feed": {
+      "type": "instagram-feed",
+      "blocks": {
+        "post-1": {
+          "type": "post",
+          "settings": {
+            "caption": "Street minimalism, modern edge"
+          }
+        },
+        "post-2": {
+          "type": "post",
+          "settings": {
+            "caption": "Layered essentials in neutral tones"
+          }
+        },
+        "post-3": {
+          "type": "post",
+          "settings": {
+            "caption": "Premium footwear focus"
+          }
+        },
+        "post-4": {
+          "type": "post",
+          "settings": {
+            "caption": "Accessories that complete the look"
+          }
+        }
+      },
+      "block_order": ["post-1", "post-2", "post-3", "post-4"],
+      "settings": {
+        "overline": "Social",
+        "heading": "Follow the FlyFlow Edit",
+        "text": "Connect your latest styling shots and product moments from Instagram.",
+        "profile_url": "https://www.instagram.com",
+        "columns_desktop": 4
+      }
+    },
     "recently-viewed": {
       "type": "recently-viewed",
       "settings": {
@@ -151,6 +192,7 @@
     "featured-collection",
     "image-with-text",
     "shop-the-look",
+    "instagram-feed",
     "recently-viewed",
     "newsletter"
   ]

@@ -1320,6 +1320,123 @@ FlyFlow.StickyATC = (function () {
 })();
 
 /* ==========================================================================
+   Hero Media Module
+   ========================================================================== */
+
+FlyFlow.HeroMedia = (function () {
+  function init() {
+    initCarousels();
+    initParallax();
+  }
+
+  function initCarousels() {
+    document.querySelectorAll('[data-hero-carousel]').forEach(function (carousel) {
+      const slides = carousel.querySelectorAll('[data-hero-slide]');
+      const dots = carousel.querySelectorAll('[data-hero-carousel-dot]');
+      const prevBtn = carousel.querySelector('[data-hero-carousel-prev]');
+      const nextBtn = carousel.querySelector('[data-hero-carousel-next]');
+      const autoplay = carousel.dataset.carouselAutoplay === 'true';
+      const interval = parseInt(carousel.dataset.carouselInterval || '5000', 10);
+      let currentIndex = 0;
+      let timer = null;
+
+      if (slides.length <= 1) {
+        if (prevBtn) prevBtn.style.display = 'none';
+        if (nextBtn) nextBtn.style.display = 'none';
+        return;
+      }
+
+      function goTo(index) {
+        currentIndex = (index + slides.length) % slides.length;
+        slides.forEach(function (slide, slideIndex) {
+          slide.classList.toggle('is-active', slideIndex === currentIndex);
+        });
+        dots.forEach(function (dot, dotIndex) {
+          dot.classList.toggle('is-active', dotIndex === currentIndex);
+        });
+      }
+
+      function startAutoplay() {
+        if (!autoplay) return;
+        stopAutoplay();
+        timer = window.setInterval(function () {
+          goTo(currentIndex + 1);
+        }, interval);
+      }
+
+      function stopAutoplay() {
+        if (timer) {
+          window.clearInterval(timer);
+          timer = null;
+        }
+      }
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', function () {
+          goTo(currentIndex - 1);
+          startAutoplay();
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function () {
+          goTo(currentIndex + 1);
+          startAutoplay();
+        });
+      }
+
+      dots.forEach(function (dot) {
+        dot.addEventListener('click', function () {
+          goTo(parseInt(dot.dataset.heroCarouselDot || '0', 10));
+          startAutoplay();
+        });
+      });
+
+      carousel.addEventListener('mouseenter', stopAutoplay);
+      carousel.addEventListener('mouseleave', startAutoplay);
+      carousel.addEventListener('focusin', stopAutoplay);
+      carousel.addEventListener('focusout', startAutoplay);
+
+      startAutoplay();
+    });
+  }
+
+  function initParallax() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const containers = document.querySelectorAll('[data-hero-parallax]');
+    if (!containers.length) return;
+
+    let ticking = false;
+
+    function updateParallax() {
+      containers.forEach(function (container) {
+        const rect = container.getBoundingClientRect();
+        const speed = 0.12;
+        const offset = -rect.top * speed;
+        container.querySelectorAll('[data-hero-parallax-target]').forEach(function (target) {
+          target.style.transform = `translate3d(0, ${offset}px, 0)`;
+        });
+      });
+      ticking = false;
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        window.requestAnimationFrame(updateParallax);
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    onScroll();
+  }
+
+  return { init };
+})();
+
+/* ==========================================================================
    Back to Top Module
    ========================================================================== */
 
@@ -1466,6 +1583,7 @@ document.addEventListener('DOMContentLoaded', function () {
   FlyFlow.Accordion.init();
   FlyFlow.QuantityButtons.init();
   FlyFlow.StickyATC.init();
+  FlyFlow.HeroMedia.init();
   FlyFlow.BackToTop.init();
   FlyFlow.NewsletterPopup.init();
   FlyFlow.Analytics.init();

@@ -13,10 +13,10 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - [x] Featured collections with hover effects
 - [x] Lookbook/editorial content sections (`shop-the-look`, `editorial-landing`, `image-with-text`)
 - [x] Newsletter section
-- [ ] Hero video support
-- [ ] Hero carousel support
-- [ ] Parallax scrolling support
-- [ ] Instagram feed integration
+- [x] Hero video support
+- [x] Hero carousel support
+- [x] Parallax scrolling support
+- [x] Instagram feed integration
 - [x] Newsletter popup/slide-in behavior
 - [x] Explicit quick-links band (collections/about/contact)
 
@@ -65,8 +65,8 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 ## Execution Plan (Phased)
 
 ### Phase 1: Feature Completion
-- [ ] Add hero video + optional carousel mode
-- [ ] Add Instagram feed section
+- [x] Add hero video + optional carousel mode
+- [x] Add Instagram feed section
 - [x] Add back-to-top control
 - [x] Add newsletter popup/slide-in option
 - [x] Add quick-links utility section on homepage
@@ -96,3 +96,4 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - 2026-02-18: Converted tracker to spec-audit + phased roadmap aligned to original project brief.
 - 2026-02-18: Added theme-level off-vibe product masking so snowboard items no longer surface in key storefront cards.
 - 2026-02-18: Completed Phase 1 UX additions: back-to-top, quick-links homepage utility section, and configurable newsletter popup/slide-in.
+- 2026-02-18: Completed remaining Phase 1 homepage features: hero video/carousel/parallax support and new Instagram feed section.
