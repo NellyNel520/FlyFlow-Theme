@@ -112,3 +112,4 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - 2026-02-18: Theme Check reduced to 2 expected `RemoteAsset` warnings in analytics snippets (GA4/Facebook pixel URLs); no actionable Liquid offenses remain.
 - 2026-02-18: Implemented functional collection view modes (grid/list/masonry) with persisted preference and section-level default view setting.
 - 2026-02-18: Fixed add-to-cart reliability by refreshing full cart drawer section state (empty/non-empty transitions) and scoping PDP variant updates to the product section only.
+- 2026-02-18: Hardened add-to-cart requests across PDP/sticky/quick-view/quick-buy with FormData submission support and native `/cart/add` fallback redirect when AJAX add fails.
