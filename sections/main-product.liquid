@@ -93,10 +93,30 @@
                   {% endfor %}
 
                   {% if option.name == 'Color' and settings.product_variant_style == 'swatches' %}
+                    {% assign swatch_name = value | downcase %}
+                    {% assign swatch_color = '#d4d1cc' %}
+                    {% case swatch_name %}
+                      {% when 'onyx', 'black' %}
+                        {% assign swatch_color = '#0a0a0a' %}
+                      {% when 'cloud', 'white' %}
+                        {% assign swatch_color = '#f5f4f2' %}
+                      {% when 'bone' %}
+                        {% assign swatch_color = '#e7dfd1' %}
+                      {% when 'butter' %}
+                        {% assign swatch_color = '#eadf9d' %}
+                      {% when 'slate', 'grey', 'gray' %}
+                        {% assign swatch_color = '#73767b' %}
+                      {% when 'olive' %}
+                        {% assign swatch_color = '#677056' %}
+                      {% when 'gold' %}
+                        {% assign swatch_color = '#c4a46a' %}
+                      {% when 'silver' %}
+                        {% assign swatch_color = '#bfc3c7' %}
+                    {% endcase %}
                     <button
                       type="button"
                       class="swatch{% if option.selected_value == value %} swatch--active{% endif %}{% unless found_available %} swatch--sold-out{% endunless %}"
-                      style="background-color: {{ value | handleize }}"
+                      style="background-color: {{ swatch_color }}"
                       data-option-value="{{ value }}"
                       data-option-name="{{ option.name }}"
                       title="{{ value }}{% unless found_available %} - {{ 'products.sold_out' | t }}{% endunless %}"

@@ -102,6 +102,25 @@
     var selectedOptions = {};
     var isLoading = false;
 
+    function getSwatchColor(value) {
+      var key = String(value || '').toLowerCase();
+      var map = {
+        onyx: '#0a0a0a',
+        black: '#0a0a0a',
+        cloud: '#f5f4f2',
+        white: '#f5f4f2',
+        bone: '#e7dfd1',
+        butter: '#eadf9d',
+        slate: '#73767b',
+        grey: '#73767b',
+        gray: '#73767b',
+        olive: '#677056',
+        gold: '#c4a46a',
+        silver: '#bfc3c7'
+      };
+      return map[key] || '#d4d1cc';
+    }
+
     document.addEventListener('click', function(e) {
       var btn = e.target.closest('[data-quick-view]');
       if (btn) {
@@ -233,7 +252,7 @@
 
           if (isColor) {
             html += '<button type="button" class="swatch' + (val === selectedVal ? ' swatch--active' : '') + (!available ? ' swatch--sold-out' : '') + '" '
-              + 'style="background-color:' + val.toLowerCase().replace(/\s/g, '') + '" '
+              + 'style="background-color:' + getSwatchColor(val) + '" '
               + 'data-qv-option data-qv-option-name="' + optionName + '" data-qv-option-value="' + val + '" '
               + 'title="' + val + '" aria-label="' + val + '"'
               + (!available ? ' aria-disabled="true"' : '') + '></button>';
