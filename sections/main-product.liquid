@@ -6,7 +6,7 @@
   Last modified: 2026-02-18
 {% endcomment %}
 
-<section class="section" data-section-id="{{ section.id }}">
+<section class="section" data-section-id="{{ section.id }}" style="--pdp-sticky-top: {{ section.settings.sticky_top_offset | default: 80 }}px;">
   <div class="container">
     <nav class="breadcrumbs mb-lg" aria-label="Breadcrumb" style="font-size:0.8125rem;color:var(--color-text-secondary)">
       <a href="{{ routes.root_url }}">Home</a>
@@ -49,6 +49,23 @@
                       {{ product.compare_at_price | money }}
                     </span>
                   </div>
+
+                {% when 'rating' %}
+                  {% assign rating_value = product.metafields.reviews.rating.value.rating | default: product.metafields.reviews.rating.value %}
+                  {% assign rating_count = product.metafields.reviews.rating_count | default: product.metafields.spr.reviews %}
+                  {% if rating_value != blank %}
+                    <div class="product-info__rating" aria-label="Rated {{ rating_value }} out of 5">
+                      <span class="product-info__rating-stars" aria-hidden="true">
+                        {% assign rating_rounded = rating_value | round %}
+                        {% for i in (1..5) %}
+                          {% if i <= rating_rounded %}★{% else %}☆{% endif %}
+                        {% endfor %}
+                      </span>
+                      <span class="product-info__rating-text">
+                        {{ rating_value }}/5{% if rating_count != blank %} ({{ rating_count }}){% endif %}
+                      </span>
+                    </div>
+                  {% endif %}
 
                 {% when 'inventory' %}
                   {% assign current_variant = product.selected_or_first_available_variant %}
@@ -253,7 +270,18 @@
 {% schema %}
 {
   "name": "Main Product",
-  "settings": [],
+  "settings": [
+    {
+      "type": "range",
+      "id": "sticky_top_offset",
+      "label": "Sticky info top offset",
+      "min": 56,
+      "max": 140,
+      "step": 4,
+      "default": 80,
+      "unit": "px"
+    }
+  ],
   "blocks": [
     {
       "type": "vendor",
@@ -268,6 +296,11 @@
     {
       "type": "price",
       "name": "Price",
+      "limit": 1
+    },
+    {
+      "type": "rating",
+      "name": "Rating",
       "limit": 1
     },
     {
@@ -327,6 +360,7 @@
         { "type": "vendor" },
         { "type": "title" },
         { "type": "price" },
+        { "type": "rating" },
         { "type": "inventory" },
         { "type": "variant_picker" },
         { "type": "quantity_selector" },

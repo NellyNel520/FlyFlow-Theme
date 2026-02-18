@@ -1079,13 +1079,13 @@ small {
 .product {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-xl);
+  gap: clamp(1.25rem, 2.5vw, 2.5rem);
   padding-block: var(--space-lg);
 }
 
 @media (min-width: 768px) {
   .product {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 58% 42%;
     gap: var(--space-2xl);
     padding-block: var(--space-xl);
   }
@@ -1093,8 +1093,8 @@ small {
 
 @media (min-width: 1024px) {
   .product {
-    grid-template-columns: 7fr 5fr;
-    gap: var(--space-3xl);
+    grid-template-columns: minmax(0, 58%) minmax(0, 42%);
+    gap: clamp(2rem, 3vw, 3.5rem);
     padding-block: var(--space-2xl);
   }
 }
@@ -1108,7 +1108,10 @@ small {
   position: relative;
   overflow: hidden;
   aspect-ratio: 3 / 4;
-  background-color: var(--color-surface);
+  background-color: var(--color-background);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(10, 10, 10, 0.06);
   cursor: zoom-in;
 }
 
@@ -1121,11 +1124,12 @@ small {
 
 .product-gallery__thumbnails {
   display: flex;
-  gap: var(--space-xs);
-  margin-top: var(--space-xs);
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  padding-bottom: 2px;
 }
 
 .product-gallery__thumbnails::-webkit-scrollbar {
@@ -1134,18 +1138,19 @@ small {
 
 .product-gallery__thumbnail {
   flex-shrink: 0;
-  width: 64px;
-  height: 80px;
+  width: 76px;
+  height: 96px;
   overflow: hidden;
-  border: 1px solid transparent;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
   cursor: pointer;
-  opacity: 0.5;
+  opacity: 0.6;
   transition: all var(--transition-fast);
 }
 
 .product-gallery__thumbnail--active,
 .product-gallery__thumbnail:hover {
-  border-color: var(--color-primary);
+  border-color: var(--color-text);
   opacity: 1;
 }
 
@@ -1203,14 +1208,19 @@ small {
 .product-info {
   display: flex;
   flex-direction: column;
+  gap: var(--space-md);
 }
 
 @media (min-width: 1024px) {
   .product-info {
     position: sticky;
-    top: 120px;
+    top: var(--pdp-sticky-top, 80px);
     align-self: start;
-    padding-left: var(--space-lg);
+    padding: clamp(1rem, 1.2vw, 1.25rem);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(10, 10, 10, 0.05);
+    background: var(--color-background);
   }
 }
 
@@ -1225,7 +1235,7 @@ small {
 .product-info__title {
   font-size: clamp(1.75rem, 3.5vw, 2.5rem);
   line-height: 1.1;
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-sm);
   letter-spacing: -0.02em;
 }
 
@@ -1233,7 +1243,7 @@ small {
   display: flex;
   align-items: baseline;
   gap: var(--space-sm);
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-sm);
   font-size: 1.125rem;
   letter-spacing: 0.03em;
 }
@@ -1249,10 +1259,29 @@ small {
   font-size: 0.9375rem;
 }
 
+.product-info__rating {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.product-info__rating-stars {
+  letter-spacing: 0.08em;
+  color: #b58f4a;
+  font-size: 0.85rem;
+}
+
+.product-info__rating-text {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.03em;
+}
+
 /* Variant swatches — refined */
 .variant-selector {
-  margin-bottom: var(--space-xl);
-  padding-top: var(--space-lg);
+  margin-bottom: var(--space-lg);
+  padding-top: var(--space-md);
   border-top: 1px solid var(--color-border);
 }
 
@@ -1428,13 +1457,42 @@ small {
 
 /* Add to cart section */
 .product-info__add-to-cart {
-  display: flex;
+  display: grid;
   gap: var(--space-sm);
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-lg);
 }
 
-.product-info__add-to-cart .btn {
-  flex: 1;
+.product-info__add-to-cart [data-add-to-cart] {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.product-info__add-to-cart .shopify-payment-button__button {
+  min-height: 48px;
+  border-radius: 999px !important;
+}
+
+.product-gallery__thumbnail:focus-visible,
+.swatch:focus-visible,
+.size-btn:focus-visible,
+.quantity-selector__btn:focus-visible,
+.product-info__add-to-cart [data-add-to-cart]:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-gallery__main-image,
+  .product-gallery__thumbnail,
+  .swatch,
+  .size-btn,
+  .product-info__add-to-cart [data-add-to-cart] {
+    transition: none !important;
+  }
 }
 
 /* Sticky add to cart — luxury bar */

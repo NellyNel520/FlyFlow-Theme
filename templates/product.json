@@ -15,6 +15,10 @@
           "type": "price",
           "settings": {}
         },
+        "rating": {
+          "type": "rating",
+          "settings": {}
+        },
         "inventory": {
           "type": "inventory",
           "settings": {}
@@ -44,6 +48,7 @@
         "vendor",
         "title",
         "price",
+        "rating",
         "inventory",
         "variant_picker",
         "quantity_selector",
