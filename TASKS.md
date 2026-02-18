@@ -103,3 +103,4 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - 2026-02-18: Added Shopify import assets for fresh FlyFlow catalog seeding: `documentation/flyflow-product-seed.csv` and `documentation/CATALOG_SETUP.md`.
 - 2026-02-18: Replaced seed catalog with designer streetwear-focused assortment and full size/color variant matrices (sneakers, hoodies, joggers, tees, accessories); aligned collection color swatch handling for Onyx/Cloud/Bone/Slate tones.
 - 2026-02-18: Upgraded seed CSV to include Shopify image fields (`Image Src`, `Variant Image`) with per-color media URLs and explicit per-variant inventory quantities across size/color options.
+- 2026-02-18: Expanded seed to a full stress-test catalog: 18 streetwear products and 114 variants (graphic tees, shorts, pants, sweatsuit, hoodies, sneakers, purses, hats, beanies) with media mapping and filter tags.
