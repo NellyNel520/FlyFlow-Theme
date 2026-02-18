@@ -38,10 +38,6 @@
         "description": {
           "type": "description",
           "settings": {}
-        },
-        "app_block": {
-          "type": "@app",
-          "settings": {}
         }
       },
       "block_order": [
@@ -52,8 +48,7 @@
         "variant_picker",
         "quantity_selector",
         "buy_buttons",
-        "description",
-        "app_block"
+        "description"
       ],
       "settings": {}
     },
