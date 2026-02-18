@@ -1,0 +1,64 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-banner",
+      "settings": {
+        "overline": "FlyFlow Journal",
+        "heading": "Stories in Motion",
+        "subheading": "Design notes, campaign edits, and behind-the-scenes perspectives from the studio.",
+        "button_text": "Explore Collections",
+        "button_link": "/collections/all",
+        "height": 70,
+        "overlay_opacity": 30
+      }
+    },
+    "editorial-landing": {
+      "type": "editorial-landing",
+      "blocks": {
+        "point-1": {
+          "type": "feature",
+          "settings": {
+            "title": "Design Process",
+            "text": "How each release evolves from concept through final fit and wear testing."
+          }
+        },
+        "point-2": {
+          "type": "feature",
+          "settings": {
+            "title": "Material Focus",
+            "text": "A closer look at fabrics, trims, and finishings chosen for movement."
+          }
+        },
+        "point-3": {
+          "type": "feature",
+          "settings": {
+            "title": "Campaign Diary",
+            "text": "Creative direction and styling references from our latest visual stories."
+          }
+        }
+      },
+      "block_order": ["point-1", "point-2", "point-3"],
+      "settings": {
+        "overline": "Inside FlyFlow",
+        "heading": "Where utility, style, and culture intersect.",
+        "text": "<p>Our editorial space documents how products are built, styled, and lived in. Use this template for brand storytelling pages, campaign narratives, and founder letters.</p>",
+        "primary_button_text": "Shop Featured Pieces",
+        "primary_button_link": "/collections/all",
+        "secondary_button_text": "Contact Us",
+        "secondary_button_link": "/pages/contact"
+      }
+    },
+    "content": {
+      "type": "main-page",
+      "settings": {}
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "heading": "Join the FlyFlow Circle",
+        "subheading": "Get launch alerts and fresh editorial drops."
+      }
+    }
+  },
+  "order": ["hero", "editorial-landing", "content", "newsletter"]
+}

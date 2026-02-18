@@ -20,6 +20,7 @@ Ship a production-ready Shopify theme with stable structure, complete core flows
 - [x] Replace hardcoded routes with Shopify `routes.*` objects in key sections/snippets
 - [x] Reach passing checks: `npm run build` and `shopify theme check` (warnings only)
 - [x] Add reusable `editorial-landing` section and wire it into homepage template flow
+- [x] Add `templates/page.editorial.json` for structured storytelling/brand pages
 
 ## Next Up (Priority Order)
 - [ ] Create/expand editorial landing structure and page templates
@@ -31,3 +32,4 @@ Ship a production-ready Shopify theme with stable structure, complete core flows
 ## Work Log
 - 2026-02-18: Session resumed from timeout; stabilized theme architecture and CI-quality checks.
 - 2026-02-18: Added editorial landing section and inserted it after hero in `templates/index.json`.
+- 2026-02-18: Added a dedicated editorial page template with hero, narrative block, and newsletter CTA.
