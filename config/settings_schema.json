@@ -381,36 +381,6 @@
     ]
   },
   {
-    "name": "Social Proof",
-    "settings": [
-      {
-        "type": "checkbox",
-        "id": "social_proof_notifications",
-        "label": "Enable purchase notifications",
-        "default": false,
-        "info": "Show recent purchase pop-ups (configure timing below)"
-      },
-      {
-        "type": "range",
-        "id": "social_proof_interval",
-        "label": "Notification interval (seconds)",
-        "min": 10,
-        "max": 60,
-        "step": 5,
-        "default": 30
-      },
-      {
-        "type": "range",
-        "id": "social_proof_duration",
-        "label": "Notification display time (seconds)",
-        "min": 3,
-        "max": 10,
-        "step": 1,
-        "default": 5
-      }
-    ]
-  },
-  {
     "name": "Marketing",
     "settings": [
       {
