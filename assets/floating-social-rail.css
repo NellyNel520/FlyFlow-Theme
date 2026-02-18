@@ -326,7 +326,7 @@ body.overflow-hidden {
   transform: translate3d(0, 0, 0);
 }
 
-@media (min-width: 990px) {
+@media (min-width: 750px) {
   .product-share {
     justify-content: flex-start;
     border-top: 0;
@@ -335,21 +335,25 @@ body.overflow-hidden {
   }
 
   .product-share__inline {
+    display: flex;
+  }
+
+  .product-share__trigger {
+    display: none !important;
+  }
+
+  .product-share__modal {
+    display: none !important;
+  }
+}
+
+@media (max-width: 749px) {
+  .product-share__inline {
     display: none;
   }
 
   .product-share__trigger {
     display: inline-flex;
-  }
-}
-
-@media (max-width: 989px) {
-  .product-share__modal {
-    display: none !important;
-  }
-
-  .product-share__trigger {
-    display: none !important;
   }
 }
 
