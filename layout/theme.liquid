@@ -124,8 +124,10 @@
   {% endstyle %}
 
   {%- comment -%} Theme font declarations {%- endcomment -%}
-  {{ settings.font_heading | font_face: font_display: 'swap' }}
-  {{ settings.font_body | font_face: font_display: 'swap' }}
+  {% style %}
+    {{ settings.font_heading | font_face: font_display: 'swap' }}
+    {{ settings.font_body | font_face: font_display: 'swap' }}
+  {% endstyle %}
 
   {%- comment -%} Critical CSS — inlined for performance {%- endcomment -%}
   <style>

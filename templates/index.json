@@ -12,11 +12,45 @@
         "overlay_opacity": 35
       }
     },
+    "collection-list": {
+      "type": "collection-list",
+      "settings": {
+        "overline": "Curated For You",
+        "heading": "Shop by Category",
+        "aspect_ratio": "3 / 4"
+      },
+      "blocks": {
+        "sneakers": {
+          "type": "collection_card",
+          "settings": { "title": "Sneakers" }
+        },
+        "accessories": {
+          "type": "collection_card",
+          "settings": { "title": "Accessories" }
+        },
+        "apparel": {
+          "type": "collection_card",
+          "settings": { "title": "Apparel" }
+        }
+      },
+      "block_order": ["sneakers", "accessories", "apparel"]
+    },
     "featured-collection": {
       "type": "featured-collection",
       "settings": {
         "heading": "New Arrivals",
         "products_to_show": 8
+      }
+    },
+    "image-with-text": {
+      "type": "image-with-text",
+      "settings": {
+        "overline": "Our Story",
+        "heading": "Designed to Move",
+        "text": "<p>FlyFlow was born from the belief that fashion should move with you — not hold you back. Every piece in our collection is crafted with intention, blending contemporary design with timeless silhouettes.</p><p>From designer sneakers to statement accessories, we curate for those who refuse to stand still.</p>",
+        "button_text": "Discover More",
+        "button_link": "/pages/about",
+        "reverse_layout": false
       }
     },
     "shop-the-look": {
@@ -41,7 +75,9 @@
   },
   "order": [
     "hero",
+    "collection-list",
     "featured-collection",
+    "image-with-text",
     "shop-the-look",
     "recently-viewed",
     "newsletter"

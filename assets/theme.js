@@ -318,7 +318,7 @@ FlyFlow.Cart = (function () {
       bar.classList.add('shipping-bar--qualified');
     } else {
       const remaining = FlyFlow.formatMoney(threshold - totalCents);
-      message.textContent = (bar.dataset.spendMessage || 'Spend {amount} more for free shipping!').replace('{amount}', remaining);
+      message.textContent = (bar.dataset.spendMessage || 'Spend AMOUNT_PLACEHOLDER more for free shipping!').replace('AMOUNT_PLACEHOLDER', remaining);
       bar.classList.remove('shipping-bar--qualified');
     }
   }
@@ -410,6 +410,7 @@ FlyFlow.Navigation = (function () {
 
         if (header) {
           header.classList.toggle('header--hidden', scrollingDown);
+          header.classList.toggle('header--scrolled', currentScrollY > 10);
         }
         if (bottomNav) {
           bottomNav.classList.toggle('bottom-nav--hidden', scrollingDown);
@@ -905,6 +906,39 @@ FlyFlow.VariantSelector = (function () {
 })();
 
 /* ==========================================================================
+   Quantity Buttons Module (Product Page)
+   ========================================================================== */
+
+FlyFlow.QuantityButtons = (function () {
+  function init() {
+    document.addEventListener('click', function (e) {
+      var minusBtn = e.target.closest('[data-qty-minus]');
+      var plusBtn = e.target.closest('[data-qty-plus]');
+
+      if (minusBtn) {
+        e.preventDefault();
+        var input = minusBtn.parentElement.querySelector('.quantity-selector__input');
+        if (input) {
+          var val = parseInt(input.value, 10) || 1;
+          input.value = Math.max(1, val - 1);
+        }
+      }
+
+      if (plusBtn) {
+        e.preventDefault();
+        var input = plusBtn.parentElement.querySelector('.quantity-selector__input');
+        if (input) {
+          var val = parseInt(input.value, 10) || 1;
+          input.value = val + 1;
+        }
+      }
+    });
+  }
+
+  return { init };
+})();
+
+/* ==========================================================================
    Filters Module
    ========================================================================== */
 
@@ -1208,6 +1242,7 @@ document.addEventListener('DOMContentLoaded', function () {
   FlyFlow.LazyLoad.init();
   FlyFlow.Modal.init();
   FlyFlow.Accordion.init();
+  FlyFlow.QuantityButtons.init();
   FlyFlow.StickyATC.init();
   FlyFlow.Analytics.init();
 });

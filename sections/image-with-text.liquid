@@ -1,0 +1,113 @@
+{% comment %}
+  FlyFlow Theme - Image with Text Section
+  Purpose: Editorial split layout with image and text side by side.
+  Dependencies: theme.css
+  Last modified: 2026-02-17
+{% endcomment %}
+
+<section class="section" data-section-id="{{ section.id }}" style="padding:0">
+  <div class="editorial-split{% if section.settings.reverse_layout %} editorial-split--reverse{% endif %}">
+    <div class="editorial-split__image">
+      {% if section.settings.image %}
+        {{ section.settings.image | image_url: width: 1200 | image_tag:
+          alt: section.settings.heading | default: 'Editorial image',
+          loading: 'lazy',
+          widths: '375, 750, 1100',
+          sizes: '(min-width: 768px) 50vw, 100vw',
+          style: 'width:100%;height:100%;object-fit:cover'
+        }}
+      {% else %}
+        {{ 'lifestyle-2' | placeholder_svg_tag: 'editorial-split__placeholder' }}
+      {% endif %}
+    </div>
+
+    <div class="editorial-split__content">
+      {% if section.settings.overline != blank %}
+        <p class="overline" style="margin-bottom:var(--space-md)">{{ section.settings.overline }}</p>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h2 style="margin-bottom:var(--space-md)">{{ section.settings.heading }}</h2>
+      {% endif %}
+
+      <hr class="divider">
+
+      {% if section.settings.text != blank %}
+        <div class="text-secondary" style="line-height:1.8;margin-bottom:var(--space-xl)">
+          {{ section.settings.text }}
+        </div>
+      {% endif %}
+
+      {% if section.settings.button_text != blank %}
+        <a href="{{ section.settings.button_link }}" class="btn btn--primary">
+          {{ section.settings.button_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+  {% if section.settings.reverse_layout %}
+    .editorial-split--reverse {
+      direction: rtl;
+    }
+    .editorial-split--reverse > * {
+      direction: ltr;
+    }
+  {% endif %}
+</style>
+
+{% schema %}
+{
+  "name": "Image with Text",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Recommended: 1200x1500px (portrait orientation)"
+    },
+    {
+      "type": "checkbox",
+      "id": "reverse_layout",
+      "label": "Reverse layout (text on left)",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "overline",
+      "label": "Overline text",
+      "default": "Our Story"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Designed to Move"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>FlyFlow was born from the belief that fashion should move with you — not hold you back. Every piece in our collection is crafted with intention, blending contemporary design with timeless silhouettes.</p><p>From designer sneakers to statement accessories, we curate for those who refuse to stand still.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Discover More"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with Text"
+    }
+  ]
+}
+{% endschema %}
