@@ -54,7 +54,12 @@
           </button>
         </form>
 
-        <div class="predictive-search__results" data-predictive-search-results style="position:relative;top:0;border:none;max-height:none;margin-top:var(--space-md)"></div>
+        <div
+          class="predictive-search__results"
+          data-predictive-search-results
+          data-no-results-text="{{ 'general.no_results' | t }}"
+          style="position:relative;top:0;border:none;max-height:none;margin-top:var(--space-md)"
+        ></div>
       </div>
     </div>
   </div>

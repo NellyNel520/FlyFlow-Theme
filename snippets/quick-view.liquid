@@ -39,6 +39,7 @@
           <span data-quick-view-price style="font-size:1.125rem;letter-spacing:0.03em"></span>
           <span data-quick-view-compare style="text-decoration:line-through;color:var(--color-text-secondary);margin-left:var(--space-sm);font-size:0.9375rem;display:none"></span>
         </div>
+        <p data-quick-view-error style="display:none;color:var(--color-error);font-size:0.8125rem;margin-bottom:var(--space-sm)"></p>
 
         {%- comment -%} Stock indicator {%- endcomment -%}
         <div data-quick-view-stock class="stock-indicator" style="display:none">
@@ -63,6 +64,7 @@
             data-quick-view-atc
             data-add-to-cart
             data-add-text="{{ 'products.add_to_cart' | t }}"
+            data-sold-out-text="{{ 'products.sold_out' | t }}"
           >
             {{ 'products.add_to_cart' | t }}
           </button>
@@ -98,6 +100,7 @@
   (function() {
     var currentProduct = null;
     var selectedOptions = {};
+    var isLoading = false;
 
     document.addEventListener('click', function(e) {
       var btn = e.target.closest('[data-quick-view]');
@@ -133,17 +136,28 @@
     });
 
     function loadProduct(handle) {
-      if (!handle) return;
+      if (!handle || isLoading) return;
+      isLoading = true;
+      setLoadingState(true);
+      setError('');
 
-      fetch('/products/' + handle + '.js')
+      fetch('/products/' + encodeURIComponent(handle) + '.js')
         .then(function(r) { return r.json(); })
         .then(function(product) {
+          if (!product || !product.variants || product.variants.length === 0) {
+            throw new Error('Invalid product payload');
+          }
+
           currentProduct = product;
           selectedOptions = {};
 
           /* Set basic info */
           setText('[data-quick-view-title]', product.title);
-          setAttr('[data-quick-view-image]', 'src', product.featured_image);
+          if (product.featured_image) {
+            setAttr('[data-quick-view-image]', 'src', product.featured_image);
+          } else {
+            removeAttr('[data-quick-view-image]', 'src');
+          }
           setAttr('[data-quick-view-image]', 'alt', product.title);
           setText('[data-quick-view-vendor]', product.vendor);
           setText('[data-quick-view-price]', FlyFlow.formatMoney(product.price));
@@ -173,6 +187,13 @@
 
           /* Open modal */
           FlyFlow.Modal.open('quick-view-modal');
+        })
+        .catch(function() {
+          setError('Unable to load this product right now. Please try again.');
+        })
+        .finally(function() {
+          isLoading = false;
+          setLoadingState(false);
         });
     }
 
@@ -229,6 +250,7 @@
     }
 
     function selectOption(btn) {
+      if (!currentProduct || !currentProduct.variants) return;
       var name = btn.dataset.qvOptionName;
       var value = btn.dataset.qvOptionValue;
       selectedOptions[name] = value;
@@ -252,10 +274,16 @@
         });
       });
 
-      if (variant) updateVariant(variant);
+      if (variant) {
+        updateVariant(variant);
+      } else {
+        setError('This combination is currently unavailable.');
+      }
     }
 
     function updateVariant(variant) {
+      if (!variant) return;
+      setError('');
       setText('[data-quick-view-price]', FlyFlow.formatMoney(variant.price));
 
       var compare = document.querySelector('[data-quick-view-compare]');
@@ -279,7 +307,7 @@
       if (stockEl && stockText) {
         stockEl.style.display = '';
         if (!variant.available) {
-          stockEl.className = 'stock-indicator stock-indicator--low-stock';
+          stockEl.className = 'stock-indicator stock-indicator--out-of-stock';
           stockText.textContent = 'Out of stock';
         } else if (variant.inventory_management && variant.inventory_quantity <= 5) {
           stockEl.className = 'stock-indicator stock-indicator--low-stock';
@@ -299,7 +327,7 @@
           atc.textContent = atc.dataset.addText || 'Add to Bag';
         } else {
           atc.disabled = true;
-          atc.textContent = 'Sold Out';
+          atc.textContent = atc.dataset.soldOutText || 'Sold Out';
         }
       }
     }
@@ -311,6 +339,24 @@
     function setAttr(sel, attr, val) {
       var el = document.querySelector(sel);
       if (el) el.setAttribute(attr, val);
+    }
+    function removeAttr(sel, attr) {
+      var el = document.querySelector(sel);
+      if (el) el.removeAttribute(attr);
+    }
+    function setError(message) {
+      var el = document.querySelector('[data-quick-view-error]');
+      if (!el) return;
+      el.textContent = message || '';
+      el.style.display = message ? '' : 'none';
+    }
+    function setLoadingState(isBusy) {
+      var atc = document.querySelector('[data-quick-view-atc]');
+      if (!atc) return;
+      if (isBusy) {
+        atc.disabled = true;
+        atc.textContent = 'Loading...';
+      }
     }
   })();
 </script>

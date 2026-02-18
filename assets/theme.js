@@ -498,7 +498,9 @@ FlyFlow.Navigation = (function () {
 FlyFlow.Search = (function () {
   let searchInput;
   let resultsContainer;
+  let trendingContainer;
   let cache = {};
+  let activeQuery = '';
 
   /**
    * Initialize predictive search
@@ -506,6 +508,7 @@ FlyFlow.Search = (function () {
   function init() {
     searchInput = document.querySelector('[data-predictive-search-input]');
     resultsContainer = document.querySelector('[data-predictive-search-results]');
+    trendingContainer = document.querySelector('[data-search-trending]');
 
     if (!searchInput || !resultsContainer) return;
 
@@ -533,21 +536,25 @@ FlyFlow.Search = (function () {
    */
   async function handleInput(e) {
     const query = e.target.value.trim();
+    const normalizedQuery = query.toLowerCase();
+    activeQuery = query;
+    toggleTrending(query.length === 0);
 
     if (query.length < 3) {
       resultsContainer.classList.remove('predictive-search__results--open');
       return;
     }
 
-    if (cache[query]) {
-      renderResults(cache[query]);
+    if (cache[normalizedQuery]) {
+      renderResults(cache[normalizedQuery]);
       return;
     }
 
     try {
       const url = `/search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product,collection,page&resources[limit]=6`;
       const data = await FlyFlow.fetchAPI(url);
-      cache[query] = data;
+      if (query !== activeQuery) return;
+      cache[normalizedQuery] = data;
       renderResults(data);
     } catch (error) {
       resultsContainer.classList.remove('predictive-search__results--open');
@@ -565,18 +572,20 @@ FlyFlow.Search = (function () {
     let html = '';
     const products = resources.results.products || [];
     const collections = resources.results.collections || [];
+    const pages = resources.results.pages || [];
 
     if (products.length > 0) {
       html += '<div class="predictive-search__group-title">Products</div>';
       products.forEach(function (product) {
+        const title = escapeHtml(product.title || '');
         const image = product.image
-          ? `<div class="predictive-search__item-image"><img src="${product.image}" alt="${product.title}" loading="lazy" width="40" height="50"></div>`
+          ? `<div class="predictive-search__item-image"><img src="${product.image}" alt="${title}" loading="lazy" width="40" height="50"></div>`
           : '';
         html += `
           <a href="${product.url}" class="predictive-search__item">
             ${image}
             <div>
-              <div class="predictive-search__item-title">${product.title}</div>
+              <div class="predictive-search__item-title">${title}</div>
               <div class="predictive-search__item-price">${FlyFlow.formatMoney(product.price)}</div>
             </div>
           </a>`;
@@ -586,9 +595,21 @@ FlyFlow.Search = (function () {
     if (collections.length > 0) {
       html += '<div class="predictive-search__group-title">Collections</div>';
       collections.forEach(function (collection) {
+        const title = escapeHtml(collection.title || '');
         html += `
           <a href="${collection.url}" class="predictive-search__item">
-            <div class="predictive-search__item-title">${collection.title}</div>
+            <div class="predictive-search__item-title">${title}</div>
+          </a>`;
+      });
+    }
+
+    if (pages.length > 0) {
+      html += '<div class="predictive-search__group-title">Pages</div>';
+      pages.forEach(function (page) {
+        const title = escapeHtml(page.title || '');
+        html += `
+          <a href="${page.url}" class="predictive-search__item">
+            <div class="predictive-search__item-title">${title}</div>
           </a>`;
       });
     }
@@ -597,7 +618,8 @@ FlyFlow.Search = (function () {
       resultsContainer.innerHTML = html;
       resultsContainer.classList.add('predictive-search__results--open');
     } else {
-      resultsContainer.innerHTML = '<div class="predictive-search__item">No results found</div>';
+      const noResultsText = resultsContainer.dataset.noResultsText || 'No results found';
+      resultsContainer.innerHTML = `<div class="predictive-search__item">${escapeHtml(noResultsText)}</div>`;
       resultsContainer.classList.add('predictive-search__results--open');
     }
   }
@@ -610,7 +632,22 @@ FlyFlow.Search = (function () {
     if (e.key === 'Escape') {
       resultsContainer.classList.remove('predictive-search__results--open');
       searchInput.blur();
+      toggleTrending(true);
     }
+  }
+
+  function toggleTrending(show) {
+    if (!trendingContainer) return;
+    trendingContainer.style.display = show ? '' : 'none';
+  }
+
+  function escapeHtml(text) {
+    return String(text)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
   }
 
   return { init };
