@@ -139,21 +139,23 @@
                   {% endif %}
 
                 {% when 'inventory' %}
-                  {% assign current_variant = product.selected_or_first_available_variant %}
-                  <div
-                    class="stock-indicator{% if current_variant.available == false %} stock-indicator--out-of-stock{% elsif current_variant.inventory_management and current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= settings.product_stock_threshold %} stock-indicator--low-stock{% else %} stock-indicator--in-stock{% endif %}"
-                    data-stock-indicator
-                    data-threshold="{{ settings.product_stock_threshold }}"
-                  >
-                    <span class="stock-indicator__dot"></span>
-                    {% if current_variant.available == false %}
-                      {{ 'products.stock.out_of_stock' | t }}
-                    {% elsif current_variant.inventory_management and current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= settings.product_stock_threshold %}
-                      {{ 'products.stock.low_stock' | t: count: current_variant.inventory_quantity }}
-                    {% else %}
-                      {{ 'products.stock.in_stock' | t }}
-                    {% endif %}
-                  </div>
+                  {% unless section.settings.enable_low_stock_notice %}
+                    {% assign current_variant = product.selected_or_first_available_variant %}
+                    <div
+                      class="stock-indicator{% if current_variant.available == false %} stock-indicator--out-of-stock{% elsif current_variant.inventory_management and current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= settings.product_stock_threshold %} stock-indicator--low-stock{% else %} stock-indicator--in-stock{% endif %}"
+                      data-stock-indicator
+                      data-threshold="{{ settings.product_stock_threshold }}"
+                    >
+                      <span class="stock-indicator__dot"></span>
+                      {% if current_variant.available == false %}
+                        {{ 'products.stock.out_of_stock' | t }}
+                      {% elsif current_variant.inventory_management and current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= settings.product_stock_threshold %}
+                        {{ 'products.stock.low_stock' | t: count: current_variant.inventory_quantity }}
+                      {% else %}
+                        {{ 'products.stock.in_stock' | t }}
+                      {% endif %}
+                    </div>
+                  {% endunless %}
 
                 {% when 'variant_picker' %}
                   {% for option in product.options_with_values %}
@@ -242,6 +244,66 @@
                   </div>
 
                 {% when 'buy_buttons' %}
+                  {% assign current_variant = product.selected_or_first_available_variant %}
+                  {% assign low_stock_threshold = section.settings.low_stock_threshold | default: 12 %}
+                  {% assign low_stock_bar_max = section.settings.low_stock_bar_max | default: 30 %}
+                  {% assign low_stock_qty = current_variant.inventory_quantity | default: -1 %}
+                  {% assign low_stock_tracked = false %}
+                  {% if current_variant.inventory_management != blank %}
+                    {% assign low_stock_tracked = true %}
+                  {% endif %}
+                  {% assign low_stock_known = false %}
+                  {% if low_stock_qty >= 0 %}
+                    {% assign low_stock_known = true %}
+                  {% endif %}
+                  {% assign low_stock_continue_with_no_stock = false %}
+                  {% if current_variant.inventory_policy == 'continue' and low_stock_qty <= 0 %}
+                    {% assign low_stock_continue_with_no_stock = true %}
+                  {% endif %}
+                  {% assign show_low_stock_notice = false %}
+                  {% assign low_stock_in_stock_state = false %}
+                  {% if section.settings.enable_low_stock_notice and low_stock_tracked and low_stock_known and current_variant.available and low_stock_continue_with_no_stock == false %}
+                    {% if low_stock_qty > 0 and low_stock_qty <= low_stock_threshold %}
+                      {% assign show_low_stock_notice = true %}
+                    {% elsif section.settings.show_when_in_stock and low_stock_qty > low_stock_threshold %}
+                      {% assign show_low_stock_notice = true %}
+                      {% assign low_stock_in_stock_state = true %}
+                    {% endif %}
+                  {% endif %}
+                  {% assign low_stock_fill = low_stock_qty | times: 100.0 | divided_by: low_stock_bar_max %}
+                  {% if low_stock_fill < 0 %}
+                    {% assign low_stock_fill = 0 %}
+                  {% endif %}
+                  {% if low_stock_fill > 100 %}
+                    {% assign low_stock_fill = 100 %}
+                  {% endif %}
+                  {% assign low_stock_message_template = section.settings.low_stock_message | default: 'Hurry, only {{count}} items left in stock!' %}
+                  {% assign low_stock_message_text = low_stock_message_template | replace: '{{count}}', low_stock_qty %}
+
+                  {% if section.settings.enable_low_stock_notice %}
+                    <div
+                      class="low-stock{% if low_stock_in_stock_state %} low-stock--in-stock{% endif %}{% if low_stock_qty <= 3 %} low-stock--critical{% endif %}"
+                      data-low-stock
+                      data-threshold="{{ low_stock_threshold }}"
+                      data-bar-max="{{ low_stock_bar_max }}"
+                      data-show-when-in-stock="{{ section.settings.show_when_in_stock }}"
+                      data-message-template="{{ low_stock_message_template | escape }}"
+                      data-in-stock-label="In stock"
+                      {% unless show_low_stock_notice %}hidden{% endunless %}
+                    >
+                      <p class="low-stock__text" data-low-stock-text>
+                        {% if low_stock_in_stock_state %}
+                          In stock
+                        {% else %}
+                          {{ low_stock_message_text }}
+                        {% endif %}
+                      </p>
+                      <div class="low-stock__bar" aria-hidden="true">
+                        <span class="low-stock__bar-fill" data-low-stock-fill style="width: {{ low_stock_fill }}%"></span>
+                      </div>
+                    </div>
+                  {% endif %}
+
                   <div class="product-info__add-to-cart" data-add-to-cart-section>
                     <button
                       type="submit"
@@ -377,6 +439,42 @@
       "type": "checkbox",
       "id": "show_product_breadcrumb",
       "label": "Show product breadcrumb",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_low_stock_notice",
+      "label": "Enable low stock notice",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "low_stock_threshold",
+      "label": "Low stock threshold",
+      "min": 1,
+      "max": 30,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "text",
+      "id": "low_stock_message",
+      "label": "Low stock message",
+      "default": "Hurry, only {{count}} items left in stock!"
+    },
+    {
+      "type": "range",
+      "id": "low_stock_bar_max",
+      "label": "Low stock bar max quantity",
+      "min": 10,
+      "max": 100,
+      "step": 1,
+      "default": 30
+    },
+    {
+      "type": "checkbox",
+      "id": "show_when_in_stock",
+      "label": "Show notice when stock is above threshold",
       "default": false
     },
     {

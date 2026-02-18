@@ -1105,6 +1105,7 @@ FlyFlow.VariantSelector = (function () {
 
     // Update stock indicator
     updateStockIndicator(variant);
+    updateLowStockNotice(variant);
   }
 
   /**
@@ -1130,6 +1131,70 @@ FlyFlow.VariantSelector = (function () {
       indicator.className = 'stock-indicator stock-indicator--in-stock';
       indicator.innerHTML = '<span class="stock-indicator__dot"></span> In stock';
     }
+  }
+
+  /**
+   * Update premium low stock notice in buy box
+   * @param {Object} variant - The selected variant
+   */
+  function updateLowStockNotice(variant) {
+    const lowStock = sectionRoot.querySelector('[data-low-stock]');
+    if (!lowStock || !variant) {
+      return;
+    }
+
+    const threshold = parseInt(lowStock.dataset.threshold, 10) || 12;
+    const barMax = parseInt(lowStock.dataset.barMax, 10) || 30;
+    const showWhenInStock = lowStock.dataset.showWhenInStock === 'true';
+    const messageTemplate =
+      lowStock.dataset.messageTemplate || 'Hurry, only {{count}} items left in stock!';
+    const inStockLabel = lowStock.dataset.inStockLabel || 'In stock';
+
+    const tracked = Boolean(variant.inventory_management);
+    const qtyRaw = Number(variant.inventory_quantity);
+    const knownQty = Number.isFinite(qtyRaw);
+    const qty = knownQty ? Math.max(0, Math.floor(qtyRaw)) : 0;
+    const continueNoStock = variant.inventory_policy === 'continue' && qty <= 0;
+    const shouldHideForTruth = !tracked || !knownQty || !variant.available || continueNoStock;
+
+    if (shouldHideForTruth) {
+      lowStock.hidden = true;
+      return;
+    }
+
+    let shouldShow = false;
+    let text = '';
+
+    if (qty > 0 && qty <= threshold) {
+      shouldShow = true;
+      text = messageTemplate.replace('{{count}}', String(qty));
+      lowStock.classList.remove('low-stock--in-stock');
+    } else if (showWhenInStock && qty > threshold) {
+      shouldShow = true;
+      text = inStockLabel;
+      lowStock.classList.add('low-stock--in-stock');
+    } else {
+      lowStock.classList.remove('low-stock--in-stock');
+    }
+
+    if (!shouldShow) {
+      lowStock.hidden = true;
+      return;
+    }
+
+    const textEl = lowStock.querySelector('[data-low-stock-text]');
+    if (textEl) {
+      textEl.textContent = text;
+    }
+
+    const fillEl = lowStock.querySelector('[data-low-stock-fill]');
+    if (fillEl) {
+      const fillRatio = Math.max(0, Math.min(1, qty / Math.max(1, barMax)));
+      fillEl.style.width = `${Math.round(fillRatio * 100)}%`;
+    }
+
+    lowStock.classList.toggle('low-stock--critical', qty > 0 && qty <= 3);
+    lowStock.hidden = false;
   }
 
   /**
@@ -1161,11 +1226,16 @@ FlyFlow.VariantSelector = (function () {
    * Set product state to unavailable when no variant matches selected options
    */
   function setUnavailableState() {
-    document.querySelectorAll('[data-add-to-cart]').forEach(function (addBtn) {
+    sectionRoot.querySelectorAll('[data-add-to-cart]').forEach(function (addBtn) {
       addBtn.disabled = true;
       addBtn.textContent = addBtn.dataset.soldOutText || 'Unavailable';
       addBtn.dataset.variantId = '';
     });
+
+    const lowStock = sectionRoot.querySelector('[data-low-stock]');
+    if (lowStock) {
+      lowStock.hidden = true;
+    }
   }
 
   return { init };
