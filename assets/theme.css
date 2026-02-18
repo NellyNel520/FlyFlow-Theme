@@ -3130,6 +3130,33 @@ small {
   border: 0;
 }
 
+/* Harden skip link so it never intercepts pointer clicks unless focused */
+.skip-to-content {
+  position: fixed;
+  top: -200px;
+  left: 1rem;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  clip: auto;
+  white-space: nowrap;
+  border: 0;
+  pointer-events: none;
+  z-index: var(--z-notification);
+}
+
+.skip-to-content:focus-visible {
+  top: 1rem;
+  padding: 0.625rem 0.875rem;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  pointer-events: auto;
+}
+
 /* Text utilities */
 .text-center {
   text-align: center;
