@@ -729,6 +729,7 @@ FlyFlow.Search = (function () {
 FlyFlow.ProductGallery = (function () {
   let mainImage;
   let thumbnails;
+  let dots;
   let images = [];
   let currentIndex = 0;
   let touchStartX = 0;
@@ -743,6 +744,9 @@ FlyFlow.ProductGallery = (function () {
 
     mainImage = gallery.querySelector('[data-gallery-main-image]');
     thumbnails = gallery.querySelectorAll('[data-gallery-thumbnail]');
+    dots = gallery.querySelectorAll('[data-gallery-dot]');
+    images = [];
+    currentIndex = 0;
 
     thumbnails.forEach(function (thumb, index) {
       images.push({
@@ -752,6 +756,12 @@ FlyFlow.ProductGallery = (function () {
       });
 
       thumb.addEventListener('click', function () {
+        goToSlide(index);
+      });
+    });
+
+    dots.forEach(function (dot, index) {
+      dot.addEventListener('click', function () {
         goToSlide(index);
       });
     });
@@ -797,7 +807,6 @@ FlyFlow.ProductGallery = (function () {
     });
 
     // Update pagination dots
-    const dots = document.querySelectorAll('[data-gallery-dot]');
     dots.forEach(function (dot, i) {
       dot.classList.toggle('product-gallery__dot--active', i === index);
     });
@@ -894,6 +903,8 @@ FlyFlow.VariantSelector = (function () {
    * @param {HTMLElement} swatch - The clicked swatch element
    */
   function selectOption(swatch) {
+    if (swatch.getAttribute('aria-disabled') === 'true') return;
+
     const optionName = swatch.dataset.optionName;
     const optionValue = swatch.dataset.optionValue;
 
@@ -920,6 +931,8 @@ FlyFlow.VariantSelector = (function () {
       updateProductInfo(variant);
       updateURL(variant);
       updateGallery(variant);
+    } else {
+      setUnavailableState();
     }
   }
 
@@ -944,20 +957,18 @@ FlyFlow.VariantSelector = (function () {
    */
   function updateProductInfo(variant) {
     // Update price
-    const priceEl = document.querySelector('[data-product-price]');
-    if (priceEl) {
+    document.querySelectorAll('[data-product-price]').forEach(function (priceEl) {
       priceEl.textContent = FlyFlow.formatMoney(variant.price);
-    }
+    });
 
-    const comparePriceEl = document.querySelector('[data-product-compare-price]');
-    if (comparePriceEl) {
+    document.querySelectorAll('[data-product-compare-price]').forEach(function (comparePriceEl) {
       if (variant.compare_at_price && variant.compare_at_price > variant.price) {
         comparePriceEl.textContent = FlyFlow.formatMoney(variant.compare_at_price);
         comparePriceEl.style.display = '';
       } else {
         comparePriceEl.style.display = 'none';
       }
-    }
+    });
 
     // Update hidden variant ID input
     const variantInput = document.querySelector('[name="id"]');
@@ -966,16 +977,16 @@ FlyFlow.VariantSelector = (function () {
     }
 
     // Update add to cart button
-    const addBtn = document.querySelector('[data-add-to-cart]');
-    if (addBtn) {
+    document.querySelectorAll('[data-add-to-cart]').forEach(function (addBtn) {
       if (variant.available) {
         addBtn.disabled = false;
         addBtn.textContent = addBtn.dataset.addText || 'Add to Cart';
       } else {
         addBtn.disabled = true;
-        addBtn.textContent = 'Sold Out';
+        addBtn.textContent = addBtn.dataset.soldOutText || 'Sold Out';
       }
-    }
+      addBtn.dataset.variantId = variant.id;
+    });
 
     // Update stock indicator
     updateStockIndicator(variant);
@@ -1027,6 +1038,17 @@ FlyFlow.VariantSelector = (function () {
         }
       });
     }
+  }
+
+  /**
+   * Set product state to unavailable when no variant matches selected options
+   */
+  function setUnavailableState() {
+    document.querySelectorAll('[data-add-to-cart]').forEach(function (addBtn) {
+      addBtn.disabled = true;
+      addBtn.textContent = addBtn.dataset.soldOutText || 'Unavailable';
+      addBtn.dataset.variantId = '';
+    });
   }
 
   return { init };

@@ -154,6 +154,7 @@
               class="btn btn--primary btn--lg"
               data-add-to-cart
               data-add-text="{{ 'products.add_to_cart' | t }}"
+              data-sold-out-text="{{ 'products.sold_out' | t }}"
               {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}
             >
               {% if product.selected_or_first_available_variant.available %}
@@ -221,6 +222,7 @@
           data-add-to-cart
           data-variant-id="{{ product.selected_or_first_available_variant.id }}"
           data-add-text="{{ 'products.add_to_cart' | t }}"
+          data-sold-out-text="{{ 'products.sold_out' | t }}"
           {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}
         >
           {% if product.selected_or_first_available_variant.available %}
