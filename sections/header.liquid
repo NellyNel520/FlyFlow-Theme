@@ -174,6 +174,29 @@
         {% endif %}
       </div>
     {% endfor %}
+
+    <div class="mobile-menu__item" style="margin-top:var(--space-md);padding-top:var(--space-md);border-top:1px solid var(--color-border)">
+      <p class="text-xs text-secondary" style="text-transform:uppercase;letter-spacing:0.12em;margin-bottom:var(--space-sm)">
+        Quick Access
+      </p>
+
+      <a href="{{ routes.root_url }}" class="mobile-menu__link">Home</a>
+      <a href="{{ routes.collections_url }}" class="mobile-menu__link">Shop</a>
+      <a href="{{ routes.search_url }}" class="mobile-menu__link">Search</a>
+
+      {% if pages['about'] != blank %}
+        <a href="{{ pages['about'].url }}" class="mobile-menu__link">About</a>
+      {% endif %}
+      {% if pages['brand-story'] != blank %}
+        <a href="{{ pages['brand-story'].url }}" class="mobile-menu__link">Brand Story</a>
+      {% endif %}
+      {% if pages['contact'] != blank %}
+        <a href="{{ pages['contact'].url }}" class="mobile-menu__link">Contact</a>
+      {% endif %}
+
+      <a href="{{ routes.account_url }}" class="mobile-menu__link">Account</a>
+      <button class="mobile-menu__link" type="button" data-cart-toggle data-mobile-menu-close>Cart</button>
+    </div>
   </nav>
 </div>
 
