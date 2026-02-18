@@ -240,7 +240,7 @@
 
                 {% when 'product_share' %}
                   {% if settings.show_product_share %}
-                    {% render 'product-share', product: product, current_variant: product.selected_or_first_available_variant %}
+                    {% render 'product-share', product: product, current_variant: product.selected_or_first_available_variant, section_id: section.id, block_id: block.id %}
                   {% endif %}
 
                 {% when 'description' %}

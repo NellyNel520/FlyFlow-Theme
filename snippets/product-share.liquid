@@ -1,7 +1,8 @@
 {% comment %}
-  FlyFlow Theme - Product Share Row
-  Purpose: Native social sharing actions + copy product link.
-  Usage: {% render 'product-share', product: product, current_variant: product.selected_or_first_available_variant %}
+  FlyFlow Theme - Product Share UI
+  Desktop: single trigger opens modal with share methods.
+  Mobile: inline share icons + copy link.
+  Usage: {% render 'product-share', product: product, current_variant: product.selected_or_first_available_variant, section_id: section.id, block_id: block.id %}
 {% endcomment %}
 
 {% assign resolved_variant = current_variant | default: product.selected_or_first_available_variant %}
@@ -14,57 +15,135 @@
 {% if product.featured_image %}
   {% assign share_image = product.featured_image | image_url: width: 1200 %}
 {% endif %}
+{% assign share_id_suffix = section_id | default: section.id %}
+{% if block_id != blank %}
+  {% assign share_id_suffix = share_id_suffix | append: '-' | append: block_id %}
+{% else %}
+  {% assign share_id_suffix = share_id_suffix | append: '-' | append: product.id %}
+{% endif %}
 
 <div class="product-share" data-product-share>
-  <span class="product-share__label">Share:</span>
-
-  <a
-    href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}"
-    target="_blank"
-    rel="noopener"
-    class="product-share__icon"
-    aria-label="Share on Facebook"
-  >
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 8H16V5h-2.5c-2.5 0-4 1.7-4 4.2V11H7v3h2.5v5H13v-5h2.7l.3-3H13V9.5c0-.9.4-1.5 1.5-1.5z" fill="currentColor"/></svg>
-  </a>
-
-  <a
-    href="https://twitter.com/intent/tweet?url={{ share_url | url_encode }}&text={{ share_title | url_encode }}"
-    target="_blank"
-    rel="noopener"
-    class="product-share__icon"
-    aria-label="Share on X"
-  >
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.2 3h2.9l-6.3 7.1L22 21h-5.6l-4.4-5.8L6.9 21H4l6.8-7.7L2 3h5.7l4 5.3L18.2 3zm-1 16h1.6L7.1 4.9H5.4L17.2 19z" fill="currentColor"/></svg>
-  </a>
-
-  <a
-    href="https://pinterest.com/pin/create/button/?url={{ share_url | url_encode }}{% if share_image != blank %}&media={{ share_image | url_encode }}{% endif %}&description={{ share_title | url_encode }}"
-    target="_blank"
-    rel="noopener"
-    class="product-share__icon"
-    aria-label="Share on Pinterest"
-  >
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.6 19.3c0-.8 0-2 .4-2.8l1.3-5.3s-.3-.7-.3-1.8c0-1.7 1-2.9 2.2-2.9 1 0 1.5.8 1.5 1.7 0 1-.7 2.6-1.1 4.1-.3 1.2.6 2.1 1.8 2.1 2.1 0 3.8-2.3 3.8-5.6 0-2.9-2.1-5-5.1-5a5.3 5.3 0 0 0-5.5 5.4c0 1.1.4 2.2.9 2.8.1.1.1.2.1.4l-.3 1.2c0 .2-.2.2-.4.1-1.4-.7-2.2-2.8-2.2-4.4 0-3.6 2.6-6.9 7.4-6.9 3.9 0 6.9 2.8 6.9 6.5 0 3.9-2.4 7-5.8 7-1.1 0-2.2-.6-2.5-1.4l-.7 2.6c-.2 1-.8 2.1-1.2 2.8A10 10 0 1 0 12 2z" fill="currentColor"/></svg>
-  </a>
-
-  <a
-    href="mailto:?subject={{ share_title | url_encode }}&body={{ share_url | url_encode }}"
-    class="product-share__icon"
-    aria-label="Share by email"
-  >
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 7l9 6 9-6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
-  </a>
-
   <button
     type="button"
-    class="product-share__copy"
-    data-copy-link
-    data-copy-url="{{ share_url }}"
-    data-copy-default="Copy link"
-    data-copy-success="Copied"
-    aria-label="Copy product link"
+    class="product-share__trigger"
+    id="share-trigger-{{ share_id_suffix }}"
+    data-share-open
+    aria-label="Share this product"
+    aria-haspopup="dialog"
+    aria-controls="product-share-modal-{{ share_id_suffix }}"
   >
-    Copy link
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 8a3 3 0 1 0-2.8-4H12a3 3 0 0 0 .2 1.1L7.8 7.7A3 3 0 0 0 6 7a3 3 0 1 0 1.8 5.4l4.4 2.6A3 3 0 0 0 12 16a3 3 0 1 0 .2 1.1l-4.4-2.6A3 3 0 0 0 9 10c0-.4-.1-.8-.2-1.1l4.4-2.6A3 3 0 0 0 15 8z" fill="currentColor"/></svg>
   </button>
+
+  <div class="product-share__inline" aria-label="Share this product">
+    <span class="product-share__label">Share:</span>
+
+    <a
+      href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}"
+      target="_blank"
+      rel="noopener"
+      class="product-share__icon"
+      aria-label="Share on Facebook"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 8H16V5h-2.5c-2.5 0-4 1.7-4 4.2V11H7v3h2.5v5H13v-5h2.7l.3-3H13V9.5c0-.9.4-1.5 1.5-1.5z" fill="currentColor"/></svg>
+    </a>
+
+    <a
+      href="https://twitter.com/intent/tweet?url={{ share_url | url_encode }}&text={{ share_title | url_encode }}"
+      target="_blank"
+      rel="noopener"
+      class="product-share__icon"
+      aria-label="Share on X"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.2 3h2.9l-6.3 7.1L22 21h-5.6l-4.4-5.8L6.9 21H4l6.8-7.7L2 3h5.7l4 5.3L18.2 3zm-1 16h1.6L7.1 4.9H5.4L17.2 19z" fill="currentColor"/></svg>
+    </a>
+
+    <a
+      href="https://pinterest.com/pin/create/button/?url={{ share_url | url_encode }}{% if share_image != blank %}&media={{ share_image | url_encode }}{% endif %}&description={{ share_title | url_encode }}"
+      target="_blank"
+      rel="noopener"
+      class="product-share__icon"
+      aria-label="Share on Pinterest"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.6 19.3c0-.8 0-2 .4-2.8l1.3-5.3s-.3-.7-.3-1.8c0-1.7 1-2.9 2.2-2.9 1 0 1.5.8 1.5 1.7 0 1-.7 2.6-1.1 4.1-.3 1.2.6 2.1 1.8 2.1 2.1 0 3.8-2.3 3.8-5.6 0-2.9-2.1-5-5.1-5a5.3 5.3 0 0 0-5.5 5.4c0 1.1.4 2.2.9 2.8.1.1.1.2.1.4l-.3 1.2c0 .2-.2.2-.4.1-1.4-.7-2.2-2.8-2.2-4.4 0-3.6 2.6-6.9 7.4-6.9 3.9 0 6.9 2.8 6.9 6.5 0 3.9-2.4 7-5.8 7-1.1 0-2.2-.6-2.5-1.4l-.7 2.6c-.2 1-.8 2.1-1.2 2.8A10 10 0 1 0 12 2z" fill="currentColor"/></svg>
+    </a>
+
+    <a
+      href="mailto:?subject={{ share_title | url_encode }}&body={{ share_url | url_encode }}"
+      class="product-share__icon"
+      aria-label="Share by email"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 7l9 6 9-6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+    </a>
+
+    <button
+      type="button"
+      class="product-share__copy"
+      data-copy-link
+      data-copy-url="{{ share_url }}"
+      data-copy-default="Copy link"
+      data-copy-success="Copied"
+      aria-label="Copy product link"
+    >
+      Copy link
+    </button>
+  </div>
+
+  <div class="product-share__modal" id="product-share-modal-{{ share_id_suffix }}" data-share-modal aria-hidden="true">
+    <div class="product-share__backdrop" data-share-close></div>
+    <div class="product-share__dialog" role="dialog" aria-modal="true" aria-labelledby="product-share-title-{{ share_id_suffix }}">
+      <div class="product-share__modal-header">
+        <h3 class="product-share__modal-title" id="product-share-title-{{ share_id_suffix }}">Share this product</h3>
+        <button type="button" class="product-share__close" data-share-close aria-label="Close share dialog">&times;</button>
+      </div>
+
+      <div class="product-share__actions" aria-label="Share methods">
+        <a
+          href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}"
+          target="_blank"
+          rel="noopener"
+          class="product-share__icon"
+          aria-label="Share on Facebook"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 8H16V5h-2.5c-2.5 0-4 1.7-4 4.2V11H7v3h2.5v5H13v-5h2.7l.3-3H13V9.5c0-.9.4-1.5 1.5-1.5z" fill="currentColor"/></svg>
+        </a>
+        <a
+          href="https://twitter.com/intent/tweet?url={{ share_url | url_encode }}&text={{ share_title | url_encode }}"
+          target="_blank"
+          rel="noopener"
+          class="product-share__icon"
+          aria-label="Share on X"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.2 3h2.9l-6.3 7.1L22 21h-5.6l-4.4-5.8L6.9 21H4l6.8-7.7L2 3h5.7l4 5.3L18.2 3zm-1 16h1.6L7.1 4.9H5.4L17.2 19z" fill="currentColor"/></svg>
+        </a>
+        <a
+          href="https://pinterest.com/pin/create/button/?url={{ share_url | url_encode }}{% if share_image != blank %}&media={{ share_image | url_encode }}{% endif %}&description={{ share_title | url_encode }}"
+          target="_blank"
+          rel="noopener"
+          class="product-share__icon"
+          aria-label="Share on Pinterest"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.6 19.3c0-.8 0-2 .4-2.8l1.3-5.3s-.3-.7-.3-1.8c0-1.7 1-2.9 2.2-2.9 1 0 1.5.8 1.5 1.7 0 1-.7 2.6-1.1 4.1-.3 1.2.6 2.1 1.8 2.1 2.1 0 3.8-2.3 3.8-5.6 0-2.9-2.1-5-5.1-5a5.3 5.3 0 0 0-5.5 5.4c0 1.1.4 2.2.9 2.8.1.1.1.2.1.4l-.3 1.2c0 .2-.2.2-.4.1-1.4-.7-2.2-2.8-2.2-4.4 0-3.6 2.6-6.9 7.4-6.9 3.9 0 6.9 2.8 6.9 6.5 0 3.9-2.4 7-5.8 7-1.1 0-2.2-.6-2.5-1.4l-.7 2.6c-.2 1-.8 2.1-1.2 2.8A10 10 0 1 0 12 2z" fill="currentColor"/></svg>
+        </a>
+        <a
+          href="mailto:?subject={{ share_title | url_encode }}&body={{ share_url | url_encode }}"
+          class="product-share__icon"
+          aria-label="Share by email"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 7l9 6 9-6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+        </a>
+        <button
+          type="button"
+          class="product-share__copy"
+          data-copy-link
+          data-copy-url="{{ share_url }}"
+          data-copy-default="Copy link"
+          data-copy-success="Copied"
+          aria-label="Copy product link"
+        >
+          Copy link
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

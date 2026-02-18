@@ -1,5 +1,5 @@
 /* FlyFlow Theme - Social UI interactions
-   Handles product copy-link action and mobile floating social rail toggle.
+   Handles product copy-link action, share modal interactions, and mobile social rail toggle.
 */
 (function () {
   function fallbackCopy(text) {
@@ -31,6 +31,46 @@
     return fallbackCopy(text);
   }
 
+  function openShareModal(trigger) {
+    const modalId = trigger.getAttribute('aria-controls');
+    if (!modalId) {
+      return;
+    }
+
+    const modal = document.getElementById(modalId);
+    if (!modal) {
+      return;
+    }
+
+    modal.dataset.lastTriggerId = trigger.id || '';
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('overflow-hidden');
+
+    const firstFocusable = modal.querySelector('button, a[href], [tabindex]:not([tabindex="-1"])');
+    if (firstFocusable) {
+      firstFocusable.focus();
+    }
+  }
+
+  function closeShareModal(modal) {
+    if (!modal) {
+      return;
+    }
+
+    const triggerId = modal.dataset.lastTriggerId;
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('overflow-hidden');
+
+    if (triggerId) {
+      const trigger = document.getElementById(triggerId);
+      if (trigger) {
+        trigger.focus();
+      }
+    }
+  }
+
   document.addEventListener('click', function (event) {
     const copyBtn = event.target.closest('[data-copy-link]');
     if (copyBtn) {
@@ -47,6 +87,21 @@
           copyBtn.setAttribute('aria-label', 'Copy product link');
         }, 1600);
       });
+      return;
+    }
+
+    const openBtn = event.target.closest('[data-share-open]');
+    if (openBtn) {
+      event.preventDefault();
+      openShareModal(openBtn);
+      return;
+    }
+
+    const closeBtn = event.target.closest('[data-share-close]');
+    if (closeBtn) {
+      event.preventDefault();
+      const modal = closeBtn.closest('[data-share-modal]');
+      closeShareModal(modal);
       return;
     }
 
@@ -71,6 +126,17 @@
           toggleBtn.setAttribute('aria-expanded', 'false');
         }
       });
+    }
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key !== 'Escape') {
+      return;
+    }
+
+    const openModal = document.querySelector('[data-share-modal].is-open');
+    if (openModal) {
+      closeShareModal(openModal);
     }
   });
 })();
