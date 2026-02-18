@@ -56,8 +56,17 @@
     <p>{{ description_intro_text }}</p>
   {% endif %}
 {% endcapture %}
-{% assign has_long_description = false %}
+{% assign description_remainder = '' %}
 {% if description_parts.size > 1 %}
+  {% for part in description_parts offset: 1 %}
+    {% assign clean_part = part | strip %}
+    {% if clean_part != blank %}
+      {% assign description_remainder = description_remainder | append: clean_part | append: '</p>' %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{% assign has_long_description = false %}
+{% if description_remainder != blank %}
   {% assign has_long_description = true %}
 {% endif %}
 
@@ -214,7 +223,7 @@
             {% if has_long_description %}
               <details class="pdp-tabs__more">
                 <summary>Read more</summary>
-                <div class="pdp-tabs__more-content">{{ product.description }}</div>
+                <div class="pdp-tabs__more-content">{{ description_remainder }}</div>
               </details>
             {% endif %}
           {% else %}
