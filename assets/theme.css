@@ -998,6 +998,7 @@ small {
   width: 14px;
   height: 14px;
   border-radius: 50%;
+  background: var(--swatch-color, #d4d1cc);
   border: 1px solid var(--color-border);
   cursor: pointer;
   transition: transform var(--transition-fast);

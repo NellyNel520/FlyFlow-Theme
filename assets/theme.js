@@ -1486,7 +1486,7 @@ FlyFlow.SwatchColors = (function () {
     const customMap = parseCustomMap();
     const map = Object.assign({}, defaultMap, customMap);
 
-    context.querySelectorAll('.swatch[data-swatch-name]').forEach(function (swatch) {
+    context.querySelectorAll('[data-swatch-name]').forEach(function (swatch) {
       const key = String(swatch.dataset.swatchName || '')
         .trim()
         .toLowerCase();

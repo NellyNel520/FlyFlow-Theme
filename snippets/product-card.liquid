@@ -162,9 +162,11 @@
       <div class="product-card__swatches" aria-label="Available colors">
         {% for value in color_option.values %}
           {% if forloop.index <= 5 %}
+            {% capture swatch_color %}{% render 'swatch-color', value: value %}{% endcapture %}
             <span
               class="product-card__swatch"
-              style="background-color: {{ value | handleize }}"
+              style="--swatch-color: {{ swatch_color | strip }}; background-color: {{ swatch_color | strip }};"
+              data-swatch-name="{{ value | escape }}"
               title="{{ value }}"
               aria-label="{{ value }}"
             ></span>
