@@ -132,3 +132,4 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - 2026-02-18: Consolidated PDP purchase controls into a single bordered purchase panel wrapper (variants + quantity + buy buttons) and removed per-block border treatment.
 - 2026-02-18: Increased vertical spacing inside single PDP purchase panel between variant picker, quantity selector, and buy buttons to reduce visual clutter.
 - 2026-02-18: Added extra bottom spacing below PDP buy-buttons block (including Buy It Now area) to reduce crowding under checkout actions.
+- 2026-02-18: Rounded PDP size option cards with 12px radius to match premium control styling.

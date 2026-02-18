@@ -1401,6 +1401,7 @@ small {
   font-weight: 600;
   letter-spacing: 0.05em;
   border: 1px solid var(--color-border);
+  border-radius: 12px;
   text-align: center;
   cursor: pointer;
   transition: all var(--transition-fast);
