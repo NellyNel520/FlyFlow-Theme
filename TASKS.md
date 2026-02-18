@@ -3,51 +3,94 @@
 Last updated: 2026-02-18
 
 ## Current Goal
-Ship a production-ready Shopify theme with stable structure, complete core flows, and clear release documentation.
+Deliver an elevated, minimalist fashion storefront with premium UX, strong storytelling, and production readiness.
 
-## In Progress
-- [ ] Build out remaining full-site layout/content structure for launch-ready presentation
-- [ ] Complete functionality polish on product, search, cart, and mobile flows
+## Spec Audit (from initial brief)
 
-## Completed
-- [x] Restore local build tooling (Node/ICU linkage) and unblock project commands
-- [x] Fix invalid section nesting by converting product gallery usage to snippet render
-- [x] Add `snippets/product-gallery.liquid` and wire from `sections/main-product.liquid`
-- [x] Add ESLint v9 flat config (`eslint.config.js`)
-- [x] Align lint/style configs with current codebase baseline
-- [x] Fix Theme Check errors in `snippets/quick-view.liquid` and `templates/gift_card.liquid`
-- [x] Add missing gift card locale key in `locales/en.default.json`
-- [x] Replace hardcoded routes with Shopify `routes.*` objects in key sections/snippets
-- [x] Reach passing checks: `npm run build` and `shopify theme check` (warnings only)
-- [x] Add reusable `editorial-landing` section and wire it into homepage template flow
-- [x] Add `templates/page.editorial.json` for structured storytelling/brand pages
-- [x] Add `sections/main-contact.liquid` and `templates/page.contact.json`
-- [x] Add `templates/page.brand-story.json` using modular narrative sections
-- [x] Harden quick view UX with loading/error handling and unavailable-option guards
-- [x] Improve predictive-search overlay close/reset behavior for cleaner live UX
-- [x] Fix cart drawer focus-trap lifecycle to avoid stacked keyboard handlers
-- [x] Add cart line-item request locking and manual qty-input handling for stable updates
-- [x] Improve product variant/gallery UX (interactive gallery dots, unavailable-combo guard, ATC state sync)
-- [x] Homepage visual refinement pass for hero + collection-list (depth, motion, stronger card treatment)
-- [x] Harden predictive search results (race-safe cache/render, pages group, safer output)
-- [x] Improve quick view resilience (loading state, fetch error handling, unavailable variant handling)
+### Homepage
+- [x] Announcement bar
+- [x] Hero section (image-based, refined visual treatment)
+- [x] Featured collections with hover effects
+- [x] Lookbook/editorial content sections (`shop-the-look`, `editorial-landing`, `image-with-text`)
+- [x] Newsletter section
+- [ ] Hero video support
+- [ ] Hero carousel support
+- [ ] Parallax scrolling support
+- [ ] Instagram feed integration
+- [ ] Newsletter popup/slide-in behavior
+- [ ] Explicit quick-links band (collections/about/contact)
 
-## Next Up (Priority Order)
-- [ ] Continue expanding strategic page templates (campaign, lookbook, landing variants)
-- [ ] Harden predictive search and quick view UX edge cases
-- [ ] Validate cart drawer/cart page behavior against manual QA checklist
-- [ ] Reduce remaining warnings (analytics remote assets + JS lint debt)
-- [ ] Final pre-release QA pass and deployment checklist
+### Product Pages
+- [x] High-res gallery with thumbnails/swipe/zoom/fullscreen
+- [x] Size guide integration
+- [x] Variant swatches
+- [x] Complete-the-look / related products
+- [x] Stock indicators + urgency behavior
+- [x] Quick add from collection cards
+- [x] Sticky add-to-cart
+- [ ] True 360° media support
+- [ ] Reviews app integration (current state: placeholder hook)
+
+### Collection Pages
+- [x] Filtering and sort controls
+- [x] Quick view modal
+- [x] Pagination support
+- [ ] Material/style taxonomy filtering validation with real catalog data
+- [ ] Masonry layout option
+- [ ] Infinite scroll option wiring (setting exists; UX path not finalized)
+
+### Navigation & UX
+- [x] Mega menu with image tiles
+- [x] Sticky header + cart preview/drawer
+- [x] Predictive search with suggestions
+- [x] Breadcrumbs
+- [x] Mobile-optimized navigation
+- [ ] Back-to-top control
+
+### Performance & Technical
+- [x] Lazy loading patterns
+- [x] Mobile-first responsive architecture
+- [x] SEO structure + JSON-LD
+- [x] Core checks currently passing (`npm run build`, `shopify theme check` warnings only)
+- [~] Core Web Vitals optimization (good base; needs final measured QA)
+- [~] Multi-currency (Shopify/platform-driven; needs store-level verification)
+- [~] Shopify POS compatibility (platform-driven; needs store-level verification)
+
+## Brand Catalog Alignment (FlyFlow vibe)
+- [ ] Replace off-vibe demo/sample catalog products in Shopify admin with luxe streetwear apparel/shoes/accessories
+- [ ] Define canonical collection set (Sneakers, Apparel, Accessories, New Arrivals, Best Sellers)
+- [ ] Rebind homepage/featured/upsell sections to FlyFlow-aligned collections
+- [ ] Ensure product photography style consistency (editorial, high-contrast, premium)
+
+## Execution Plan (Phased)
+
+### Phase 1: Feature Completion
+- [ ] Add hero video + optional carousel mode
+- [ ] Add Instagram feed section
+- [ ] Add back-to-top control
+- [ ] Add newsletter popup/slide-in option
+- [ ] Add quick-links utility section on homepage
+
+### Phase 2: Merchandising & Brand Fit
+- [ ] Catalog cleanup in Shopify admin to remove off-vibe products
+- [ ] Update section defaults/content copy to FlyFlow tone across templates
+- [ ] Validate collection filters against real catalog attributes (size/color/material/style)
+
+### Phase 3: Optimization & Launch Hardening
+- [ ] Integrate reviews app block cleanly
+- [ ] Final cart/search/product regression pass on mobile + desktop
+- [ ] Lighthouse and Core Web Vitals measurement pass
+- [ ] Reduce remaining lint/theme warnings where practical
+- [ ] Final launch checklist and deployment runbook
+
+## Completed Engineering Work (to date)
+- [x] Theme architecture stabilization and build/check pipeline recovery
+- [x] Liquid fixes and route hardening
+- [x] Predictive search + quick view resilience improvements
+- [x] Cart interaction reliability improvements
+- [x] Product variant/gallery interaction improvements
+- [x] Homepage visual refinement pass
+- [x] Added editorial/contact/brand-story templates
 
 ## Work Log
-- 2026-02-18: Session resumed from timeout; stabilized theme architecture and CI-quality checks.
-- 2026-02-18: Added editorial landing section and inserted it after hero in `templates/index.json`.
-- 2026-02-18: Added a dedicated editorial page template with hero, narrative block, and newsletter CTA.
-- 2026-02-18: Added dedicated contact and brand-story templates, including a new main contact section with Shopify form handling.
-- 2026-02-18: Improved quick-view state handling (loading, fetch failure messaging, sold-out option guards).
-- 2026-02-18: Refined predictive-search overlay interactions (outside-click close and reset behavior).
-- 2026-02-18: Patched cart drawer focus trap cleanup for more stable repeated opens/closes.
-- 2026-02-18: Added cart line-item locking, qty input change handling, and drawer fallback to `/cart`.
-- 2026-02-18: Polished product variant/gallery interactions with better ATC state and gallery controls.
-- 2026-02-18: Applied homepage visual refinement updates for hero and collection-list sections.
-- 2026-02-18: Improved predictive search and quick view robustness for empty/error and variant edge cases.
+- 2026-02-18: Converted tracker to spec-audit + phased roadmap aligned to original project brief.
