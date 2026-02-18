@@ -305,22 +305,8 @@ FlyFlow.Cart = (function () {
     } catch {
       btn.disabled = false;
       btn.textContent = btn.dataset.addText || originalText;
-
-      redirectToCartPermalink(parsedVariantId, quantity);
+      window.location.href = '/cart';
     }
-  }
-
-  /**
-   * Fallback to Shopify cart permalink add flow.
-   * Uses absolute myshopify domain when available to avoid local dev host quirks.
-   * @param {number} variantId - Variant ID
-   * @param {number} quantity - Quantity
-   */
-  function redirectToCartPermalink(variantId, quantity) {
-    const qty = Math.max(1, parseInt(quantity, 10) || 1);
-    const shopDomain =
-      window.Shopify && window.Shopify.shop ? `https://${window.Shopify.shop}` : '';
-    window.location.href = `${shopDomain}/cart/${variantId}:${qty}`;
   }
 
   /**
