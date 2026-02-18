@@ -42,6 +42,48 @@
         "product_share": {
           "type": "product_share",
           "settings": {}
+        },
+        "tab_spec_weight": {
+          "type": "tab_spec",
+          "settings": {
+            "label": "Weight",
+            "value": "Lightweight build for everyday wear"
+          }
+        },
+        "tab_spec_origin": {
+          "type": "tab_spec",
+          "settings": {
+            "label": "Origin",
+            "value": "Refer to garment label for origin details"
+          }
+        },
+        "tab_spec_model": {
+          "type": "tab_spec",
+          "settings": {
+            "label": "Model Info",
+            "value": "Model sizing details can be added here"
+          }
+        },
+        "reviews_faq_1": {
+          "type": "reviews_faq",
+          "settings": {
+            "question": "How are reviews verified?",
+            "answer": "<p>Verification depends on your selected reviews app settings and workflows.</p>"
+          }
+        },
+        "reviews_faq_2": {
+          "type": "reviews_faq",
+          "settings": {
+            "question": "When will reviews appear?",
+            "answer": "<p>Reviews appear after your reviews app is installed, configured, and approved submissions are published.</p>"
+          }
+        },
+        "reviews_faq_3": {
+          "type": "reviews_faq",
+          "settings": {
+            "question": "Can I leave a review?",
+            "answer": "<p>Review collection is managed by your configured reviews app and store policies.</p>"
+          }
         }
       },
       "block_order": [
@@ -53,7 +95,13 @@
         "variant_picker",
         "quantity_selector",
         "buy_buttons",
-        "product_share"
+        "product_share",
+        "tab_spec_weight",
+        "tab_spec_origin",
+        "tab_spec_model",
+        "reviews_faq_1",
+        "reviews_faq_2",
+        "reviews_faq_3"
       ],
       "settings": {}
     },
@@ -71,9 +119,5 @@
       }
     }
   },
-  "order": [
-    "main-product",
-    "related-products",
-    "recently-viewed"
-  ]
+  "order": ["main-product", "related-products", "recently-viewed"]
 }

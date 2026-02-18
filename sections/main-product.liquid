@@ -35,6 +35,10 @@
           {% assign purchase_panel_open = false %}
 
           {% for block in section.blocks %}
+            {% if block.type == 'tab_spec' or block.type == 'reviews_faq' %}
+              {% continue %}
+            {% endif %}
+
             {% assign is_purchase_block = false %}
             {% if purchase_panel_types contains block.type %}
               {% assign is_purchase_block = true %}
@@ -408,23 +412,6 @@
       "default": true
     },
     {
-      "type": "page",
-      "id": "size_guide_default_page",
-      "label": "Default size guide page"
-    },
-    {
-      "type": "text",
-      "id": "shipping_returns_page_handle",
-      "label": "Shipping & Returns page handle",
-      "info": "Optional. Example: shipping-returns"
-    },
-    {
-      "type": "richtext",
-      "id": "shipping_returns_richtext",
-      "label": "Shipping & Returns rich text",
-      "default": "<p>Free standard shipping on orders over $75. Returns accepted within 30 days in original condition.</p>"
-    },
-    {
       "type": "select",
       "id": "initial_active_tab",
       "label": "Initial active tab",
@@ -435,6 +422,128 @@
         { "value": "reviews", "label": "Reviews" },
         { "value": "shipping", "label": "Shipping & Returns" }
       ]
+    },
+    {
+      "type": "richtext",
+      "id": "details_intro_richtext",
+      "label": "Details intro (fallback)",
+      "default": "<p>This piece is designed with modern proportion, clean structure, and everyday versatility in mind. Update this copy to match your product story.</p>"
+    },
+    {
+      "type": "textarea",
+      "id": "default_highlights",
+      "label": "Default highlights (one per line)",
+      "default": "Premium construction\\nSoft hand feel\\nDesigned for daily wear\\nBalanced modern fit"
+    },
+    {
+      "type": "richtext",
+      "id": "details_care_richtext",
+      "label": "Care fallback",
+      "default": "<p>Follow the care instructions on the garment label for best results and long-term wear.</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "details_fit_richtext",
+      "label": "Fit fallback",
+      "default": "<p>Fit may vary by style and preference. Compare measurements to your everyday favorites for guidance.</p>"
+    },
+    {
+      "type": "page",
+      "id": "size_guide_default_page",
+      "label": "Default size guide page"
+    },
+    {
+      "type": "richtext",
+      "id": "size_guide_intro_richtext",
+      "label": "Size guide intro",
+      "default": "<p>Use this guide to compare your measurements with our size chart before ordering.</p>"
+    },
+    {
+      "type": "textarea",
+      "id": "size_guide_measurement_steps",
+      "label": "How to measure steps (one per line)",
+      "default": "Measure your chest at the fullest point\\nMeasure your waist at the natural waistline\\nCompare your measurements with the table below"
+    },
+    {
+      "type": "image_picker",
+      "id": "size_guide_diagram_image",
+      "label": "Size guide diagram image"
+    },
+    {
+      "type": "richtext",
+      "id": "size_guide_fit_notes_richtext",
+      "label": "Size guide fit notes",
+      "default": "<p>If you prefer a looser silhouette, consider sizing up. For a closer fit, choose your regular size.</p>"
+    },
+    {
+      "type": "url",
+      "id": "size_guide_help_link",
+      "label": "Size guide help link"
+    },
+    {
+      "type": "text",
+      "id": "size_guide_help_label",
+      "label": "Size guide help label",
+      "default": "Need help choosing a size?"
+    },
+    {
+      "type": "text",
+      "id": "reviews_empty_state_title",
+      "label": "Reviews empty state title",
+      "default": "Reviews Coming Soon"
+    },
+    {
+      "type": "richtext",
+      "id": "reviews_empty_state_body_richtext",
+      "label": "Reviews empty state body",
+      "default": "<p>Customer reviews will appear here once published. Install and connect your preferred reviews app to start collecting feedback.</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "shipping_returns_intro_richtext",
+      "label": "Shipping & returns intro",
+      "default": "<p>Shipping options and delivery estimates are shown at checkout. Returns are handled according to your store policy settings.</p>"
+    },
+    {
+      "type": "text",
+      "id": "shipping_policy_page_handle",
+      "label": "Shipping policy page handle",
+      "info": "Optional. Example: shipping-policy"
+    },
+    {
+      "type": "text",
+      "id": "returns_policy_page_handle",
+      "label": "Returns policy page handle",
+      "info": "Optional. Example: returns-policy"
+    },
+    {
+      "type": "richtext",
+      "id": "shipping_card_richtext",
+      "label": "Shipping card fallback",
+      "default": "<p>Shipping options are calculated at checkout based on destination and selected service.</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "returns_card_richtext",
+      "label": "Returns card fallback",
+      "default": "<p>Returns are accepted according to your return policy. Review your policy page for full details.</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "order_processing_note_richtext",
+      "label": "Order processing note",
+      "default": "<p>Order processing times may vary during high-volume periods.</p>"
+    },
+    {
+      "type": "url",
+      "id": "shipping_returns_help_link",
+      "label": "Shipping & returns help link"
+    },
+    {
+      "type": "text",
+      "id": "shipping_returns_help_label",
+      "label": "Shipping & returns help label",
+      "default": "Need help with your order?"
     }
   ],
   "blocks": [
@@ -510,6 +619,42 @@
       "limit": 1
     },
     {
+      "type": "tab_spec",
+      "name": "Tab spec row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Material"
+        },
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value",
+          "default": "Update in theme editor"
+        }
+      ]
+    },
+    {
+      "type": "reviews_faq",
+      "name": "Reviews FAQ",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "How are reviews verified?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Verification depends on your selected reviews app settings.</p>"
+        }
+      ]
+    },
+    {
       "type": "@app"
     }
   ],
@@ -526,7 +671,40 @@
         { "type": "quantity_selector" },
         { "type": "buy_buttons" },
         { "type": "product_share" },
-        { "type": "description" }
+        { "type": "description" },
+        {
+          "type": "tab_spec",
+          "settings": { "label": "Weight", "value": "Lightweight build for everyday wear" }
+        },
+        {
+          "type": "tab_spec",
+          "settings": { "label": "Origin", "value": "Refer to garment label for origin details" }
+        },
+        {
+          "type": "tab_spec",
+          "settings": { "label": "Model Info", "value": "Model sizing details can be added here" }
+        },
+        {
+          "type": "reviews_faq",
+          "settings": {
+            "question": "How are reviews verified?",
+            "answer": "<p>Verification depends on your selected reviews app settings and workflows.</p>"
+          }
+        },
+        {
+          "type": "reviews_faq",
+          "settings": {
+            "question": "When will reviews appear?",
+            "answer": "<p>Reviews appear after your reviews app is installed, configured, and approved submissions are published.</p>"
+          }
+        },
+        {
+          "type": "reviews_faq",
+          "settings": {
+            "question": "Can I leave a review?",
+            "answer": "<p>Review collection is managed by your configured reviews app and store policies.</p>"
+          }
+        }
       ]
     }
   ]

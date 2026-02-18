@@ -48,7 +48,26 @@
 {% assign reviews_panel_id = 'pdp-panel-reviews-' | append: section.id %}
 {% assign shipping_panel_id = 'pdp-panel-shipping-' | append: section.id %}
 
-{% assign highlights = product.metafields.custom.highlights.value | default: product.metafields.custom.highlights %}
+{% assign description_html = product.description | strip %}
+{% assign description_parts = description_html | split: '</p>' %}
+{% assign description_intro_text = description_parts.first | strip_html | strip %}
+{% capture description_intro %}
+  {% if description_intro_text != blank %}
+    <p>{{ description_intro_text }}</p>
+  {% endif %}
+{% endcapture %}
+{% assign has_long_description = false %}
+{% if description_parts.size > 1 %}
+  {% assign has_long_description = true %}
+{% endif %}
+
+{% assign highlights_source = product.metafields.custom.highlights.value | default: product.metafields.custom.highlights | default: section.settings.default_highlights %}
+{% assign highlights_lines = highlights_source | newline_to_br | split: '<br />' %}
+
+{% assign material_value = product.metafields.custom.material.value | default: product.metafields.custom.material %}
+{% assign care_value = product.metafields.custom.care.value | default: product.metafields.custom.care %}
+{% assign fit_value = product.metafields.custom.fit.value | default: product.metafields.custom.fit %}
+
 {% assign size_guide_ref = product.metafields.custom.size_guide.value %}
 {% assign size_guide_page = blank %}
 {% assign size_guide_html = '' %}
@@ -69,13 +88,37 @@
   {% assign size_guide_page = section.settings.size_guide_default_page %}
 {% endif %}
 
+{% assign size_measure_steps = section.settings.size_guide_measurement_steps | newline_to_br | split: '<br />' %}
+
 {% assign shipping_page = blank %}
-{% if section.settings.shipping_returns_page_handle != blank %}
-  {% assign shipping_page = pages[section.settings.shipping_returns_page_handle] %}
+{% if section.settings.shipping_policy_page_handle != blank %}
+  {% assign shipping_page = pages[section.settings.shipping_policy_page_handle] %}
 {% endif %}
+{% assign returns_page = blank %}
+{% if section.settings.returns_policy_page_handle != blank %}
+  {% assign returns_page = pages[section.settings.returns_policy_page_handle] %}
+{% endif %}
+
+{% assign shipping_content = '' %}
+{% if shipping_page != blank and shipping_page.content != blank %}
+  {% assign shipping_content = shipping_page.content %}
+{% elsif shop.shipping_policy != blank and shop.shipping_policy.body != blank %}
+  {% assign shipping_content = shop.shipping_policy.body %}
+{% else %}
+  {% assign shipping_content = section.settings.shipping_card_richtext %}
+{% endif %}
+
+{% assign returns_content = '' %}
+{% if returns_page != blank and returns_page.content != blank %}
+  {% assign returns_content = returns_page.content %}
+{% elsif shop.refund_policy != blank and shop.refund_policy.body != blank %}
+  {% assign returns_content = shop.refund_policy.body %}
+{% else %}
+  {% assign returns_content = section.settings.returns_card_richtext %}
+{% endif %}
+
 {% assign rating_value = product.metafields.reviews.rating.value.rating | default: product.metafields.reviews.rating.value %}
 {% assign rating_count = product.metafields.reviews.rating_count | default: product.metafields.spr.reviews %}
-{% assign highlights_lines = highlights | newline_to_br | split: '<br />' %}
 
 {% if show_details_tab or show_size_guide_tab or show_reviews_tab or show_shipping_tab %}
   <div
@@ -165,29 +208,74 @@
           data-tab-panel
           data-tab-key="details"
         >
-          {{ product.description }}
-
-          {% if highlights != blank %}
-            <div class="pdp-tabs__highlights">
-              <p class="pdp-tabs__subhead">Highlights</p>
-              <ul class="pdp-tabs__bullet-list">
-                {% if highlights contains '|' %}
-                  {% assign highlights_list = highlights | split: '|' %}
-                  {% for item in highlights_list %}
-                    {% assign clean_item = item | strip %}
-                    {% if clean_item != blank %}<li>{{ clean_item }}</li>{% endif %}
-                  {% endfor %}
-                {% elsif highlights_lines.size > 1 %}
-                  {% for item in highlights_lines %}
-                    {% assign clean_item = item | strip %}
-                    {% if clean_item != blank %}<li>{{ clean_item }}</li>{% endif %}
-                  {% endfor %}
-                {% else %}
-                  <li>{{ highlights }}</li>
-                {% endif %}
-              </ul>
-            </div>
+          <p class="pdp-tabs__eyebrow">Product Overview</p>
+          {% if description_html != blank %}
+            {{ description_intro }}
+            {% if has_long_description %}
+              <details class="pdp-tabs__more">
+                <summary>Read more</summary>
+                <div class="pdp-tabs__more-content">{{ product.description }}</div>
+              </details>
+            {% endif %}
+          {% else %}
+            {{ section.settings.details_intro_richtext }}
           {% endif %}
+
+          <p class="pdp-tabs__subhead">Highlights</p>
+          <ul class="pdp-tabs__bullet-list">
+            {% if highlights_source contains '|' %}
+              {% assign highlights_list = highlights_source | split: '|' %}
+              {% for item in highlights_list %}
+                {% assign clean_item = item | strip %}
+                {% if clean_item != blank %}<li>{{ clean_item }}</li>{% endif %}
+              {% endfor %}
+            {% elsif highlights_lines.size > 1 %}
+              {% for item in highlights_lines %}
+                {% assign clean_item = item | strip %}
+                {% if clean_item != blank %}<li>{{ clean_item }}</li>{% endif %}
+              {% endfor %}
+            {% elsif highlights_source != blank %}
+              <li>{{ highlights_source }}</li>
+            {% endif %}
+          </ul>
+
+          <p class="pdp-tabs__subhead">Specifications</p>
+          <dl class="pdp-tabs__spec-grid">
+            {% if material_value != blank %}
+              <div><dt>Material</dt><dd>{{ material_value }}</dd></div>
+            {% endif %}
+            {% if fit_value != blank %}
+              <div><dt>Fit</dt><dd>{{ fit_value }}</dd></div>
+            {% endif %}
+            {% for block in section.blocks %}
+              {% if block.type == 'tab_spec' and block.settings.label != blank and block.settings.value != blank %}
+                <div>
+                  <dt>{{ block.settings.label }}</dt>
+                  <dd>{{ block.settings.value }}</dd>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </dl>
+
+          <p class="pdp-tabs__subhead">Care &amp; Fit</p>
+          <div class="pdp-tabs__care-fit">
+            <div>
+              <h4>Care</h4>
+              {% if care_value != blank %}
+                <p>{{ care_value }}</p>
+              {% else %}
+                {{ section.settings.details_care_richtext }}
+              {% endif %}
+            </div>
+            <div>
+              <h4>Fit</h4>
+              {% if fit_value != blank %}
+                <p>{{ fit_value }}</p>
+              {% else %}
+                {{ section.settings.details_fit_richtext }}
+              {% endif %}
+            </div>
+          </div>
         </section>
       {% endif %}
 
@@ -201,6 +289,26 @@
           data-tab-panel
           data-tab-key="size"
         >
+          {{ section.settings.size_guide_intro_richtext }}
+
+          {% if section.settings.size_guide_diagram_image != blank %}
+            <div class="pdp-size-guide__diagram">
+              {{ section.settings.size_guide_diagram_image | image_url: width: 900 | image_tag: loading: 'lazy', alt: 'Size guide diagram' }}
+            </div>
+          {% endif %}
+
+          {% if size_measure_steps.size > 0 %}
+            <p class="pdp-tabs__subhead">How to Measure</p>
+            <ol class="pdp-tabs__steps">
+              {% for step in size_measure_steps %}
+                {% assign clean_step = step | strip %}
+                {% if clean_step != blank %}
+                  <li>{{ clean_step }}</li>
+                {% endif %}
+              {% endfor %}
+            </ol>
+          {% endif %}
+
           {% if size_guide_html != blank %}
             <div class="pdp-size-guide__table-wrap rte">{{ size_guide_html }}</div>
           {% elsif size_guide_page != blank %}
@@ -248,6 +356,14 @@
               <p class="pdp-tabs__compact-note">Add a size guide for this product.</p>
             {% endif %}
           {% endif %}
+
+          {{ section.settings.size_guide_fit_notes_richtext }}
+
+          {% if section.settings.size_guide_help_link != blank %}
+            <div class="pdp-tabs__help-row">
+              <a href="{{ section.settings.size_guide_help_link }}">{{ section.settings.size_guide_help_label | default: 'Need help choosing a size?' }}</a>
+            </div>
+          {% endif %}
         </section>
       {% endif %}
 
@@ -261,6 +377,14 @@
           data-tab-panel
           data-tab-key="reviews"
         >
+          {% if rating_value != blank %}
+            <div class="pdp-tabs__rating-summary" aria-label="Average rating {{ rating_value }} out of 5">
+              <span>Average rating</span>
+              <strong>{{ rating_value }}/5</strong>
+              {% if rating_count != blank %}<span>({{ rating_count }})</span>{% endif %}
+            </div>
+          {% endif %}
+
           {% if has_reviews_app_block %}
             {% for app_block in section.blocks %}
               {% if app_block.type == '@app' %}
@@ -269,10 +393,22 @@
                 </div>
               {% endif %}
             {% endfor %}
-          {% elsif rating_value != blank %}
-            <p class="pdp-tabs__compact-note">Rated {{ rating_value }}/5{% if rating_count != blank %} ({{ rating_count }} reviews){% endif %}</p>
           {% else %}
-            <p class="pdp-tabs__compact-note">Install a reviews app to display verified reviews.</p>
+            <div class="pdp-tabs__empty-state">
+              <h3>{{ section.settings.reviews_empty_state_title }}</h3>
+              {{ section.settings.reviews_empty_state_body_richtext }}
+
+              <div class="pdp-tabs__faq-list">
+                {% for block in section.blocks %}
+                  {% if block.type == 'reviews_faq' %}
+                    <details class="pdp-tabs__faq-item" {{ block.shopify_attributes }}>
+                      <summary>{{ block.settings.question }}</summary>
+                      <div>{{ block.settings.answer }}</div>
+                    </details>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
           {% endif %}
         </section>
       {% endif %}
@@ -287,12 +423,25 @@
           data-tab-panel
           data-tab-key="shipping"
         >
-          {% if shipping_page != blank %}
-            {{ shipping_page.content }}
-          {% elsif section.settings.shipping_returns_richtext != blank %}
-            {{ section.settings.shipping_returns_richtext }}
-          {% else %}
-            <p class="pdp-tabs__compact-note">Add shipping and returns content in the product section settings.</p>
+          {{ section.settings.shipping_returns_intro_richtext }}
+
+          <div class="pdp-tabs__policy-grid">
+            <article class="pdp-tabs__policy-card">
+              <h4>Shipping</h4>
+              <div>{{ shipping_content }}</div>
+            </article>
+            <article class="pdp-tabs__policy-card">
+              <h4>Returns</h4>
+              <div>{{ returns_content }}</div>
+            </article>
+          </div>
+
+          {{ section.settings.order_processing_note_richtext }}
+
+          {% if section.settings.shipping_returns_help_link != blank %}
+            <div class="pdp-tabs__help-row">
+              <a href="{{ section.settings.shipping_returns_help_link }}">{{ section.settings.shipping_returns_help_label | default: 'Need help with your order?' }}</a>
+            </div>
           {% endif %}
         </section>
       {% endif %}
