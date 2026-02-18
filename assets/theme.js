@@ -137,6 +137,7 @@ FlyFlow.Cart = (function () {
   let cartSubtotalElement;
   let overlay;
   let removeFocusTrap;
+  let pendingLineKeys = new Set();
 
   /**
    * Initialize cart module
@@ -149,6 +150,7 @@ FlyFlow.Cart = (function () {
     overlay = document.querySelector('[data-overlay]');
 
     document.addEventListener('click', handleClick);
+    document.addEventListener('change', handleChange);
     if (overlay) {
       overlay.addEventListener('click', close);
     }
@@ -180,6 +182,7 @@ FlyFlow.Cart = (function () {
     if (removeBtn) {
       e.preventDefault();
       const key = removeBtn.dataset.cartRemove;
+      if (pendingLineKeys.has(key)) return;
       updateItem(key, 0);
       return;
     }
@@ -189,6 +192,22 @@ FlyFlow.Cart = (function () {
       e.preventDefault();
       handleQuantityChange(qtyBtn);
     }
+  }
+
+  /**
+   * Handle change events via delegation
+   * @param {Event} e - Change event
+   */
+  function handleChange(e) {
+    const input = e.target.closest('[data-cart-qty-input]');
+    if (!input) return;
+
+    const key = getLineKeyFromElement(input);
+    if (!key || pendingLineKeys.has(key)) return;
+
+    const quantity = Math.max(0, parseInt(input.value, 10) || 0);
+    input.value = quantity;
+    updateItem(key, quantity);
   }
 
   /**
@@ -252,6 +271,7 @@ FlyFlow.Cart = (function () {
    */
   function handleQuantityChange(btn) {
     const key = btn.dataset.lineKey;
+    if (!key || pendingLineKeys.has(key)) return;
     const direction = btn.dataset.cartQty;
     const input = btn.parentElement.querySelector('[data-cart-qty-input]');
     let qty = parseInt(input.value, 10);
@@ -267,6 +287,8 @@ FlyFlow.Cart = (function () {
    * @param {number} quantity - New quantity
    */
   async function updateItem(key, quantity) {
+    pendingLineKeys.add(key);
+    setLineItemBusy(key, true);
     try {
       await FlyFlow.fetchAPI('/cart/change.js', { id: key, quantity });
       await refreshCart();
@@ -275,6 +297,9 @@ FlyFlow.Cart = (function () {
       }
     } catch (error) {
       FlyFlow.announce('Could not update cart');
+    } finally {
+      pendingLineKeys.delete(key);
+      setLineItemBusy(key, false);
     }
   }
 
@@ -350,7 +375,10 @@ FlyFlow.Cart = (function () {
 
   /** Open cart drawer */
   function open() {
-    if (!cartDrawer) return;
+    if (!cartDrawer) {
+      window.location.href = '/cart';
+      return;
+    }
     cartDrawer.classList.add('cart-drawer--open');
     if (overlay) overlay.classList.add('overlay--visible');
     document.body.classList.add('drawer-open');
@@ -372,11 +400,46 @@ FlyFlow.Cart = (function () {
 
   /** Toggle cart drawer */
   function toggle() {
-    if (cartDrawer && cartDrawer.classList.contains('cart-drawer--open')) {
+    if (!cartDrawer) {
+      window.location.href = '/cart';
+      return;
+    }
+    if (cartDrawer.classList.contains('cart-drawer--open')) {
       close();
     } else {
       open();
     }
+  }
+
+  /**
+   * Resolve line key from any element inside a cart item
+   * @param {HTMLElement} element - Element inside cart item
+   * @returns {string | null} Line key
+   */
+  function getLineKeyFromElement(element) {
+    const lineContainer = element.closest('[data-line-key], [data-cart-item]');
+    if (!lineContainer) return null;
+    return lineContainer.dataset.lineKey || lineContainer.dataset.cartItem || null;
+  }
+
+  /**
+   * Lock a line item during async cart update
+   * @param {string} key - Line item key
+   * @param {boolean} isBusy - Busy state
+   */
+  function setLineItemBusy(key, isBusy) {
+    const selectors = [
+      `[data-line-key="${key}"]`,
+      `[data-cart-item="${key}"]`,
+      `[data-cart-remove="${key}"]`,
+      `[data-line-key="${key}"] [data-cart-qty-input]`,
+    ];
+
+    document.querySelectorAll(selectors.join(', ')).forEach(function (el) {
+      if (el.tagName === 'INPUT' || el.tagName === 'BUTTON') {
+        el.disabled = isBusy;
+      }
+    });
   }
 
   return { init, open, close, refreshCart };

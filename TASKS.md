@@ -26,6 +26,7 @@ Ship a production-ready Shopify theme with stable structure, complete core flows
 - [x] Harden quick view UX with loading/error handling and unavailable-option guards
 - [x] Improve predictive-search overlay close/reset behavior for cleaner live UX
 - [x] Fix cart drawer focus-trap lifecycle to avoid stacked keyboard handlers
+- [x] Add cart line-item request locking and manual qty-input handling for stable updates
 - [x] Harden predictive search results (race-safe cache/render, pages group, safer output)
 - [x] Improve quick view resilience (loading state, fetch error handling, unavailable variant handling)
 
@@ -44,4 +45,5 @@ Ship a production-ready Shopify theme with stable structure, complete core flows
 - 2026-02-18: Improved quick-view state handling (loading, fetch failure messaging, sold-out option guards).
 - 2026-02-18: Refined predictive-search overlay interactions (outside-click close and reset behavior).
 - 2026-02-18: Patched cart drawer focus trap cleanup for more stable repeated opens/closes.
+- 2026-02-18: Added cart line-item locking, qty input change handling, and drawer fallback to `/cart`.
 - 2026-02-18: Improved predictive search and quick view robustness for empty/error and variant edge cases.
