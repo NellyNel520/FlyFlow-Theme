@@ -67,7 +67,9 @@
       >
         {% case block.type %}
           {% when 'description' %}
-            <div class="rte">{{ product.description }}</div>
+            <div class="product-description-card">
+              <div class="rte">{{ product.description }}</div>
+            </div>
           {% when 'size-guide' %}
             <p class="text-sm text-secondary mb-md">Find your perfect fit with our size guide.</p>
             <button class="btn btn--secondary btn--sm" data-modal-open="size-guide-modal">
@@ -128,7 +130,9 @@
           <div class="accordion__body text-sm">
             {% case block.type %}
               {% when 'description' %}
-                <div class="rte">{{ product.description }}</div>
+                <div class="product-description-card">
+                  <div class="rte">{{ product.description }}</div>
+                </div>
               {% when 'size-guide' %}
                 <button class="btn btn--secondary btn--sm" data-modal-open="size-guide-modal">
                   {{ 'products.size_guide.title' | t }}
