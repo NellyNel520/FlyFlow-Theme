@@ -6,12 +6,13 @@
 3. Upload `/Users/DeveloperNel/Archform-Labs/FlyFlow-Theme/documentation/flyflow-product-seed.csv`.
 4. Run import and publish all imported products.
 
-This seed is now the primary streetwear set with full variant matrices:
+This seed is now the primary streetwear set with full variant matrices and image mapping:
 - Premium sneakers: multiple sizes and colors
-- Hoodies: sizes S/M/L and two colorways
+- Hoodies: sizes S/M/L/XL and two colorways
 - Joggers: sizes S/M/L and two colorways
 - Tees: sizes S/M/L/XL and two colorways
 - Accessories: designer crossbody colorways
+- Every row includes `Image Src` and `Variant Image` for color-specific media
 
 ## Create Smart Collections (Required)
 Create these collections as **Automated (Smart)** with condition `Product tag is equal to`:
@@ -30,9 +31,9 @@ Set collection handles exactly:
 
 ## Filter Readiness
 The CSV seeds tags for filter validation:
-- Color tags: `color-black`, `color-white`, `color-grey`, `color-olive`, `color-gold`, `color-silver`
-- Material tags: `material-cotton`, `material-nylon`, `material-polyester`, `material-leather`, `material-metal`, `material-steel`
-- Style tags: `style-runner`, `style-low-top`, `style-oversized`, `style-techwear`, `style-bomber`, `style-crossbody`, `style-aviator`, `style-cap`, `style-chain`
+- Color tags: `color-onyx`, `color-cloud`, `color-bone`, `color-slate`
+- Material tags: `material-cotton`, `material-nylon`, `material-leather`
+- Style tags: `style-runner`, `style-oversized`, `style-techwear`, `style-crossbody`
 
 ## Next
 After import and collection creation, we can run the Phase 2 filter validation pass in-theme.
