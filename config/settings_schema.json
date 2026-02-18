@@ -18,34 +18,34 @@
         "type": "color",
         "id": "color_primary",
         "label": "Primary color",
-        "default": "#1a1a1a",
+        "default": "#0a0a0a",
         "info": "Used for primary buttons, headings, and key UI elements"
       },
       {
         "type": "color",
         "id": "color_secondary",
         "label": "Secondary color",
-        "default": "#6b7280",
+        "default": "#8a8a8a",
         "info": "Used for secondary text and subtle UI elements"
       },
       {
         "type": "color",
         "id": "color_accent",
         "label": "Accent color",
-        "default": "#c8a97e",
+        "default": "#b8965a",
         "info": "Used for highlights, links, and call-to-action elements"
       },
       {
         "type": "color",
         "id": "color_background",
         "label": "Background color",
-        "default": "#ffffff"
+        "default": "#fafaf8"
       },
       {
         "type": "color",
         "id": "color_surface",
         "label": "Surface color",
-        "default": "#f9fafb",
+        "default": "#f2f0ed",
         "info": "Used for cards, modals, and elevated surfaces"
       },
       {
@@ -140,15 +140,15 @@
         "type": "font_picker",
         "id": "font_heading",
         "label": "Heading font",
-        "default": "assistant_n4",
-        "info": "Used for all headings (H1-H6)"
+        "default": "cormorant_n4",
+        "info": "Editorial serif for luxury headings (H1-H6)"
       },
       {
         "type": "font_picker",
         "id": "font_body",
         "label": "Body font",
-        "default": "assistant_n4",
-        "info": "Used for body text, buttons, and UI"
+        "default": "montserrat_n4",
+        "info": "Clean sans-serif for body text, buttons, and UI"
       },
       {
         "type": "range",
@@ -169,7 +169,7 @@
           { "value": "1.25", "label": "Major Third (1.25)" },
           { "value": "1.333", "label": "Perfect Fourth (1.333)" }
         ],
-        "default": "1.25",
+        "default": "1.333",
         "info": "Controls the size progression between heading levels"
       }
     ]
@@ -204,7 +204,7 @@
         "min": 0,
         "max": 16,
         "step": 2,
-        "default": 4,
+        "default": 0,
         "unit": "px"
       },
       {

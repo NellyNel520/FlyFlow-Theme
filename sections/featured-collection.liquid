@@ -30,9 +30,35 @@
               {{ 'product-' | append: forloop.index | placeholder_svg_tag: 'product-card__image' }}
             </div>
             <div class="product-card__info">
-              <p class="product-card__vendor">Brand</p>
-              <h3 class="product-card__title">Sample Product {{ forloop.index }}</h3>
-              <div class="product-card__price"><span>$0.00</span></div>
+              <p class="product-card__vendor">FlyFlow</p>
+              <h3 class="product-card__title">
+                {%- case forloop.index -%}
+                  {%- when 1 -%}Aero Runner Sneaker
+                  {%- when 2 -%}Midnight Crossbody Bag
+                  {%- when 3 -%}Velocity Slim Jogger
+                  {%- when 4 -%}Cloud 9 Platform Boot
+                  {%- when 5 -%}Drift Oversized Hoodie
+                  {%- when 6 -%}Flyknit Lace-Up Oxford
+                  {%- when 7 -%}Horizon Aviator Sunglasses
+                  {%- when 8 -%}Stealth Cargo Pant
+                  {%- else -%}FlyFlow Essential {{ forloop.index }}
+                {%- endcase -%}
+              </h3>
+              <div class="product-card__price">
+                <span>
+                  {%- case forloop.index -%}
+                    {%- when 1 -%}$185.00
+                    {%- when 2 -%}$245.00
+                    {%- when 3 -%}$128.00
+                    {%- when 4 -%}$295.00
+                    {%- when 5 -%}$165.00
+                    {%- when 6 -%}$220.00
+                    {%- when 7 -%}$175.00
+                    {%- when 8 -%}$155.00
+                    {%- else -%}$150.00
+                  {%- endcase -%}
+                </span>
+              </div>
             </div>
           </div>
         {% endfor %}
@@ -49,7 +75,7 @@
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Featured Collection"
+      "default": "New Arrivals"
     },
     {
       "type": "collection",

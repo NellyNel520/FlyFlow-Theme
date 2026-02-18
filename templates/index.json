@@ -3,23 +3,26 @@
     "hero": {
       "type": "hero-banner",
       "settings": {
-        "heading": "New Season Arrivals",
-        "subheading": "Discover the latest in contemporary fashion",
-        "button_text": "Shop Now",
-        "button_link": "/collections/all"
+        "overline": "New Collection",
+        "heading": "Elevate Your Style",
+        "subheading": "Discover curated fashion, designer footwear, and statement accessories crafted for those who move with intention.",
+        "button_text": "Explore the Collection",
+        "button_link": "/collections/all",
+        "height": 90,
+        "overlay_opacity": 35
       }
     },
     "featured-collection": {
       "type": "featured-collection",
       "settings": {
-        "heading": "Featured Collection",
+        "heading": "New Arrivals",
         "products_to_show": 8
       }
     },
     "shop-the-look": {
       "type": "shop-the-look",
       "settings": {
-        "heading": "Shop the Look"
+        "heading": "Style Edit"
       }
     },
     "recently-viewed": {
@@ -31,8 +34,8 @@
     "newsletter": {
       "type": "newsletter",
       "settings": {
-        "heading": "Join the FlyFlow Community",
-        "subheading": "Be the first to know about new arrivals, sales, and exclusive offers."
+        "heading": "Join the FlyFlow Circle",
+        "subheading": "Early access to new drops, exclusive collaborations, and curated style inspiration — delivered to your inbox."
       }
     }
   },

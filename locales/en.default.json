@@ -6,7 +6,7 @@
     "close": "Close",
     "loading": "Loading...",
     "no_results": "No results found",
-    "view_all": "View all",
+    "view_all": "View All",
     "share": "Share",
     "pagination": {
       "previous": "Previous",
@@ -16,11 +16,11 @@
   },
   "accessibility": {
     "skip_to_content": "Skip to content",
-    "close_modal": "Close modal",
+    "close_modal": "Close",
     "open_menu": "Open menu",
     "close_menu": "Close menu",
-    "open_cart": "Open cart",
-    "cart_count": "{{ count }} items in cart",
+    "open_cart": "Open bag",
+    "cart_count": "{{ count }} items in bag",
     "dark_mode_toggle": "Toggle dark mode",
     "current_theme_light": "Current theme: light mode",
     "current_theme_dark": "Current theme: dark mode",
@@ -31,18 +31,18 @@
   },
   "header": {
     "menu": "Menu",
-    "cart": "Cart",
+    "cart": "Bag",
     "account": "Account",
-    "search_placeholder": "Search products...",
+    "search_placeholder": "Search collections, styles, designers...",
     "search_button": "Search"
   },
   "products": {
-    "add_to_cart": "Add to Cart",
-    "added_to_cart": "Added!",
+    "add_to_cart": "Add to Bag",
+    "added_to_cart": "Added",
     "sold_out": "Sold Out",
     "unavailable": "Unavailable",
-    "quick_buy": "Quick Buy",
-    "view_product": "View Product",
+    "quick_buy": "Quick Add",
+    "view_product": "View Details",
     "on_sale": "Sale",
     "new": "New",
     "limited_edition": "Limited Edition",
@@ -57,15 +57,15 @@
       "color": "Color",
       "size": "Size",
       "not_available": "Not available",
-      "sold_out_variant": "{{ option }} - Sold out"
+      "sold_out_variant": "{{ option }} — Sold out"
     },
     "stock": {
       "in_stock": "In stock",
       "low_stock": "Only {{ count }} left",
       "out_of_stock": "Out of stock",
       "back_in_stock_title": "Get notified when it's back",
-      "back_in_stock_button": "Notify me",
-      "back_in_stock_success": "We'll email you when it's available"
+      "back_in_stock_button": "Notify Me",
+      "back_in_stock_success": "We'll email you when this is available again"
     },
     "gallery": {
       "thumbnail": "Thumbnail {{ number }}",
@@ -74,7 +74,7 @@
       "close_fullscreen": "Close fullscreen"
     },
     "tabs": {
-      "description": "Description",
+      "description": "Details",
       "size_guide": "Size Guide",
       "reviews": "Reviews",
       "shipping": "Shipping & Returns"
@@ -90,39 +90,39 @@
     "filter": "Filter",
     "sort": "Sort by",
     "clear_all": "Clear all",
-    "apply_filters": "Apply filters",
-    "results_count": "{{ count }} products",
-    "no_products": "No products match your filters",
-    "load_more": "Load more products",
+    "apply_filters": "Apply",
+    "results_count": "{{ count }} styles",
+    "no_products": "No styles match your selection",
+    "load_more": "Load More",
     "grid_view": "Grid view",
     "list_view": "List view",
     "sort_options": {
       "featured": "Featured",
       "price_asc": "Price: Low to High",
       "price_desc": "Price: High to Low",
-      "title_asc": "A-Z",
-      "title_desc": "Z-A",
+      "title_asc": "A–Z",
+      "title_desc": "Z–A",
       "created_desc": "Newest",
       "best_selling": "Best Selling"
     }
   },
   "cart": {
-    "title": "Your Cart",
-    "empty": "Your cart is empty",
-    "continue_shopping": "Continue shopping",
+    "title": "Your Bag",
+    "empty": "Your bag is empty",
+    "continue_shopping": "Continue Shopping",
     "subtotal": "Subtotal",
     "checkout": "Checkout",
     "remove": "Remove",
     "note_placeholder": "Add a note to your order...",
     "shipping_bar": {
-      "spend_more": "Spend {{ amount }} more for free shipping!",
-      "qualified": "You qualify for free shipping!"
+      "spend_more": "{{ amount }} away from complimentary shipping",
+      "qualified": "You've earned complimentary shipping"
     },
-    "upsell_title": "You might also like"
+    "upsell_title": "Complete the Look"
   },
   "customer": {
     "login": {
-      "title": "Login",
+      "title": "Sign In",
       "email": "Email",
       "password": "Password",
       "forgot_password": "Forgot your password?",
@@ -135,35 +135,35 @@
       "last_name": "Last name",
       "email": "Email",
       "password": "Password",
-      "submit": "Create"
+      "submit": "Create Account"
     },
     "account": {
       "title": "My Account",
       "orders": "Order History",
       "addresses": "Addresses",
-      "logout": "Log Out"
+      "logout": "Sign Out"
     }
   },
   "search": {
     "title": "Search",
-    "placeholder": "What are you looking for?",
+    "placeholder": "Search collections, shoes, accessories...",
     "no_results": "No results for \"{{ query }}\"",
     "results_count": "{{ count }} results for \"{{ query }}\"",
-    "trending": "Trending searches",
+    "trending": "Trending Now",
     "products": "Products",
     "collections": "Collections",
     "pages": "Pages"
   },
   "newsletter": {
-    "title": "Join our newsletter",
+    "title": "Join the FlyFlow Circle",
     "placeholder": "Enter your email",
     "submit": "Subscribe",
-    "success": "Thanks for subscribing!",
+    "success": "Welcome to the circle.",
     "error": "Something went wrong. Please try again."
   },
   "dark_mode": {
-    "light": "Light mode",
-    "dark": "Dark mode",
-    "system": "System default"
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
   }
 }
