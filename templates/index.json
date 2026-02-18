@@ -82,7 +82,7 @@
         "subheading": "Use this carousel for hero-grade campaign images and seasonal creative.",
         "button_text": "Shop The Edit",
         "button_link": "/collections/new-arrivals",
-        "height": 68,
+        "height": 70,
         "enable_parallax": true,
         "carousel_autoplay": true,
         "carousel_interval": 5,
