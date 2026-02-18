@@ -236,7 +236,7 @@
         {% else %}
           <div class="text-center" style="padding:var(--space-3xl) 0">
             <p class="text-secondary">{{ 'collections.no_products' | t }}</p>
-            <a href="/collections/all" class="btn btn--secondary mt-md">{{ 'cart.continue_shopping' | t }}</a>
+            <a href="{{ routes.all_products_collection_url }}" class="btn btn--secondary mt-md">{{ 'cart.continue_shopping' | t }}</a>
           </div>
         {% endif %}
       </div>

@@ -75,7 +75,7 @@
     {% endif %}
 
     <div class="gift-card__qr">
-      {{ gift_card | qr_code: 200 }}
+      <div id="GiftCardQrCode" data-qr-identifier="{{ gift_card.qr_identifier | escape }}"></div>
     </div>
 
     {% if gift_card.pass_url %}
@@ -88,5 +88,25 @@
 
     <button class="gift-card__print" onclick="window.print()">Print this gift card</button>
   </div>
+
+  <script>
+    (function() {
+      var qrNode = document.getElementById('GiftCardQrCode');
+      if (!qrNode) return;
+
+      var identifier = qrNode.getAttribute('data-qr-identifier');
+      if (!identifier) return;
+
+      // Render QR if QRCode library is available; otherwise show identifier text.
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(qrNode, { text: identifier, width: 200, height: 200 });
+      } else {
+        qrNode.textContent = identifier;
+        qrNode.style.fontFamily = 'monospace';
+        qrNode.style.fontSize = '0.75rem';
+        qrNode.style.wordBreak = 'break-all';
+      }
+    })();
+  </script>
 </body>
 </html>

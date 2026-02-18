@@ -23,7 +23,7 @@
 
     {%- comment -%} Logo {%- endcomment -%}
     <div class="header__logo">
-      <a href="/" aria-label="{{ shop.name }}">
+      <a href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
         {% if section.settings.logo %}
           {{ section.settings.logo | image_url: width: 200 | image_tag:
             alt: shop.name,
@@ -109,7 +109,7 @@
       {% endif %}
 
       {%- comment -%} Account link {%- endcomment -%}
-      <a href="/account" class="header__icon-btn hidden-mobile" aria-label="{{ 'header.account' | t }}">
+      <a href="{{ routes.account_url }}" class="header__icon-btn hidden-mobile" aria-label="{{ 'header.account' | t }}">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
           <circle cx="12" cy="7" r="4"/>

@@ -6,7 +6,7 @@
 
 <section class="section" data-section-id="{{ section.id }}">
   <div class="container" style="max-width:640px">
-    <a href="/account" class="text-sm text-accent mb-md" style="display:inline-block;text-decoration:underline">&larr; Back to Account</a>
+    <a href="{{ routes.account_url }}" class="text-sm text-accent mb-md" style="display:inline-block;text-decoration:underline">&larr; Back to Account</a>
     <h1 class="mb-xl">{{ 'customer.account.addresses' | t }}</h1>
 
     {% for address in customer.addresses %}
@@ -17,7 +17,7 @@
         <p style="font-weight:600">{{ address.name }}</p>
         <p class="text-sm text-secondary">{{ address | format_address }}</p>
         <div class="flex flex--gap-sm mt-md">
-          <a href="/account/addresses/{{ address.id }}/edit" class="btn btn--secondary btn--sm">Edit</a>
+          <a href="{{ routes.account_addresses_url }}/{{ address.id }}/edit" class="btn btn--secondary btn--sm">Edit</a>
           {% form 'customer_address', address %}
             <input type="hidden" name="_method" value="delete">
             <button type="submit" class="btn btn--secondary btn--sm" onclick="return confirm('Delete this address?')">Delete</button>

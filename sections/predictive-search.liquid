@@ -28,7 +28,7 @@
   <div style="padding:var(--space-lg) var(--space-md);border-bottom:1px solid var(--color-border)">
     <div class="container" style="max-width:800px">
       <div class="predictive-search" data-predictive-search>
-        <form action="/search" method="get" role="search" style="display:flex;align-items:center;gap:var(--space-md)">
+        <form action="{{ routes.search_url }}" method="get" role="search" style="display:flex;align-items:center;gap:var(--space-md)">
           <div class="predictive-search__input-wrapper" style="flex:1">
             <input
               type="search"
@@ -67,7 +67,7 @@
     <div class="predictive-search__trending-tags">
       {% for block in section.blocks %}
         {% if block.type == 'trending' %}
-          <a href="/search?q={{ block.settings.term | url_encode }}" class="predictive-search__trending-tag" {{ block.shopify_attributes }}>
+          <a href="{{ routes.search_url }}?q={{ block.settings.term | url_encode }}" class="predictive-search__trending-tag" {{ block.shopify_attributes }}>
             {{ block.settings.term }}
           </a>
         {% endif %}

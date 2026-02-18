@@ -60,7 +60,7 @@
             <span class="overline" style="font-size:0.625rem;text-align:right">Total</span>
           </div>
 
-          <form action="/cart" method="post" id="cart-form">
+          <form action="{{ routes.cart_url }}" method="post" id="cart-form">
             <div data-cart-page-items>
               {% for item in cart.items %}
                 <div class="cart-item" style="display:grid;grid-template-columns:100px 1fr auto auto;gap:var(--space-lg);padding:var(--space-lg) 0;border-bottom:1px solid var(--color-border);align-items:center" data-cart-item data-line-key="{{ item.key }}">
@@ -150,7 +150,7 @@
               {{ 'cart.checkout' | t }}
             </a>
 
-            <a href="/collections/all" style="display:block;text-align:center;margin-top:var(--space-md);font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--color-text-secondary)">
+            <a href="{{ routes.all_products_collection_url }}" style="display:block;text-align:center;margin-top:var(--space-md);font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--color-text-secondary)">
               {{ 'cart.continue_shopping' | t }}
             </a>
 
@@ -214,7 +214,7 @@
           <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
         </svg>
         <p class="text-secondary mb-lg" style="font-size:1.125rem">{{ 'cart.empty' | t }}</p>
-        <a href="/collections/all" class="btn btn--primary btn--lg">{{ 'cart.continue_shopping' | t }}</a>
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary btn--lg">{{ 'cart.continue_shopping' | t }}</a>
       </div>
 
     {% endif %}

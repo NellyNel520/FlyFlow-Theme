@@ -5,6 +5,12 @@
     "custom-property-pattern": null,
     "no-descending-specificity": null,
     "color-function-notation": "legacy",
-    "alpha-value-notation": "number"
+    "alpha-value-notation": "number",
+    "property-no-vendor-prefix": null,
+    "media-feature-range-notation": null,
+    "color-hex-length": null,
+    "value-keyword-case": null,
+    "keyframes-name-pattern": null,
+    "rule-empty-line-before": null
   }
 }

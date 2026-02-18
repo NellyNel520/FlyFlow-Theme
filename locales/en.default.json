@@ -165,5 +165,10 @@
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+  },
+  "gift_cards": {
+    "issued": {
+      "title": "Gift card"
+    }
   }
 }

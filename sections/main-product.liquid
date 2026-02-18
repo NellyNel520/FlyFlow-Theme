@@ -10,7 +10,7 @@
   <div class="container">
     {%- comment -%} Breadcrumbs {%- endcomment -%}
     <nav class="breadcrumbs mb-lg" aria-label="Breadcrumb" style="font-size:0.8125rem;color:var(--color-text-secondary)">
-      <a href="/">Home</a>
+      <a href="{{ routes.root_url }}">Home</a>
       <span aria-hidden="true">/</span>
       {% if product.collections.size > 0 %}
         <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
@@ -21,7 +21,7 @@
 
     <div class="product">
       {%- comment -%} Gallery {%- endcomment -%}
-      {% section 'product-gallery' %}
+      {% render 'product-gallery', product: product, parent_section_id: section.id %}
 
       {%- comment -%} Product info {%- endcomment -%}
       <div class="product-info">
@@ -77,7 +77,6 @@
 
               <div class="variant-selector__options">
                 {% for value in option.values %}
-                  {% assign option_available = true %}
                   {% comment %} Check if this option value has any available variants {% endcomment %}
                   {% assign found_available = false %}
                   {% for variant in product.variants %}

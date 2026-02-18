@@ -54,7 +54,7 @@ FlyFlow.fetchAPI = async function fetchAPI(endpoint, body = null) {
     method: body ? 'POST' : 'GET',
     headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
+      Accept: 'application/json',
     },
   };
   if (body) options.body = JSON.stringify(body);
@@ -85,7 +85,9 @@ FlyFlow.announce = function announce(message) {
   const region = document.getElementById('sr-live-region');
   if (region) {
     region.textContent = message;
-    setTimeout(() => { region.textContent = ''; }, 3000);
+    setTimeout(() => {
+      region.textContent = '';
+    }, 3000);
   }
 };
 
@@ -338,7 +340,9 @@ FlyFlow.Cart = (function () {
       bar.classList.add('shipping-bar--qualified');
     } else {
       const remaining = FlyFlow.formatMoney(threshold - totalCents);
-      message.textContent = (bar.dataset.spendMessage || 'Spend AMOUNT_PLACEHOLDER more for free shipping!').replace('AMOUNT_PLACEHOLDER', remaining);
+      message.textContent = (
+        bar.dataset.spendMessage || 'Spend AMOUNT_PLACEHOLDER more for free shipping!'
+      ).replace('AMOUNT_PLACEHOLDER', remaining);
       bar.classList.remove('shipping-bar--qualified');
     }
   }
@@ -505,10 +509,7 @@ FlyFlow.Search = (function () {
 
     if (!searchInput || !resultsContainer) return;
 
-    searchInput.addEventListener(
-      'input',
-      FlyFlow.debounce(handleInput, 300)
-    );
+    searchInput.addEventListener('input', FlyFlow.debounce(handleInput, 300));
 
     searchInput.addEventListener('focus', function () {
       if (searchInput.value.length >= 3) {

@@ -8,7 +8,7 @@
   <div class="container" style="max-width:960px">
     <div class="flex flex--between mb-xl">
       <h1>{{ 'customer.account.title' | t }}</h1>
-      <a href="/account/logout" class="btn btn--secondary btn--sm">{{ 'customer.account.logout' | t }}</a>
+      <a href="{{ routes.account_logout_url }}" class="btn btn--secondary btn--sm">{{ 'customer.account.logout' | t }}</a>
     </div>
 
     <h2 class="mb-md" style="font-size:1.25rem">{{ 'customer.account.orders' | t }}</h2>
@@ -38,13 +38,13 @@
       </div>
     {% else %}
       <p class="text-secondary">You haven't placed any orders yet.</p>
-      <a href="/collections/all" class="btn btn--primary mt-md">Start Shopping</a>
+      <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary mt-md">Start Shopping</a>
     {% endif %}
 
     <div class="mt-2xl" style="padding-top:var(--space-xl);border-top:1px solid var(--color-border)">
       <div class="flex flex--between mb-md">
         <h2 style="font-size:1.25rem">{{ 'customer.account.addresses' | t }}</h2>
-        <a href="/account/addresses" class="btn btn--secondary btn--sm">Manage Addresses</a>
+        <a href="{{ routes.account_addresses_url }}" class="btn btn--secondary btn--sm">Manage Addresses</a>
       </div>
       {% if customer.default_address %}
         <div class="text-sm text-secondary">

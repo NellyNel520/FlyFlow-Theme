@@ -132,7 +132,7 @@
         {{ 'cart.checkout' | t }}
       </a>
 
-      <a href="/collections/all" class="btn btn--secondary btn--full mt-sm">
+      <a href="{{ routes.all_products_collection_url }}" class="btn btn--secondary btn--full mt-sm">
         {{ 'cart.continue_shopping' | t }}
       </a>
 
@@ -175,7 +175,7 @@
         <path d="M16 10a4 4 0 0 1-8 0"/>
       </svg>
       <p class="mb-md">{{ 'cart.empty' | t }}</p>
-      <a href="/collections/all" class="btn btn--primary">
+      <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">
         {{ 'cart.continue_shopping' | t }}
       </a>
     </div>
