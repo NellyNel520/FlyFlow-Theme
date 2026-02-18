@@ -340,6 +340,16 @@
           data-tab-key="size"
         >
           {{ section.settings.size_guide_intro_richtext }}
+          <p class="pdp-tabs__inline-hint">
+            For quick reference, open the
+            <button
+              type="button"
+              class="pdp-tabs__inline-action"
+              data-modal-open="size-guide-modal"
+            >
+              {{ 'products.tabs.size_guide' | t }}
+            </button>.
+          </p>
 
           {% if section.settings.size_guide_diagram_image != blank %}
             <div class="pdp-size-guide__diagram">
@@ -408,16 +418,6 @@
           {% endif %}
 
           {{ section.settings.size_guide_fit_notes_richtext }}
-
-          <div class="pdp-tabs__help-row">
-            <button
-              type="button"
-              class="pdp-tabs__inline-action"
-              data-modal-open="size-guide-modal"
-            >
-              {{ 'products.tabs.size_guide' | t }}
-            </button>
-          </div>
 
           {% if section.settings.size_guide_help_link != blank %}
             <div class="pdp-tabs__help-row">
