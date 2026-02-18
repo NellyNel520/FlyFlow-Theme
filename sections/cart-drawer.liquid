@@ -132,6 +132,11 @@
       <a href="/checkout" class="btn btn--primary btn--full btn--lg">
         {{ 'cart.checkout' | t }}
       </a>
+      {% if additional_checkout_buttons %}
+        <div class="mt-sm">
+          {{ content_for_additional_checkout_buttons }}
+        </div>
+      {% endif %}
 
       <a href="{{ routes.all_products_collection_url }}" class="btn btn--secondary btn--full mt-sm">
         {{ 'cart.continue_shopping' | t }}

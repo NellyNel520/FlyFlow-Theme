@@ -1,0 +1,66 @@
+{% comment %}
+  FlyFlow Theme - Custom Liquid Section
+  Purpose: Merchant-inserted custom Liquid/HTML block for advanced storefront customization.
+  Last modified: 2026-02-18
+{% endcomment %}
+
+<section
+  class="section custom-liquid"
+  data-section-id="{{ section.id }}"
+  style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="container" style="max-width:{% if section.settings.width == 'narrow' %}840px{% elsif section.settings.width == 'wide' %}1440px{% else %}var(--page-width){% endif %}">
+    {% if section.settings.custom_liquid != blank %}
+      {{ section.settings.custom_liquid }}
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Liquid",
+  "settings": [
+    {
+      "type": "liquid",
+      "id": "custom_liquid",
+      "label": "Custom Liquid"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Content width",
+      "options": [
+        { "value": "narrow", "label": "Narrow" },
+        { "value": "normal", "label": "Normal" },
+        { "value": "wide", "label": "Wide" }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "default": 40,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Liquid"
+    }
+  ]
+}
+{% endschema %}

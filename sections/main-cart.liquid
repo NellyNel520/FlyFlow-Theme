@@ -149,6 +149,11 @@
             <a href="/checkout" class="btn btn--primary btn--full btn--lg" style="margin-top:var(--space-lg)">
               {{ 'cart.checkout' | t }}
             </a>
+            {% if additional_checkout_buttons %}
+              <div style="margin-top:var(--space-sm)">
+                {{ content_for_additional_checkout_buttons }}
+              </div>
+            {% endif %}
 
             <a href="{{ routes.all_products_collection_url }}" style="display:block;text-align:center;margin-top:var(--space-md);font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--color-text-secondary)">
               {{ 'cart.continue_shopping' | t }}

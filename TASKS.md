@@ -79,6 +79,10 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - [x] Upgrade seed to full streetwear variant matrix (sizes + colorways)
 
 ### Phase 3: Optimization & Launch Hardening
+- [x] Convert product template to required OS 2.0 block architecture (vendor/title/price/variant picker/quantity/buy buttons/description)
+- [x] Add dynamic checkout button support on product
+- [x] Add additional checkout buttons support on cart page/drawer
+- [x] Add required `custom-liquid` section
 - [x] Integrate reviews app block cleanly
 - [ ] Final cart/search/product regression pass on mobile + desktop
 - [ ] Lighthouse and Core Web Vitals measurement pass
@@ -116,3 +120,4 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - 2026-02-18: Unified mobile bottom nav with header mobile menu source, improved bottom-nav reappearance behavior during downward scroll, and parallelized cart refresh API calls to reduce update latency.
 - 2026-02-18: Added native POST `/cart/add` fail-safe fallback in cart JS so add-to-cart always completes even if AJAX path fails.
 - 2026-02-18: Completed About page fallback build in `main-page.liquid` for `/pages/about` with finished FlyFlow brand story layout, pillars, and CTAs (no template reassignment required).
+- 2026-02-18: Shopify approval-readiness structural pass: rebuilt `main-product.liquid` as block-based OS 2.0 section with required product information blocks + `@app` support, updated `templates/product.json` block order, added `sections/custom-liquid.liquid`, added `content_for_additional_checkout_buttons` on cart page/drawer, and resolved remaining hardcoded route warning in `main-page.liquid`.
