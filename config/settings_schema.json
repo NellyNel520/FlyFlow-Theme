@@ -367,9 +367,9 @@
         "id": "collection_new_days",
         "label": "Days to show 'New' badge",
         "min": 7,
-        "max": 56,
-        "step": 7,
-        "default": 28
+        "max": 60,
+        "step": 1,
+        "default": 30
       }
     ]
   },

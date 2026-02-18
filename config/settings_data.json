@@ -40,7 +40,7 @@
     "collection_pagination": "load_more",
     "collection_grid_toggle": true,
     "collection_show_badges": true,
-    "collection_new_days": 28,
+    "collection_new_days": 30,
     "social_proof_notifications": false,
     "social_proof_interval": 30,
     "social_proof_duration": 5,
