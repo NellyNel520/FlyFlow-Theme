@@ -138,6 +138,7 @@ FlyFlow.Cart = (function () {
   let overlay;
   let removeFocusTrap;
   let pendingLineKeys = new Set();
+  let noteSaveTimer = null;
 
   /**
    * Initialize cart module
@@ -151,6 +152,7 @@ FlyFlow.Cart = (function () {
 
     document.addEventListener('click', handleClick);
     document.addEventListener('change', handleChange);
+    document.addEventListener('input', handleInput);
     if (overlay) {
       overlay.addEventListener('click', close);
     }
@@ -208,6 +210,25 @@ FlyFlow.Cart = (function () {
     const quantity = Math.max(0, parseInt(input.value, 10) || 0);
     input.value = quantity;
     updateItem(key, quantity);
+  }
+
+  /**
+   * Handle input events for cart note autosave in drawer
+   * @param {Event} e - Input event
+   */
+  function handleInput(e) {
+    const noteField = e.target.closest('[data-cart-note-drawer]');
+    if (!noteField || !noteField.closest('[data-cart-drawer]')) return;
+
+    if (noteSaveTimer) {
+      window.clearTimeout(noteSaveTimer);
+    }
+
+    noteSaveTimer = window.setTimeout(function () {
+      FlyFlow.fetchAPI('/cart/update.js', { note: noteField.value }).catch(function () {
+        // Silent failure to avoid disrupting checkout flow
+      });
+    }, 500);
   }
 
   /**
