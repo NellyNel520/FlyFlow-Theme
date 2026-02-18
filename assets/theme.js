@@ -136,6 +136,7 @@ FlyFlow.Cart = (function () {
   let cartCountElements;
   let cartSubtotalElement;
   let overlay;
+  let removeFocusTrap;
 
   /**
    * Initialize cart module
@@ -353,7 +354,8 @@ FlyFlow.Cart = (function () {
     cartDrawer.classList.add('cart-drawer--open');
     if (overlay) overlay.classList.add('overlay--visible');
     document.body.classList.add('drawer-open');
-    FlyFlow.trapFocus(cartDrawer);
+    if (removeFocusTrap) removeFocusTrap();
+    removeFocusTrap = FlyFlow.trapFocus(cartDrawer);
   }
 
   /** Close cart drawer */
@@ -362,6 +364,10 @@ FlyFlow.Cart = (function () {
     cartDrawer.classList.remove('cart-drawer--open');
     if (overlay) overlay.classList.remove('overlay--visible');
     document.body.classList.remove('drawer-open');
+    if (removeFocusTrap) {
+      removeFocusTrap();
+      removeFocusTrap = null;
+    }
   }
 
   /** Toggle cart drawer */
