@@ -278,7 +278,7 @@
                     {% assign low_stock_fill = 100 %}
                   {% endif %}
                   {% assign low_stock_message_template = section.settings.low_stock_message | default: 'Hurry, only {{count}} items left in stock!' %}
-                  {% assign low_stock_message_text = low_stock_message_template | replace: '{{count}}', low_stock_qty %}
+                  {% assign low_stock_message_text = low_stock_message_template | replace: '{{ count }}', low_stock_qty | replace: '{{count}}', low_stock_qty %}
 
                   {% if section.settings.enable_low_stock_notice %}
                     <div

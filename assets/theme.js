@@ -1167,7 +1167,9 @@ FlyFlow.VariantSelector = (function () {
 
     if (qty > 0 && qty <= threshold) {
       shouldShow = true;
-      text = messageTemplate.replace('{{count}}', String(qty));
+      text = messageTemplate
+        .replace(/\{\{\s*count\s*\}\}/g, String(qty))
+        .replace('{count}', String(qty));
       lowStock.classList.remove('low-stock--in-stock');
     } else if (showWhenInStock && qty > threshold) {
       shouldShow = true;
