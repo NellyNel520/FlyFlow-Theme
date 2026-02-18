@@ -526,6 +526,7 @@ small {
 @media (min-width: 1024px) {
   .header__inner {
     min-height: 80px;
+    position: relative;
   }
 }
 
@@ -609,6 +610,17 @@ small {
     display: flex;
     align-items: center;
     gap: var(--space-xl);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+@media (min-width: 768px) {
+  .header__actions .hidden-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
