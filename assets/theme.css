@@ -1713,6 +1713,90 @@ small {
   margin-top: var(--space-sm);
 }
 
+/* Product-page scoped spacing + premium tabs integration */
+.template-product .main-product-section {
+  padding-top: clamp(1.1rem, 1.6vw, 1.8rem);
+  padding-bottom: clamp(0.7rem, 1vw, 1.1rem);
+}
+
+.template-product .product-tabs.section {
+  margin-top: clamp(1.1rem, 2vw, 2rem);
+  padding-top: clamp(0.8rem, 1.2vw, 1.2rem);
+  padding-bottom: clamp(1.2rem, 2vw, 2rem);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.template-product .product-tabs__nav {
+  gap: clamp(0.9rem, 2vw, 1.5rem);
+  margin-bottom: clamp(0.25rem, 0.5vw, 0.5rem);
+}
+
+.template-product .product-tabs__btn {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  padding: 0.7rem 0;
+}
+
+.template-product .product-tabs__btn--active {
+  border-bottom-width: 2px;
+}
+
+.template-product .product-tabs__content {
+  padding-top: clamp(0.8rem, 1.2vw, 1.2rem);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.99) 0%, rgba(251, 251, 251, 0.99) 100%);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
+  padding-inline: clamp(1rem, 1.6vw, 1.5rem);
+  padding-bottom: clamp(1rem, 1.6vw, 1.5rem);
+}
+
+.template-product .product-tabs__content .product-description-card {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.template-product .product-tabs__reviews-placeholder {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.02);
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 1023px) {
+  .template-product .main-product-section {
+    padding-top: clamp(1rem, 1.8vw, 1.4rem);
+    padding-bottom: 0.8rem;
+  }
+
+  .template-product .product-tabs.section {
+    margin-top: 1rem;
+    padding-top: 0.7rem;
+    padding-bottom: 1.4rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .template-product .main-product-section {
+    padding-bottom: 0.6rem;
+  }
+
+  .template-product .product-tabs.section {
+    margin-top: 0.7rem;
+    padding-top: 0.55rem;
+    padding-bottom: 1.1rem;
+  }
+}
+
 /* ==========================================================================
    10. Collection Page — Clean editorial grid
    ========================================================================== */

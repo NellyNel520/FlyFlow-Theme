@@ -133,3 +133,4 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - 2026-02-18: Increased vertical spacing inside single PDP purchase panel between variant picker, quantity selector, and buy buttons to reduce visual clutter.
 - 2026-02-18: Added extra bottom spacing below PDP buy-buttons block (including Buy It Now area) to reduce crowding under checkout actions.
 - 2026-02-18: Rounded PDP size option cards with 12px radius to match premium control styling.
+- 2026-02-18: Tightened PDP main-to-tabs vertical spacing with product-page scoped section spacing, redesigned tabs/panels to compact premium card layout, and added toggleable compact reviews placeholder (`show_reviews_placeholder`) to avoid large empty no-app review areas.

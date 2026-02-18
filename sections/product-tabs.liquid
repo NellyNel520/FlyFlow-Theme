@@ -86,7 +86,9 @@
                   {% endif %}
                 {% endfor %}
               {% else %}
-                <p class="text-sm text-secondary">Install a reviews app and add its app block here to show verified customer reviews.</p>
+                {% if section.settings.show_reviews_placeholder %}
+                  <p class="product-tabs__reviews-placeholder">Reviews app not enabled. Add a reviews app block to display ratings and customer feedback here.</p>
+                {% endif %}
               {% endif %}
             </div>
           {% when 'shipping' %}
@@ -147,7 +149,9 @@
                     {% endif %}
                   {% endfor %}
                 {% else %}
-                  <p class="text-secondary">Install a reviews app and add its app block here to show verified customer reviews.</p>
+                  {% if section.settings.show_reviews_placeholder %}
+                    <p class="product-tabs__reviews-placeholder">Reviews app not enabled. Add a reviews app block to display ratings and customer feedback here.</p>
+                  {% endif %}
                 {% endif %}
               {% when 'shipping' %}
                 <div class="rte">{{ block.settings.content }}</div>
@@ -185,6 +189,14 @@
 {% schema %}
 {
   "name": "Product Tabs",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_reviews_placeholder",
+      "label": "Show compact reviews placeholder when no app is installed",
+      "default": false
+    }
+  ],
   "blocks": [
     {
       "type": "description",
