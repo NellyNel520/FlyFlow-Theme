@@ -35,24 +35,24 @@
         <p class="text-center text-secondary text-sm mb-lg">
           {{ 'search.results_count' | t: count: search.results_count, query: search.terms }}
         </p>
-        <div class="product-grid">
-          {% for result in search.results %}
-            {% if result.object_type == 'product' %}
-              {% render 'product-card', product: result %}
-            {% else %}
-              <article class="product-card">
-                <div class="product-card__info">
-                  <h3 class="product-card__title">
-                    <a href="{{ result.url }}">{{ result.title }}</a>
-                  </h3>
-                  <p class="text-sm text-secondary">{{ result.content | strip_html | truncate: 120 }}</p>
-                </div>
-              </article>
-            {% endif %}
-          {% endfor %}
-        </div>
-
         {% paginate search.results by 12 %}
+          <div class="product-grid">
+            {% for result in paginate.items %}
+              {% if result.object_type == 'product' %}
+                {% render 'product-card', product: result %}
+              {% else %}
+                <article class="product-card">
+                  <div class="product-card__info">
+                    <h3 class="product-card__title">
+                      <a href="{{ result.url }}">{{ result.title }}</a>
+                    </h3>
+                    <p class="text-sm text-secondary">{{ result.content | strip_html | truncate: 120 }}</p>
+                  </div>
+                </article>
+              {% endif %}
+            {% endfor %}
+          </div>
+
           {% if paginate.pages > 1 %}
             <nav class="pagination" aria-label="Search results pagination">
               {% if paginate.previous %}
