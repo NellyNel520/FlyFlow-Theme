@@ -116,7 +116,7 @@
                     <button
                       type="button"
                       class="swatch{% if option.selected_value == value %} swatch--active{% endif %}{% unless found_available %} swatch--sold-out{% endunless %}"
-                      style="background-color: {{ swatch_color }}"
+                      style="--swatch-color: {{ swatch_color }}; background-color: {{ swatch_color }};"
                       data-option-value="{{ value }}"
                       data-option-name="{{ option.name }}"
                       title="{{ value }}{% unless found_available %} - {{ 'products.sold_out' | t }}{% endunless %}"
