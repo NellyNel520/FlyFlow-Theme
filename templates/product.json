@@ -57,29 +57,6 @@
       ],
       "settings": {}
     },
-    "product-tabs": {
-      "type": "product-tabs",
-      "blocks": {
-        "description": {
-          "type": "description",
-          "settings": {}
-        },
-        "size-guide": {
-          "type": "size-guide",
-          "settings": {}
-        },
-        "reviews": {
-          "type": "reviews",
-          "settings": {}
-        },
-        "shipping": {
-          "type": "shipping",
-          "settings": {}
-        }
-      },
-      "block_order": ["description", "size-guide", "reviews", "shipping"],
-      "settings": {}
-    },
     "related-products": {
       "type": "related-products",
       "settings": {
@@ -96,7 +73,6 @@
   },
   "order": [
     "main-product",
-    "product-tabs",
     "related-products",
     "recently-viewed"
   ]

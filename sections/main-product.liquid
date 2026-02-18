@@ -266,7 +266,7 @@
                   {% endif %}
 
                 {% when 'description' %}
-                  {% if product.description != blank %}
+                  {% if section.settings.enable_product_tabs == false and product.description != blank %}
                     <div class="product-info__description text-sm" style="color:var(--color-text-secondary);line-height:1.7">
                       {{ product.description }}
                     </div>
@@ -294,7 +294,9 @@
                   {% endunless %}
 
                 {% when '@app' %}
-                  {% render block %}
+                  {% unless section.settings.enable_product_tabs and section.settings.show_reviews_tab %}
+                    {% render block %}
+                  {% endunless %}
               {% endcase %}
             </div>
 
@@ -310,6 +312,10 @@
         {% endform %}
       </div>
     </div>
+
+    {% if section.settings.enable_product_tabs %}
+      {% render 'product-tabs', product: product, section: section %}
+    {% endif %}
   </div>
 
   <script type="application/json" data-product-json>
@@ -317,6 +323,7 @@
   </script>
 
   {% render 'size-guide-modal' %}
+  <script src="{{ 'product-tabs.js' | asset_url }}" defer></script>
 
   {% if settings.product_sticky_atc %}
     <div class="sticky-atc" data-sticky-atc>
@@ -359,6 +366,74 @@
       "step": 4,
       "default": 80,
       "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_product_tabs",
+      "label": "Enable product tabs",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "tabs_style",
+      "label": "Mobile tabs style",
+      "default": "tabs",
+      "options": [
+        { "value": "tabs", "label": "Horizontal tabs" },
+        { "value": "accordion", "label": "Accordion style" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_details_tab",
+      "label": "Show Details tab",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_size_guide_tab",
+      "label": "Show Size Guide tab",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_reviews_tab",
+      "label": "Show Reviews tab",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shipping_returns_tab",
+      "label": "Show Shipping & Returns tab",
+      "default": true
+    },
+    {
+      "type": "page",
+      "id": "size_guide_default_page",
+      "label": "Default size guide page"
+    },
+    {
+      "type": "page",
+      "id": "shipping_returns_page",
+      "label": "Shipping & Returns page"
+    },
+    {
+      "type": "richtext",
+      "id": "shipping_returns_richtext",
+      "label": "Shipping & Returns rich text",
+      "default": "<p>Free standard shipping on orders over $75. Returns accepted within 30 days in original condition.</p>"
+    },
+    {
+      "type": "select",
+      "id": "initial_active_tab",
+      "label": "Initial active tab",
+      "default": "details",
+      "options": [
+        { "value": "details", "label": "Details" },
+        { "value": "size", "label": "Size Guide" },
+        { "value": "reviews", "label": "Reviews" },
+        { "value": "shipping", "label": "Shipping & Returns" }
+      ]
     }
   ],
   "blocks": [

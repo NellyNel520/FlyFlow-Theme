@@ -1,0 +1,298 @@
+{% comment %}
+  FlyFlow Theme - Product Tabs (OS 2.0)
+  Real ARIA tabs for product details, size guide, reviews, and shipping/returns.
+  Usage: {% render 'product-tabs', product: product, section: section %}
+{% endcomment %}
+
+{% assign show_details_tab = section.settings.show_details_tab %}
+{% assign show_size_guide_tab = section.settings.show_size_guide_tab %}
+{% assign show_reviews_tab = section.settings.show_reviews_tab %}
+{% assign show_shipping_tab = section.settings.show_shipping_returns_tab %}
+
+{% assign active_tab = section.settings.initial_active_tab | default: 'details' %}
+{% if active_tab == 'details' and show_details_tab == false %}
+  {% assign active_tab = '' %}
+{% elsif active_tab == 'size' and show_size_guide_tab == false %}
+  {% assign active_tab = '' %}
+{% elsif active_tab == 'reviews' and show_reviews_tab == false %}
+  {% assign active_tab = '' %}
+{% elsif active_tab == 'shipping' and show_shipping_tab == false %}
+  {% assign active_tab = '' %}
+{% endif %}
+{% if active_tab == '' %}
+  {% if show_details_tab %}
+    {% assign active_tab = 'details' %}
+  {% elsif show_size_guide_tab %}
+    {% assign active_tab = 'size' %}
+  {% elsif show_reviews_tab %}
+    {% assign active_tab = 'reviews' %}
+  {% elsif show_shipping_tab %}
+    {% assign active_tab = 'shipping' %}
+  {% endif %}
+{% endif %}
+
+{% assign has_reviews_app_block = false %}
+{% for block in section.blocks %}
+  {% if block.type == '@app' %}
+    {% assign has_reviews_app_block = true %}
+  {% endif %}
+{% endfor %}
+
+{% assign details_id = 'pdp-tab-details-' | append: section.id %}
+{% assign size_id = 'pdp-tab-size-' | append: section.id %}
+{% assign reviews_id = 'pdp-tab-reviews-' | append: section.id %}
+{% assign shipping_id = 'pdp-tab-shipping-' | append: section.id %}
+
+{% assign details_panel_id = 'pdp-panel-details-' | append: section.id %}
+{% assign size_panel_id = 'pdp-panel-size-' | append: section.id %}
+{% assign reviews_panel_id = 'pdp-panel-reviews-' | append: section.id %}
+{% assign shipping_panel_id = 'pdp-panel-shipping-' | append: section.id %}
+
+{% assign highlights = product.metafields.custom.highlights.value | default: product.metafields.custom.highlights %}
+{% assign size_guide_ref = product.metafields.custom.size_guide.value %}
+{% assign size_guide_page = blank %}
+{% assign size_guide_html = '' %}
+{% assign size_guide_headers = '' %}
+{% assign size_guide_rows = '' %}
+
+{% if size_guide_ref != blank %}
+  {% if size_guide_ref.content != blank %}
+    {% assign size_guide_page = size_guide_ref %}
+  {% else %}
+    {% assign size_guide_html = size_guide_ref.html | default: size_guide_ref.table_html %}
+    {% assign size_guide_headers = size_guide_ref.headers.value | default: size_guide_ref.headers | default: size_guide_ref.columns.value | default: size_guide_ref.columns | default: size_guide_ref.column_headers.value | default: size_guide_ref.column_headers %}
+    {% assign size_guide_rows = size_guide_ref.rows.value | default: size_guide_ref.rows | default: size_guide_ref.table_rows.value | default: size_guide_ref.table_rows %}
+  {% endif %}
+{% endif %}
+
+{% if size_guide_page == blank and size_guide_html == blank and size_guide_rows == blank and section.settings.size_guide_default_page != blank %}
+  {% assign size_guide_page = section.settings.size_guide_default_page %}
+{% endif %}
+
+{% assign shipping_page = section.settings.shipping_returns_page %}
+{% assign rating_value = product.metafields.reviews.rating.value.rating | default: product.metafields.reviews.rating.value %}
+{% assign rating_count = product.metafields.reviews.rating_count | default: product.metafields.spr.reviews %}
+{% assign highlights_lines = highlights | newline_to_br | split: '<br />' %}
+
+{% if show_details_tab or show_size_guide_tab or show_reviews_tab or show_shipping_tab %}
+  <div
+    class="pdp-tabs pdp-tabs--{{ section.settings.tabs_style | default: 'tabs' }}"
+    data-product-tabs
+    data-sync-hash="true"
+    data-mobile-style="{{ section.settings.tabs_style | default: 'tabs' }}"
+  >
+    <div class="pdp-tabs__frame">
+      <div class="pdp-tabs__list" role="tablist" aria-label="Product information tabs">
+        {% if show_details_tab %}
+          <button
+            type="button"
+            class="pdp-tabs__tab{% if active_tab == 'details' %} is-active{% endif %}"
+            id="{{ details_id }}"
+            role="tab"
+            aria-controls="{{ details_panel_id }}"
+            aria-selected="{% if active_tab == 'details' %}true{% else %}false{% endif %}"
+            tabindex="{% if active_tab == 'details' %}0{% else %}-1{% endif %}"
+            data-tab
+            data-tab-key="details"
+            data-tab-hash="details"
+          >
+            Details
+          </button>
+        {% endif %}
+
+        {% if show_size_guide_tab %}
+          <button
+            type="button"
+            class="pdp-tabs__tab{% if active_tab == 'size' %} is-active{% endif %}"
+            id="{{ size_id }}"
+            role="tab"
+            aria-controls="{{ size_panel_id }}"
+            aria-selected="{% if active_tab == 'size' %}true{% else %}false{% endif %}"
+            tabindex="{% if active_tab == 'size' %}0{% else %}-1{% endif %}"
+            data-tab
+            data-tab-key="size"
+            data-tab-hash="size-guide"
+          >
+            Size Guide
+          </button>
+        {% endif %}
+
+        {% if show_reviews_tab %}
+          <button
+            type="button"
+            class="pdp-tabs__tab{% if active_tab == 'reviews' %} is-active{% endif %}"
+            id="{{ reviews_id }}"
+            role="tab"
+            aria-controls="{{ reviews_panel_id }}"
+            aria-selected="{% if active_tab == 'reviews' %}true{% else %}false{% endif %}"
+            tabindex="{% if active_tab == 'reviews' %}0{% else %}-1{% endif %}"
+            data-tab
+            data-tab-key="reviews"
+            data-tab-hash="reviews"
+          >
+            Reviews
+          </button>
+        {% endif %}
+
+        {% if show_shipping_tab %}
+          <button
+            type="button"
+            class="pdp-tabs__tab{% if active_tab == 'shipping' %} is-active{% endif %}"
+            id="{{ shipping_id }}"
+            role="tab"
+            aria-controls="{{ shipping_panel_id }}"
+            aria-selected="{% if active_tab == 'shipping' %}true{% else %}false{% endif %}"
+            tabindex="{% if active_tab == 'shipping' %}0{% else %}-1{% endif %}"
+            data-tab
+            data-tab-key="shipping"
+            data-tab-hash="shipping-returns"
+          >
+            Shipping &amp; Returns
+          </button>
+        {% endif %}
+      </div>
+
+      {% if show_details_tab %}
+        <section
+          class="pdp-tabs__panel rte"
+          id="{{ details_panel_id }}"
+          role="tabpanel"
+          aria-labelledby="{{ details_id }}"
+          {% unless active_tab == 'details' %}hidden{% endunless %}
+          data-tab-panel
+          data-tab-key="details"
+        >
+          {{ product.description }}
+
+          {% if highlights != blank %}
+            <div class="pdp-tabs__highlights">
+              <p class="pdp-tabs__subhead">Highlights</p>
+              <ul class="pdp-tabs__bullet-list">
+                {% if highlights contains '|' %}
+                  {% assign highlights_list = highlights | split: '|' %}
+                  {% for item in highlights_list %}
+                    {% assign clean_item = item | strip %}
+                    {% if clean_item != blank %}<li>{{ clean_item }}</li>{% endif %}
+                  {% endfor %}
+                {% elsif highlights_lines.size > 1 %}
+                  {% for item in highlights_lines %}
+                    {% assign clean_item = item | strip %}
+                    {% if clean_item != blank %}<li>{{ clean_item }}</li>{% endif %}
+                  {% endfor %}
+                {% else %}
+                  <li>{{ highlights }}</li>
+                {% endif %}
+              </ul>
+            </div>
+          {% endif %}
+        </section>
+      {% endif %}
+
+      {% if show_size_guide_tab %}
+        <section
+          class="pdp-tabs__panel"
+          id="{{ size_panel_id }}"
+          role="tabpanel"
+          aria-labelledby="{{ size_id }}"
+          {% unless active_tab == 'size' %}hidden{% endunless %}
+          data-tab-panel
+          data-tab-key="size"
+        >
+          {% if size_guide_html != blank %}
+            <div class="pdp-size-guide__table-wrap rte">{{ size_guide_html }}</div>
+          {% elsif size_guide_page != blank %}
+            <div class="pdp-size-guide__table-wrap rte">{{ size_guide_page.content }}</div>
+          {% elsif size_guide_headers != blank and size_guide_rows != blank %}
+            {% assign headers = size_guide_headers %}
+            {% if size_guide_headers contains '|' %}
+              {% assign headers = size_guide_headers | split: '|' %}
+            {% elsif size_guide_headers contains ',' %}
+              {% assign headers = size_guide_headers | split: ',' %}
+            {% endif %}
+            {% assign rows = size_guide_rows | newline_to_br | split: '<br />' %}
+            <div class="pdp-size-guide__table-wrap">
+              <table class="pdp-size-guide__table">
+                <thead>
+                  <tr>
+                    {% for header in headers %}
+                      <th scope="col">{{ header | strip }}</th>
+                    {% endfor %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for row in rows %}
+                    {% assign clean_row = row | strip %}
+                    {% if clean_row != blank %}
+                      {% if clean_row contains '|' %}
+                        {% assign row_cells = clean_row | split: '|' %}
+                      {% elsif clean_row contains ',' %}
+                        {% assign row_cells = clean_row | split: ',' %}
+                      {% else %}
+                        {% assign row_cells = clean_row | split: ';' %}
+                      {% endif %}
+                      <tr>
+                        {% for cell in row_cells %}
+                          <td>{{ cell | strip }}</td>
+                        {% endfor %}
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            {% if request.design_mode %}
+              <p class="pdp-tabs__compact-note">Add a size guide for this product.</p>
+            {% endif %}
+          {% endif %}
+        </section>
+      {% endif %}
+
+      {% if show_reviews_tab %}
+        <section
+          class="pdp-tabs__panel"
+          id="{{ reviews_panel_id }}"
+          role="tabpanel"
+          aria-labelledby="{{ reviews_id }}"
+          {% unless active_tab == 'reviews' %}hidden{% endunless %}
+          data-tab-panel
+          data-tab-key="reviews"
+        >
+          {% if has_reviews_app_block %}
+            {% for app_block in section.blocks %}
+              {% if app_block.type == '@app' %}
+                <div class="pdp-tabs__app-block" {{ app_block.shopify_attributes }}>
+                  {% render app_block %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% elsif rating_value != blank %}
+            <p class="pdp-tabs__compact-note">Rated {{ rating_value }}/5{% if rating_count != blank %} ({{ rating_count }} reviews){% endif %}</p>
+          {% else %}
+            <p class="pdp-tabs__compact-note">Install a reviews app to display verified reviews.</p>
+          {% endif %}
+        </section>
+      {% endif %}
+
+      {% if show_shipping_tab %}
+        <section
+          class="pdp-tabs__panel rte"
+          id="{{ shipping_panel_id }}"
+          role="tabpanel"
+          aria-labelledby="{{ shipping_id }}"
+          {% unless active_tab == 'shipping' %}hidden{% endunless %}
+          data-tab-panel
+          data-tab-key="shipping"
+        >
+          {% if shipping_page != blank %}
+            {{ shipping_page.content }}
+          {% elsif section.settings.shipping_returns_richtext != blank %}
+            {{ section.settings.shipping_returns_richtext }}
+          {% else %}
+            <p class="pdp-tabs__compact-note">Add shipping and returns content in the product section settings.</p>
+          {% endif %}
+        </section>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
