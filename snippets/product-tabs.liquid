@@ -409,6 +409,16 @@
 
           {{ section.settings.size_guide_fit_notes_richtext }}
 
+          <div class="pdp-tabs__help-row">
+            <button
+              type="button"
+              class="pdp-tabs__inline-action"
+              data-modal-open="size-guide-modal"
+            >
+              {{ 'products.tabs.size_guide' | t }}
+            </button>
+          </div>
+
           {% if section.settings.size_guide_help_link != blank %}
             <div class="pdp-tabs__help-row">
               <a href="{{ section.settings.size_guide_help_link }}">{{ section.settings.size_guide_help_label | default: 'Need help choosing a size?' }}</a>

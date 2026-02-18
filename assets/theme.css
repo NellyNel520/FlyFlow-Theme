@@ -1342,6 +1342,11 @@ small {
   gap: var(--space-sm);
 }
 
+.variant-selector__size-guide-trigger {
+  margin-top: var(--space-md);
+  display: inline-flex;
+}
+
 /* Color swatches — luxury presentation */
 .swatch {
   position: relative;
@@ -1831,6 +1836,25 @@ small {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+.pdp-tabs__inline-action {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.pdp-tabs__inline-action:hover,
+.pdp-tabs__inline-action:focus-visible {
+  border-color: currentcolor;
 }
 
 .template-product .pdp-tabs__shipping-accordion-group {
