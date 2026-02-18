@@ -276,15 +276,11 @@ FlyFlow.Cart = (function () {
     }
 
     if (!variantId) {
-      if (form) {
-        form.submit();
-      }
       return;
     }
 
     const parsedVariantId = parseInt(variantId, 10);
     if (!Number.isFinite(parsedVariantId) || parsedVariantId <= 0) {
-      submitNativeAdd(variantId, quantity);
       return;
     }
 
@@ -293,35 +289,9 @@ FlyFlow.Cart = (function () {
     btn.textContent = 'Adding...';
 
     try {
-      if (form) {
-        const formData = new FormData(form);
-        if (!formData.get('id')) {
-          formData.set('id', String(parsedVariantId));
-        }
-        formData.set('quantity', String(Math.max(1, quantity)));
-
-        const response = await fetch('/cart/add.js', {
-          method: 'POST',
-          headers: { Accept: 'application/json' },
-          body: formData,
-        });
-
-        if (!response.ok) {
-          let errorMessage = `Request failed: ${response.status}`;
-          try {
-            const payload = await response.json();
-            errorMessage = payload.description || errorMessage;
-          } catch {
-            // Ignore parse errors and use default message
-          }
-          throw new Error(errorMessage);
-        }
-      } else {
-        await FlyFlow.fetchAPI('/cart/add.js', {
-          id: parsedVariantId,
-          quantity: Math.max(1, quantity),
-        });
-      }
+      await FlyFlow.fetchAPI('/cart/add.js', {
+        items: [{ id: parsedVariantId, quantity: Math.max(1, quantity) }],
+      });
 
       await refreshCart();
       open();
@@ -336,36 +306,21 @@ FlyFlow.Cart = (function () {
       btn.disabled = false;
       btn.textContent = btn.dataset.addText || originalText;
 
-      submitNativeAdd(parsedVariantId, quantity);
+      redirectToCartPermalink(parsedVariantId, quantity);
     }
   }
 
   /**
-   * Native add-to-cart fallback via standard form POST.
-   * This bypasses AJAX and guarantees Shopify cart add behavior.
-   * @param {number|string} variantId - Variant ID
+   * Fallback to Shopify cart permalink add flow.
+   * Uses absolute myshopify domain when available to avoid local dev host quirks.
+   * @param {number} variantId - Variant ID
    * @param {number} quantity - Quantity
    */
-  function submitNativeAdd(variantId, quantity) {
-    const fallbackForm = document.createElement('form');
-    fallbackForm.method = 'post';
-    fallbackForm.action = '/cart/add';
-    fallbackForm.style.display = 'none';
-
-    const idInput = document.createElement('input');
-    idInput.type = 'hidden';
-    idInput.name = 'id';
-    idInput.value = String(variantId);
-
-    const qtyInput = document.createElement('input');
-    qtyInput.type = 'hidden';
-    qtyInput.name = 'quantity';
-    qtyInput.value = String(Math.max(1, parseInt(quantity, 10) || 1));
-
-    fallbackForm.appendChild(idInput);
-    fallbackForm.appendChild(qtyInput);
-    document.body.appendChild(fallbackForm);
-    fallbackForm.submit();
+  function redirectToCartPermalink(variantId, quantity) {
+    const qty = Math.max(1, parseInt(quantity, 10) || 1);
+    const shopDomain =
+      window.Shopify && window.Shopify.shop ? `https://${window.Shopify.shop}` : '';
+    window.location.href = `${shopDomain}/cart/${variantId}:${qty}`;
   }
 
   /**
