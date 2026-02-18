@@ -221,61 +221,79 @@
             {{ section.settings.details_intro_richtext }}
           {% endif %}
 
-          <p class="pdp-tabs__subhead">Highlights</p>
-          <ul class="pdp-tabs__bullet-list">
-            {% if highlights_source contains '|' %}
-              {% assign highlights_list = highlights_source | split: '|' %}
-              {% for item in highlights_list %}
-                {% assign clean_item = item | strip %}
-                {% if clean_item != blank %}<li>{{ clean_item }}</li>{% endif %}
-              {% endfor %}
-            {% elsif highlights_lines.size > 1 %}
-              {% for item in highlights_lines %}
-                {% assign clean_item = item | strip %}
-                {% if clean_item != blank %}<li>{{ clean_item }}</li>{% endif %}
-              {% endfor %}
-            {% elsif highlights_source != blank %}
-              <li>{{ highlights_source }}</li>
-            {% endif %}
-          </ul>
+          <details class="pdp-tabs__accordion">
+            <summary class="pdp-tabs__accordion-summary">
+              <span class="pdp-tabs__subhead">Highlights</span>
+            </summary>
+            <div class="pdp-tabs__accordion-content">
+              <ul class="pdp-tabs__bullet-list">
+                {% if highlights_source contains '|' %}
+                  {% assign highlights_list = highlights_source | split: '|' %}
+                  {% for item in highlights_list %}
+                    {% assign clean_item = item | strip %}
+                    {% if clean_item != blank %}<li>{{ clean_item }}</li>{% endif %}
+                  {% endfor %}
+                {% elsif highlights_lines.size > 1 %}
+                  {% for item in highlights_lines %}
+                    {% assign clean_item = item | strip %}
+                    {% if clean_item != blank %}<li>{{ clean_item }}</li>{% endif %}
+                  {% endfor %}
+                {% elsif highlights_source != blank %}
+                  <li>{{ highlights_source }}</li>
+                {% endif %}
+              </ul>
+            </div>
+          </details>
 
-          <p class="pdp-tabs__subhead">Specifications</p>
-          <dl class="pdp-tabs__spec-grid">
-            {% if material_value != blank %}
-              <div><dt>Material</dt><dd>{{ material_value }}</dd></div>
-            {% endif %}
-            {% if fit_value != blank %}
-              <div><dt>Fit</dt><dd>{{ fit_value }}</dd></div>
-            {% endif %}
-            {% for block in section.blocks %}
-              {% if block.type == 'tab_spec' and block.settings.label != blank and block.settings.value != blank %}
+          <details class="pdp-tabs__accordion">
+            <summary class="pdp-tabs__accordion-summary">
+              <span class="pdp-tabs__subhead">Specifications</span>
+            </summary>
+            <div class="pdp-tabs__accordion-content">
+              <dl class="pdp-tabs__spec-grid">
+                {% if material_value != blank %}
+                  <div><dt>Material</dt><dd>{{ material_value }}</dd></div>
+                {% endif %}
+                {% if fit_value != blank %}
+                  <div><dt>Fit</dt><dd>{{ fit_value }}</dd></div>
+                {% endif %}
+                {% for block in section.blocks %}
+                  {% if block.type == 'tab_spec' and block.settings.label != blank and block.settings.value != blank %}
+                    <div>
+                      <dt>{{ block.settings.label }}</dt>
+                      <dd>{{ block.settings.value }}</dd>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </dl>
+            </div>
+          </details>
+
+          <details class="pdp-tabs__accordion">
+            <summary class="pdp-tabs__accordion-summary">
+              <span class="pdp-tabs__subhead">Care &amp; Fit</span>
+            </summary>
+            <div class="pdp-tabs__accordion-content">
+              <div class="pdp-tabs__care-fit">
                 <div>
-                  <dt>{{ block.settings.label }}</dt>
-                  <dd>{{ block.settings.value }}</dd>
+                  <h4>Care</h4>
+                  {% if care_value != blank %}
+                    <p>{{ care_value }}</p>
+                  {% else %}
+                    {{ section.settings.details_care_richtext }}
+                  {% endif %}
                 </div>
-              {% endif %}
-            {% endfor %}
-          </dl>
-
-          <p class="pdp-tabs__subhead">Care &amp; Fit</p>
-          <div class="pdp-tabs__care-fit">
-            <div>
-              <h4>Care</h4>
-              {% if care_value != blank %}
-                <p>{{ care_value }}</p>
-              {% else %}
-                {{ section.settings.details_care_richtext }}
-              {% endif %}
+                <div>
+                  <h4>Fit</h4>
+                  {% if fit_value != blank %}
+                    <p>{{ fit_value }}</p>
+                  {% else %}
+                    {{ section.settings.details_fit_richtext }}
+                  {% endif %}
+                </div>
+              </div>
             </div>
-            <div>
-              <h4>Fit</h4>
-              {% if fit_value != blank %}
-                <p>{{ fit_value }}</p>
-              {% else %}
-                {{ section.settings.details_fit_richtext }}
-              {% endif %}
-            </div>
-          </div>
+          </details>
         </section>
       {% endif %}
 
