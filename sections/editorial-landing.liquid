@@ -1,0 +1,214 @@
+{% comment %}
+  FlyFlow Theme - Editorial Landing Section
+  Purpose: Story-first editorial section with headline, body, CTA, and supporting value points.
+  Last modified: 2026-02-18
+{% endcomment %}
+
+<section class="section editorial-landing editorial-landing--{{ section.id }}" data-section-id="{{ section.id }}">
+  <div class="container">
+    <div class="editorial-landing__panel">
+      <div class="editorial-landing__content">
+        {% if section.settings.overline != blank %}
+          <p class="overline" style="margin-bottom:var(--space-md)">{{ section.settings.overline }}</p>
+        {% endif %}
+
+        {% if section.settings.heading != blank %}
+          <h2 class="editorial-landing__heading">{{ section.settings.heading }}</h2>
+        {% endif %}
+
+        {% if section.settings.text != blank %}
+          <div class="editorial-landing__text text-secondary">
+            {{ section.settings.text }}
+          </div>
+        {% endif %}
+
+        <div class="editorial-landing__actions">
+          {% if section.settings.primary_button_text != blank %}
+            <a href="{{ section.settings.primary_button_link }}" class="btn btn--primary">
+              {{ section.settings.primary_button_text }}
+            </a>
+          {% endif %}
+          {% if section.settings.secondary_button_text != blank %}
+            <a href="{{ section.settings.secondary_button_link }}" class="btn btn--secondary">
+              {{ section.settings.secondary_button_text }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="editorial-landing__features">
+        {% for block in section.blocks %}
+          <article class="editorial-landing__feature" {{ block.shopify_attributes }}>
+            <h3 class="editorial-landing__feature-title">{{ block.settings.title }}</h3>
+            {% if block.settings.text != blank %}
+              <p class="editorial-landing__feature-text">{{ block.settings.text }}</p>
+            {% endif %}
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .editorial-landing--{{ section.id }} {
+    background:
+      radial-gradient(circle at 10% 10%, rgba(200, 169, 126, 0.16), transparent 45%),
+      radial-gradient(circle at 90% 90%, rgba(26, 26, 26, 0.08), transparent 40%),
+      var(--color-surface);
+  }
+
+  .editorial-landing--{{ section.id }} .editorial-landing__panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: var(--space-2xl);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    padding: clamp(1.25rem, 3.5vw, 3rem);
+    background: var(--color-background);
+  }
+
+  .editorial-landing--{{ section.id }} .editorial-landing__heading {
+    margin-bottom: var(--space-md);
+  }
+
+  .editorial-landing--{{ section.id }} .editorial-landing__text {
+    line-height: 1.8;
+    margin-bottom: var(--space-lg);
+  }
+
+  .editorial-landing--{{ section.id }} .editorial-landing__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .editorial-landing--{{ section.id }} .editorial-landing__features {
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .editorial-landing--{{ section.id }} .editorial-landing__feature {
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    border-radius: var(--border-radius);
+    padding: var(--space-md);
+  }
+
+  .editorial-landing--{{ section.id }} .editorial-landing__feature-title {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-xs);
+  }
+
+  .editorial-landing--{{ section.id }} .editorial-landing__feature-text {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 768px) {
+    .editorial-landing--{{ section.id }} .editorial-landing__panel {
+      grid-template-columns: 1fr;
+      gap: var(--space-lg);
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Editorial Landing",
+  "settings": [
+    {
+      "type": "text",
+      "id": "overline",
+      "label": "Overline",
+      "default": "Manifesto"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Built for movement. Styled for impact."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>FlyFlow blends utility and modern design so every look performs as hard as it looks. Curated drops, premium materials, and silhouettes engineered for everyday momentum.</p>"
+    },
+    {
+      "type": "text",
+      "id": "primary_button_text",
+      "label": "Primary button text",
+      "default": "Shop New Arrivals"
+    },
+    {
+      "type": "url",
+      "id": "primary_button_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_button_text",
+      "label": "Secondary button text",
+      "default": "Read Our Story"
+    },
+    {
+      "type": "url",
+      "id": "secondary_button_link",
+      "label": "Secondary button link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature Point",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Premium Construction"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Durable materials selected for comfort, movement, and longevity."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Editorial Landing",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Premium Construction",
+            "text": "Durable materials selected for comfort, movement, and longevity."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Curated Drops",
+            "text": "Limited releases and capsule edits designed to stand out."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Fast Fulfillment",
+            "text": "Quick dispatch and transparent shipping from checkout to doorstep."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

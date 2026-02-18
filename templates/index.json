@@ -12,6 +12,42 @@
         "overlay_opacity": 35
       }
     },
+    "editorial-landing": {
+      "type": "editorial-landing",
+      "blocks": {
+        "point-1": {
+          "type": "feature",
+          "settings": {
+            "title": "Premium Construction",
+            "text": "Durable materials selected for comfort, movement, and longevity."
+          }
+        },
+        "point-2": {
+          "type": "feature",
+          "settings": {
+            "title": "Curated Drops",
+            "text": "Limited releases and capsule edits designed to stand out."
+          }
+        },
+        "point-3": {
+          "type": "feature",
+          "settings": {
+            "title": "Fast Fulfillment",
+            "text": "Quick dispatch and transparent shipping from checkout to doorstep."
+          }
+        }
+      },
+      "block_order": ["point-1", "point-2", "point-3"],
+      "settings": {
+        "overline": "Manifesto",
+        "heading": "Built for movement. Styled for impact.",
+        "text": "<p>FlyFlow blends utility and modern design so every look performs as hard as it looks. Curated drops, premium materials, and silhouettes engineered for everyday momentum.</p>",
+        "primary_button_text": "Shop New Arrivals",
+        "primary_button_link": "/collections/all",
+        "secondary_button_text": "Read Our Story",
+        "secondary_button_link": "/pages/about"
+      }
+    },
     "collection-list": {
       "type": "collection-list",
       "settings": {
@@ -75,6 +111,7 @@
   },
   "order": [
     "hero",
+    "editorial-landing",
     "collection-list",
     "featured-collection",
     "image-with-text",
