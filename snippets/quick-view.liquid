@@ -274,6 +274,7 @@
           if (isColor) {
             html += '<button type="button" class="swatch' + (val === selectedVal ? ' swatch--active' : '') + (!available ? ' swatch--sold-out' : '') + '" '
               + 'style="--swatch-color:' + getSwatchColor(val) + ';background-color:' + getSwatchColor(val) + ';" '
+              + 'data-swatch-name="' + val + '" '
               + 'data-qv-option data-qv-option-name="' + optionName + '" data-qv-option-value="' + val + '" '
               + 'title="' + val + '" aria-label="' + val + '"'
               + (!available ? ' aria-disabled="true"' : '') + '></button>';
@@ -289,6 +290,9 @@
       });
 
       container.innerHTML = html;
+      if (window.FlyFlow && FlyFlow.SwatchColors && typeof FlyFlow.SwatchColors.apply === 'function') {
+        FlyFlow.SwatchColors.apply(container);
+      }
     }
 
     function selectOption(btn) {

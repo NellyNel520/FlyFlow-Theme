@@ -1437,6 +1437,73 @@ FlyFlow.HeroMedia = (function () {
 })();
 
 /* ==========================================================================
+   Swatch Colors Module
+   ========================================================================== */
+
+FlyFlow.SwatchColors = (function () {
+  const defaultMap = {
+    onyx: '#0a0a0a',
+    black: '#0a0a0a',
+    cloud: '#f5f4f2',
+    white: '#f5f4f2',
+    bone: '#e7dfd1',
+    butter: '#eadf9d',
+    slate: '#73767b',
+    grey: '#73767b',
+    gray: '#73767b',
+    olive: '#677056',
+    gold: '#c4a46a',
+    silver: '#bfc3c7',
+  };
+
+  function parseCustomMap() {
+    const node = document.getElementById('swatch-color-map-data');
+    if (!node) return {};
+
+    let raw = '';
+    try {
+      raw = JSON.parse(node.textContent || '""');
+    } catch (e) {
+      raw = '';
+    }
+
+    const parsed = {};
+    String(raw || '')
+      .split(/\r?\n/)
+      .forEach(function (line) {
+        const cleaned = line.trim();
+        if (!cleaned || !cleaned.includes(':')) return;
+        const splitIndex = cleaned.indexOf(':');
+        const name = cleaned.slice(0, splitIndex).trim().toLowerCase();
+        const color = cleaned.slice(splitIndex + 1).trim();
+        if (name && color) parsed[name] = color;
+      });
+
+    return parsed;
+  }
+
+  function apply(context = document) {
+    const customMap = parseCustomMap();
+    const map = Object.assign({}, defaultMap, customMap);
+
+    context.querySelectorAll('.swatch[data-swatch-name]').forEach(function (swatch) {
+      const key = String(swatch.dataset.swatchName || '')
+        .trim()
+        .toLowerCase();
+      const color = map[key] || '#d4d1cc';
+      swatch.style.setProperty('--swatch-color', color);
+      swatch.style.setProperty('background-color', color, 'important');
+    });
+  }
+
+  function init() {
+    apply(document);
+  }
+
+  return { init, apply };
+})();
+
+/* ==========================================================================
    Back to Top Module
    ========================================================================== */
 
@@ -1584,6 +1651,7 @@ document.addEventListener('DOMContentLoaded', function () {
   FlyFlow.QuantityButtons.init();
   FlyFlow.StickyATC.init();
   FlyFlow.HeroMedia.init();
+  FlyFlow.SwatchColors.init();
   FlyFlow.BackToTop.init();
   FlyFlow.NewsletterPopup.init();
   FlyFlow.Analytics.init();
