@@ -129,3 +129,4 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - 2026-02-18: Refined PDP share responsiveness: standard mobile now shows full inline share icons, modal fallback only on ultra-small screens (<390px) with explicit "Share" trigger text; removed main-product description block from template flow and increased share-area spacing.
 - 2026-02-18: Styled PDP description content as a premium card inside Product Tabs/accordion with luxe spacing, rounded corners, subtle border, and soft elevation.
 - 2026-02-18: Styled PDP purchase controls (variant picker, quantity, buy buttons) as premium rounded cards with subtle gradient/surface, softer border/elevation, and improved control spacing for a sleeker modern look.
+- 2026-02-18: Consolidated PDP purchase controls into a single bordered purchase panel wrapper (variants + quantity + buy buttons) and removed per-block border treatment.

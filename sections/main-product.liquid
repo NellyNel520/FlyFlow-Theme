@@ -31,8 +31,30 @@
 
         {% form 'product', product, data-product-form: '' %}
           <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          {% assign purchase_panel_types = 'variant_picker,quantity_selector,buy_buttons' | split: ',' %}
+          {% assign purchase_panel_open = false %}
 
           {% for block in section.blocks %}
+            {% assign is_purchase_block = false %}
+            {% if purchase_panel_types contains block.type %}
+              {% assign is_purchase_block = true %}
+            {% endif %}
+
+            {% assign next_index = forloop.index0 | plus: 1 %}
+            {% assign next_block_type = '' %}
+            {% if next_index < section.blocks.size %}
+              {% assign next_block_type = section.blocks[next_index].type %}
+            {% endif %}
+            {% assign next_is_purchase_block = false %}
+            {% if purchase_panel_types contains next_block_type %}
+              {% assign next_is_purchase_block = true %}
+            {% endif %}
+
+            {% if is_purchase_block and purchase_panel_open == false %}
+              <div class="product-purchase-panel">
+              {% assign purchase_panel_open = true %}
+            {% endif %}
+
             <div {% if block.type != '@app' %}class="product-block product-block--{{ block.type | replace: '_', '-' }}"{% endif %} {{ block.shopify_attributes }}>
               {% case block.type %}
                 {% when 'vendor' %}
@@ -275,7 +297,16 @@
                   {% render block %}
               {% endcase %}
             </div>
+
+            {% if is_purchase_block and next_is_purchase_block == false and purchase_panel_open %}
+              </div>
+              {% assign purchase_panel_open = false %}
+            {% endif %}
           {% endfor %}
+
+          {% if purchase_panel_open %}
+            </div>
+          {% endif %}
         {% endform %}
       </div>
     </div>
