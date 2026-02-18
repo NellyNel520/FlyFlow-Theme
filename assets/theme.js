@@ -1320,6 +1320,79 @@ FlyFlow.StickyATC = (function () {
 })();
 
 /* ==========================================================================
+   Back to Top Module
+   ========================================================================== */
+
+FlyFlow.BackToTop = (function () {
+  function init() {
+    const button = document.querySelector('[data-back-to-top]');
+    if (!button) return;
+
+    function onScroll() {
+      button.classList.toggle('back-to-top--visible', window.scrollY > 500);
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    button.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  return { init };
+})();
+
+/* ==========================================================================
+   Newsletter Popup Module
+   ========================================================================== */
+
+FlyFlow.NewsletterPopup = (function () {
+  const storageKey = 'flyflow-newsletter-popup-dismissed-at';
+
+  function init() {
+    const popup = document.querySelector('[data-newsletter-popup]');
+    if (!popup) return;
+
+    const closeBtn = popup.querySelector('[data-newsletter-popup-close]');
+    const delaySeconds =
+      parseInt(document.documentElement.dataset.newsletterPopupDelay || '6', 10) || 6;
+    const frequencyDays =
+      parseInt(document.documentElement.dataset.newsletterPopupFrequency || '7', 10) || 7;
+
+    if (isSuppressed(frequencyDays)) return;
+
+    window.setTimeout(function () {
+      popup.classList.add('newsletter-popup--visible');
+      popup.setAttribute('aria-hidden', 'false');
+    }, delaySeconds * 1000);
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        dismiss(popup);
+      });
+    }
+  }
+
+  function isSuppressed(frequencyDays) {
+    const raw = localStorage.getItem(storageKey);
+    if (!raw) return false;
+    const dismissedAt = parseInt(raw, 10);
+    if (!dismissedAt) return false;
+    const nextEligible = dismissedAt + frequencyDays * 24 * 60 * 60 * 1000;
+    return Date.now() < nextEligible;
+  }
+
+  function dismiss(popup) {
+    popup.classList.remove('newsletter-popup--visible');
+    popup.setAttribute('aria-hidden', 'true');
+    localStorage.setItem(storageKey, String(Date.now()));
+  }
+
+  return { init };
+})();
+
+/* ==========================================================================
    Analytics Module
    ========================================================================== */
 
@@ -1393,5 +1466,7 @@ document.addEventListener('DOMContentLoaded', function () {
   FlyFlow.Accordion.init();
   FlyFlow.QuantityButtons.init();
   FlyFlow.StickyATC.init();
+  FlyFlow.BackToTop.init();
+  FlyFlow.NewsletterPopup.init();
   FlyFlow.Analytics.init();
 });

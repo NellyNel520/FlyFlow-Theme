@@ -2783,3 +2783,169 @@ small {
 .stagger-4 {
   animation-delay: 0.4s;
 }
+
+/* ==========================================================================
+   19. Phase 1 Components
+   ========================================================================== */
+
+.quick-links__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-sm);
+}
+
+.quick-links__card {
+  display: grid;
+  gap: var(--space-xs);
+  padding: var(--space-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  transition:
+    transform var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.quick-links__card:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-accent);
+  box-shadow: 0 14px 24px rgba(0, 0, 0, 0.12);
+}
+
+.quick-links__eyebrow {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-text-secondary);
+}
+
+.quick-links__title {
+  font-family: var(--font-heading);
+  font-size: 1.375rem;
+  line-height: 1.15;
+}
+
+.quick-links__cta {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-accent);
+}
+
+.back-to-top {
+  position: fixed;
+  right: var(--space-md);
+  bottom: calc(var(--space-2xl) + 56px);
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-border);
+  background: var(--color-background);
+  color: var(--color-text);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition:
+    opacity var(--transition-base),
+    transform var(--transition-base),
+    visibility var(--transition-base);
+  z-index: var(--z-sticky);
+}
+
+.back-to-top--visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.newsletter-popup {
+  position: fixed;
+  z-index: var(--z-notification);
+  max-width: 360px;
+  width: calc(100% - 2rem);
+  border: 1px solid var(--color-border);
+  background: var(--color-background);
+  padding: var(--space-lg);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--transition-base),
+    transform var(--transition-base),
+    visibility var(--transition-base);
+}
+
+.newsletter-popup--modal {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -48%);
+}
+
+.newsletter-popup--slidein {
+  right: var(--space-md);
+  bottom: var(--space-md);
+  transform: translateY(20px);
+}
+
+.newsletter-popup--visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.newsletter-popup--modal.newsletter-popup--visible {
+  transform: translate(-50%, -50%);
+}
+
+.newsletter-popup--slidein.newsletter-popup--visible {
+  transform: translateY(0);
+}
+
+.newsletter-popup__close {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.5rem;
+  font-size: 1.25rem;
+  line-height: 1;
+  background: none;
+  border: 0;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.newsletter-popup__heading {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  line-height: 1.15;
+  margin-bottom: var(--space-sm);
+}
+
+.newsletter-popup__text {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.newsletter-popup__form {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.newsletter-popup__input {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: 0.75rem 0.875rem;
+}
+
+@media (max-width: 767px) {
+  .quick-links__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .newsletter-popup--slidein {
+    right: var(--space-sm);
+    left: var(--space-sm);
+    width: auto;
+  }
+}

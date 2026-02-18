@@ -13,6 +13,8 @@
   lang="{{ request.locale.iso_code }}"
   dir="{{ settings.text_direction | default: 'ltr' }}"
   data-theme="light"
+  data-newsletter-popup-delay="{{ settings.newsletter_popup_delay | default: 6 }}"
+  data-newsletter-popup-frequency="{{ settings.newsletter_popup_frequency_days | default: 7 }}"
 >
 <head>
   <meta charset="utf-8">
@@ -201,6 +203,12 @@
 
   {%- comment -%} Purchase notifications (social proof) {%- endcomment -%}
   {% render 'purchase-notification' %}
+
+  {%- comment -%} Newsletter popup / slide-in {%- endcomment -%}
+  {% render 'newsletter-popup' %}
+
+  {%- comment -%} Back to top button {%- endcomment -%}
+  {% render 'back-to-top' %}
 
   {%- comment -%} Core JavaScript — deferred for performance {%- endcomment -%}
   <script src="{{ 'theme.js' | asset_url }}" defer></script>

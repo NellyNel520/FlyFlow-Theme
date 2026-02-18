@@ -17,8 +17,8 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - [ ] Hero carousel support
 - [ ] Parallax scrolling support
 - [ ] Instagram feed integration
-- [ ] Newsletter popup/slide-in behavior
-- [ ] Explicit quick-links band (collections/about/contact)
+- [x] Newsletter popup/slide-in behavior
+- [x] Explicit quick-links band (collections/about/contact)
 
 ### Product Pages
 - [x] High-res gallery with thumbnails/swipe/zoom/fullscreen
@@ -45,7 +45,7 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - [x] Predictive search with suggestions
 - [x] Breadcrumbs
 - [x] Mobile-optimized navigation
-- [ ] Back-to-top control
+- [x] Back-to-top control
 
 ### Performance & Technical
 - [x] Lazy loading patterns
@@ -67,9 +67,9 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 ### Phase 1: Feature Completion
 - [ ] Add hero video + optional carousel mode
 - [ ] Add Instagram feed section
-- [ ] Add back-to-top control
-- [ ] Add newsletter popup/slide-in option
-- [ ] Add quick-links utility section on homepage
+- [x] Add back-to-top control
+- [x] Add newsletter popup/slide-in option
+- [x] Add quick-links utility section on homepage
 
 ### Phase 2: Merchandising & Brand Fit
 - [ ] Catalog cleanup in Shopify admin to remove off-vibe products
@@ -95,3 +95,4 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 ## Work Log
 - 2026-02-18: Converted tracker to spec-audit + phased roadmap aligned to original project brief.
 - 2026-02-18: Added theme-level off-vibe product masking so snowboard items no longer surface in key storefront cards.
+- 2026-02-18: Completed Phase 1 UX additions: back-to-top, quick-links homepage utility section, and configurable newsletter popup/slide-in.

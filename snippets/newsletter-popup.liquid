@@ -1,0 +1,48 @@
+{% comment %}
+  FlyFlow Theme - Newsletter Popup Snippet
+  Purpose: Configurable popup/slide-in email capture with localStorage frequency controls.
+  Last modified: 2026-02-18
+{% endcomment %}
+
+{% if settings.newsletter_popup_enabled %}
+  <div
+    class="newsletter-popup newsletter-popup--{{ settings.newsletter_popup_style }}"
+    data-newsletter-popup
+    aria-hidden="true"
+  >
+    <button
+      type="button"
+      class="newsletter-popup__close"
+      data-newsletter-popup-close
+      aria-label="{{ 'general.close' | t }}"
+    >
+      &times;
+    </button>
+
+    {% if settings.newsletter_popup_heading != blank %}
+      <p class="newsletter-popup__heading">{{ settings.newsletter_popup_heading }}</p>
+    {% endif %}
+    {% if settings.newsletter_popup_text != blank %}
+      <p class="newsletter-popup__text">{{ settings.newsletter_popup_text }}</p>
+    {% endif %}
+
+    {% form 'customer', class: 'newsletter-popup__form' %}
+      {% if form.posted_successfully? %}
+        <p class="text-accent">{{ 'newsletter.success' | t }}</p>
+      {% else %}
+        <input type="hidden" name="contact[tags]" value="newsletter,popup">
+        <input
+          type="email"
+          name="contact[email]"
+          class="newsletter-popup__input"
+          placeholder="{{ 'newsletter.placeholder' | t }}"
+          aria-label="{{ 'newsletter.placeholder' | t }}"
+          required
+        >
+        <button type="submit" class="btn btn--primary btn--full">
+          {{ settings.newsletter_popup_button | default: 'Subscribe' }}
+        </button>
+      {% endif %}
+    {% endform %}
+  </div>
+{% endif %}

@@ -48,6 +48,40 @@
         "secondary_button_link": "/pages/about"
       }
     },
+    "quick-links": {
+      "type": "quick-links",
+      "blocks": {
+        "new-arrivals": {
+          "type": "link_item",
+          "settings": {
+            "eyebrow": "Collection",
+            "title": "New Arrivals",
+            "link": "/collections/all"
+          }
+        },
+        "about": {
+          "type": "link_item",
+          "settings": {
+            "eyebrow": "Story",
+            "title": "About FlyFlow",
+            "link": "/pages/about"
+          }
+        },
+        "contact": {
+          "type": "link_item",
+          "settings": {
+            "eyebrow": "Support",
+            "title": "Contact Us",
+            "link": "/pages/contact"
+          }
+        }
+      },
+      "block_order": ["new-arrivals", "about", "contact"],
+      "settings": {
+        "overline": "Start Here",
+        "heading": "Navigate FlyFlow"
+      }
+    },
     "collection-list": {
       "type": "collection-list",
       "settings": {
@@ -112,6 +146,7 @@
   "order": [
     "hero",
     "editorial-landing",
+    "quick-links",
     "collection-list",
     "featured-collection",
     "image-with-text",

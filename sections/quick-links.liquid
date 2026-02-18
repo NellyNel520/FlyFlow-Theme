@@ -1,0 +1,102 @@
+{% comment %}
+  FlyFlow Theme - Quick Links Section
+  Purpose: Utility links for high-intent navigation to core pages.
+  Last modified: 2026-02-18
+{% endcomment %}
+
+<section class="section quick-links quick-links--{{ section.id }}" data-section-id="{{ section.id }}">
+  <div class="container">
+    {% if section.settings.heading != blank %}
+      <div class="text-center mb-lg">
+        {% if section.settings.overline != blank %}
+          <p class="overline mb-sm">{{ section.settings.overline }}</p>
+        {% endif %}
+        <h2>{{ section.settings.heading }}</h2>
+      </div>
+    {% endif %}
+
+    <div class="quick-links__grid">
+      {% for block in section.blocks %}
+        <a href="{{ block.settings.link | default: routes.root_url }}" class="quick-links__card" {{ block.shopify_attributes }}>
+          <span class="quick-links__eyebrow">{{ block.settings.eyebrow }}</span>
+          <span class="quick-links__title">{{ block.settings.title }}</span>
+          <span class="quick-links__cta">Explore</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Quick Links",
+  "settings": [
+    {
+      "type": "text",
+      "id": "overline",
+      "label": "Overline",
+      "default": "Start Here"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Navigate FlyFlow"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "link_item",
+      "name": "Link",
+      "settings": [
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow",
+          "default": "Collection"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "New Arrivals"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Quick Links",
+      "blocks": [
+        {
+          "type": "link_item",
+          "settings": {
+            "eyebrow": "Collection",
+            "title": "New Arrivals"
+          }
+        },
+        {
+          "type": "link_item",
+          "settings": {
+            "eyebrow": "Story",
+            "title": "About FlyFlow"
+          }
+        },
+        {
+          "type": "link_item",
+          "settings": {
+            "eyebrow": "Support",
+            "title": "Contact Us"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

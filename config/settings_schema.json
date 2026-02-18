@@ -404,6 +404,63 @@
     ]
   },
   {
+    "name": "Marketing",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "newsletter_popup_enabled",
+        "label": "Enable newsletter popup",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "newsletter_popup_style",
+        "label": "Popup style",
+        "options": [
+          { "value": "modal", "label": "Centered modal" },
+          { "value": "slidein", "label": "Bottom-right slide-in" }
+        ],
+        "default": "slidein"
+      },
+      {
+        "type": "range",
+        "id": "newsletter_popup_delay",
+        "label": "Popup delay (seconds)",
+        "min": 2,
+        "max": 20,
+        "step": 1,
+        "default": 6
+      },
+      {
+        "type": "range",
+        "id": "newsletter_popup_frequency_days",
+        "label": "Hide for days after close",
+        "min": 1,
+        "max": 30,
+        "step": 1,
+        "default": 7
+      },
+      {
+        "type": "text",
+        "id": "newsletter_popup_heading",
+        "label": "Heading",
+        "default": "Join the FlyFlow Circle"
+      },
+      {
+        "type": "textarea",
+        "id": "newsletter_popup_text",
+        "label": "Text",
+        "default": "Get early access to curated drops, private offers, and editorial styling notes."
+      },
+      {
+        "type": "text",
+        "id": "newsletter_popup_button",
+        "label": "Button text",
+        "default": "Subscribe"
+      }
+    ]
+  },
+  {
     "name": "Analytics & SEO",
     "settings": [
       {
