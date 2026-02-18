@@ -82,7 +82,7 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - [x] Integrate reviews app block cleanly
 - [ ] Final cart/search/product regression pass on mobile + desktop
 - [ ] Lighthouse and Core Web Vitals measurement pass
-- [ ] Reduce remaining lint/theme warnings where practical
+- [x] Reduce remaining lint/theme warnings where practical
 - [x] Final launch checklist and deployment runbook
 
 ## Completed Engineering Work (to date)
@@ -108,3 +108,5 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - 2026-02-18: Completed Phase 2 validation pass with live catalog data; hardened collection color filter detection to support `Color`/`Colour` and case variants.
 - 2026-02-18: Completed Phase 3 reviews integration wiring: product tabs now support OS 2.0 app blocks for reviews with graceful fallback messaging and default template reviews tab enabled.
 - 2026-02-18: Added launch playbook document: `documentation/LAUNCH_RUNBOOK.md` covering pre-launch gates, UX regression checklist, deployment commands, rollback, and post-launch monitoring.
+- 2026-02-18: Completed JS lint cleanup pass (`assets/theme.js`, `assets/dark-mode.js`) and pushed commit `93b272d`; synced latest theme to live store.
+- 2026-02-18: Theme Check reduced to 2 expected `RemoteAsset` warnings in analytics snippets (GA4/Facebook pixel URLs); no actionable Liquid offenses remain.
