@@ -108,7 +108,8 @@
                 <div class="accordion__body">
                   {% case filter.type %}
                     {% when 'list' %}
-                      {% if filter.label == 'Color' %}
+                      {% assign filter_label_key = filter.label | downcase %}
+                      {% if filter_label_key contains 'color' or filter_label_key contains 'colour' %}
                         <div class="filter-swatches">
                           {% for value in filter.values %}
                             {% capture swatch_color %}{% render 'swatch-color', value: value.label %}{% endcapture %}
@@ -269,7 +270,8 @@
               <div class="accordion__body">
                 {% case filter.type %}
                   {% when 'list' %}
-                    {% if filter.label == 'Color' %}
+                    {% assign filter_label_key = filter.label | downcase %}
+                    {% if filter_label_key contains 'color' or filter_label_key contains 'colour' %}
                       <div class="filter-swatches">
                         {% for value in filter.values %}
                           {% capture swatch_color %}{% render 'swatch-color', value: value.label %}{% endcapture %}

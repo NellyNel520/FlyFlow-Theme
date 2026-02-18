@@ -35,7 +35,7 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - [x] Filtering and sort controls
 - [x] Quick view modal
 - [x] Pagination support
-- [ ] Material/style taxonomy filtering validation with real catalog data
+- [x] Material/style taxonomy filtering validation with real catalog data
 - [ ] Masonry layout option
 - [ ] Infinite scroll option wiring (setting exists; UX path not finalized)
 
@@ -72,9 +72,9 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - [x] Add quick-links utility section on homepage
 
 ### Phase 2: Merchandising & Brand Fit
-- [ ] Catalog cleanup in Shopify admin to remove off-vibe products
+- [x] Catalog cleanup in Shopify admin to remove off-vibe products
 - [x] Update section defaults/content copy to FlyFlow tone across templates
-- [ ] Validate collection filters against real catalog attributes (size/color/material/style)
+- [x] Validate collection filters against real catalog attributes (size/color/material/style)
 - [x] Generate import-ready starter catalog seed (luxe streetwear)
 - [x] Upgrade seed to full streetwear variant matrix (sizes + colorways)
 
@@ -105,3 +105,4 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - 2026-02-18: Upgraded seed CSV to include Shopify image fields (`Image Src`, `Variant Image`) with per-color media URLs and explicit per-variant inventory quantities across size/color options.
 - 2026-02-18: Expanded seed to a full stress-test catalog: 18 streetwear products and 114 variants (graphic tees, shorts, pants, sweatsuit, hoodies, sneakers, purses, hats, beanies) with media mapping and filter tags.
 - 2026-02-18: Applied demo-ready swatch mapping palette in live theme settings to support custom color names without manual setup.
+- 2026-02-18: Completed Phase 2 validation pass with live catalog data; hardened collection color filter detection to support `Color`/`Colour` and case variants.
