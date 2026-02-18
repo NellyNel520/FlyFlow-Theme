@@ -5,7 +5,7 @@
   Last modified: 2026-02-17
 {% endcomment %}
 
-<section class="section" data-section-id="{{ section.id }}">
+<section class="section collection-list collection-list--{{ section.id }}" data-section-id="{{ section.id }}">
   <div class="container">
     {% if section.settings.heading != blank %}
       <div class="text-center" style="margin-bottom:var(--space-2xl)">
@@ -87,9 +87,50 @@
 </section>
 
 <style>
-  .collection-list__card:hover img {
-    transform: scale(1.04);
+  .collection-list--{{ section.id }} .collection-list__card {
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+    animation: list-rise-{{ section.id }} 480ms ease both;
   }
+
+  .collection-list--{{ section.id }} .collection-list__card:nth-child(2) {
+    animation-delay: 90ms;
+  }
+
+  .collection-list--{{ section.id }} .collection-list__card:nth-child(3) {
+    animation-delay: 160ms;
+  }
+
+  .collection-list--{{ section.id }} .collection-list__card:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--color-accent) 42%, var(--color-border));
+    box-shadow: 0 20px 32px rgba(0, 0, 0, 0.14);
+  }
+
+  .collection-list--{{ section.id }} .collection-list__card:hover img {
+    transform: scale(1.06);
+  }
+
+  .collection-list--{{ section.id }} .collection-list__card > div:last-child {
+    transition: background var(--transition-base);
+  }
+
+  .collection-list--{{ section.id }} .collection-list__card:hover > div:last-child {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.22) 64%);
+  }
+
+  @keyframes list-rise-{{ section.id }} {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   @media (max-width: 767px) {
     .collection-list__card {
       aspect-ratio: 3 / 4 !important;
