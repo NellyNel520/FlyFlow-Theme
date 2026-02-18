@@ -10,7 +10,7 @@
   <div class="header__inner container">
     {%- comment -%} Mobile menu toggle (visible < 1024px) {%- endcomment -%}
     <button
-      class="header__icon-btn"
+      class="header__icon-btn hidden-desktop"
       data-mobile-menu-toggle
       aria-label="{{ 'accessibility.open_menu' | t }}"
     >
@@ -72,6 +72,16 @@
           {% endif %}
         </div>
       {% endfor %}
+      {% if pages['about'] != blank %}
+        <div class="nav__item">
+          <a
+            href="{{ pages['about'].url }}"
+            class="nav__link{% if request.path == pages['about'].url %} nav__link--active{% endif %}"
+          >
+            About
+          </a>
+        </div>
+      {% endif %}
     </nav>
 
     {%- comment -%} Header actions (search, dark mode, account, cart) {%- endcomment -%}
@@ -151,30 +161,6 @@
   </div>
 
   <nav aria-label="Mobile navigation">
-    {% for link in section.settings.menu.links %}
-      <div class="mobile-menu__item">
-        {% if link.links.size > 0 %}
-          <button
-            class="mobile-menu__link"
-            data-submenu-toggle
-            aria-expanded="false"
-          >
-            {{ link.title }}
-            <svg class="accordion__icon" viewBox="0 0 24 24" aria-hidden="true" width="12" height="12">
-              <polyline points="6 9 12 15 18 9" fill="none" stroke="currentColor" stroke-width="2"/>
-            </svg>
-          </button>
-          <div class="mobile-menu__submenu">
-            {% for child in link.links %}
-              <a href="{{ child.url }}" class="mobile-menu__sublink">{{ child.title }}</a>
-            {% endfor %}
-          </div>
-        {% else %}
-          <a href="{{ link.url }}" class="mobile-menu__link">{{ link.title }}</a>
-        {% endif %}
-      </div>
-    {% endfor %}
-
     <div class="mobile-menu__item" style="margin-top:var(--space-md);padding-top:var(--space-md);border-top:1px solid var(--color-border)">
       <p class="text-xs text-secondary" style="text-transform:uppercase;letter-spacing:0.12em;margin-bottom:var(--space-sm)">
         Quick Access
