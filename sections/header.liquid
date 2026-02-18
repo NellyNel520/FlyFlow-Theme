@@ -177,6 +177,9 @@
   </nav>
 </div>
 
+{%- comment -%} Mobile bottom navigation (uses same menu source as sidebar) {%- endcomment -%}
+{% render 'bottom-nav', menu: section.settings.menu %}
+
 {% schema %}
 {
   "name": "Header",

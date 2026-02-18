@@ -380,7 +380,12 @@ FlyFlow.Cart = (function () {
    */
   async function refreshCart() {
     try {
-      const cart = await FlyFlow.fetchAPI('/cart.js');
+      const [cart, sections] = await Promise.all([
+        FlyFlow.fetchAPI('/cart.js'),
+        fetch('/?sections=cart-drawer').then(function (response) {
+          return response.json();
+        }),
+      ]);
       updateCartCount(cart.item_count);
       updateShippingBar(cart.total_price);
 
@@ -389,8 +394,6 @@ FlyFlow.Cart = (function () {
       }
 
       // Use Section Rendering API for full cart HTML update
-      const response = await fetch('/?sections=cart-drawer');
-      const sections = await response.json();
       if (sections['cart-drawer'] && cartDrawer) {
         const temp = document.createElement('div');
         temp.innerHTML = sections['cart-drawer'];
@@ -541,6 +544,7 @@ FlyFlow.Navigation = (function () {
   let mobileMenu;
   let bottomNav;
   let lastScrollY = 0;
+  let bottomNavTimer = null;
   let ticking = false;
 
   /**
@@ -586,17 +590,32 @@ FlyFlow.Navigation = (function () {
     if (!ticking) {
       window.requestAnimationFrame(function () {
         const currentScrollY = window.scrollY;
-        const scrollingDown = currentScrollY > lastScrollY && currentScrollY > 100;
+        const deltaY = currentScrollY - lastScrollY;
+        const scrollingDown = deltaY > 2 && currentScrollY > 100;
+        const scrollingUp = deltaY < -2;
 
         if (header) {
           header.classList.toggle('header--hidden', scrollingDown);
           header.classList.toggle('header--scrolled', currentScrollY > 10);
         }
         if (bottomNav) {
-          bottomNav.classList.toggle('bottom-nav--hidden', scrollingDown);
+          if (scrollingDown) {
+            bottomNav.classList.add('bottom-nav--hidden');
+          } else if (scrollingUp || currentScrollY <= 100) {
+            bottomNav.classList.remove('bottom-nav--hidden');
+          }
+
+          if (bottomNavTimer) {
+            window.clearTimeout(bottomNavTimer);
+          }
+          bottomNavTimer = window.setTimeout(function () {
+            if (bottomNav) {
+              bottomNav.classList.remove('bottom-nav--hidden');
+            }
+          }, 180);
         }
 
-        lastScrollY = currentScrollY;
+        lastScrollY = Math.max(currentScrollY, 0);
         ticking = false;
       });
       ticking = true;
