@@ -10,7 +10,7 @@
 <nav class="bottom-nav" data-bottom-nav aria-label="Mobile navigation">
   <div class="bottom-nav__items">
     {% if menu and menu.links.size > 0 %}
-      {% for link in menu.links limit: 5 %}
+      {% for link in menu.links limit: 4 %}
         <a href="{{ link.url }}" class="bottom-nav__item{% if link.active %} bottom-nav__item--active{% endif %}">
           <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none" aria-hidden="true">
             {% case forloop.index %}
@@ -35,5 +35,23 @@
         </a>
       {% endfor %}
     {% endif %}
+
+    <button class="bottom-nav__item" type="button" data-cart-toggle aria-label="{{ 'accessibility.open_cart' | t }}">
+      <span style="position:relative">
+        <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none" aria-hidden="true">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+        <span
+          class="header__cart-count"
+          data-cart-count
+          {% if cart.item_count == 0 %}style="display:none;top:-4px;right:-8px;font-size:0.5625rem;min-width:16px;height:16px;line-height:16px"{% else %}style="top:-4px;right:-8px;font-size:0.5625rem;min-width:16px;height:16px;line-height:16px"{% endif %}
+        >
+          {{ cart.item_count }}
+        </span>
+      </span>
+      <span>Cart</span>
+    </button>
   </div>
 </nav>
