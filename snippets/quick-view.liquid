@@ -101,9 +101,30 @@
     var currentProduct = null;
     var selectedOptions = {};
     var isLoading = false;
+    var customSwatchMap = {};
+
+    (function hydrateSwatchMap() {
+      var mapNode = document.getElementById('swatch-color-map-data');
+      if (!mapNode) return;
+      var raw = '';
+      try {
+        raw = JSON.parse(mapNode.textContent || '""');
+      } catch (e) {
+        raw = '';
+      }
+      String(raw || '').split(/\r?\n/).forEach(function(line) {
+        var cleaned = line.trim();
+        if (!cleaned || cleaned.indexOf(':') === -1) return;
+        var splitIndex = cleaned.indexOf(':');
+        var name = cleaned.slice(0, splitIndex).trim().toLowerCase();
+        var color = cleaned.slice(splitIndex + 1).trim();
+        if (name && color) customSwatchMap[name] = color;
+      });
+    })();
 
     function getSwatchColor(value) {
       var key = String(value || '').toLowerCase();
+      if (customSwatchMap[key]) return customSwatchMap[key];
       var map = {
         onyx: '#0a0a0a',
         black: '#0a0a0a',

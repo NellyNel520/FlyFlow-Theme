@@ -111,30 +111,11 @@
                       {% if filter.label == 'Color' %}
                         <div class="filter-swatches">
                           {% for value in filter.values %}
-                            {% assign swatch_name = value.label | downcase %}
-                            {% assign swatch_color = '#d4d1cc' %}
-                            {% case swatch_name %}
-                              {% when 'onyx', 'black' %}
-                                {% assign swatch_color = '#0a0a0a' %}
-                              {% when 'cloud', 'white' %}
-                                {% assign swatch_color = '#f5f4f2' %}
-                              {% when 'bone' %}
-                                {% assign swatch_color = '#e7dfd1' %}
-                              {% when 'butter' %}
-                                {% assign swatch_color = '#eadf9d' %}
-                              {% when 'slate', 'grey', 'gray' %}
-                                {% assign swatch_color = '#73767b' %}
-                              {% when 'olive' %}
-                                {% assign swatch_color = '#677056' %}
-                              {% when 'gold' %}
-                                {% assign swatch_color = '#c4a46a' %}
-                              {% when 'silver' %}
-                                {% assign swatch_color = '#bfc3c7' %}
-                            {% endcase %}
+                            {% capture swatch_color %}{% render 'swatch-color', value: value.label %}{% endcapture %}
                             <a
                               href="{{ value.url }}"
                               class="filter-swatch{% if value.active %} filter-swatch--active{% endif %}"
-                              style="background-color: {{ swatch_color }}"
+                              style="background-color: {{ swatch_color | strip }}"
                               title="{{ value.label }} ({{ value.count }})"
                               aria-label="{{ value.label }}, {{ value.count }} products"
                             >
@@ -291,30 +272,11 @@
                     {% if filter.label == 'Color' %}
                       <div class="filter-swatches">
                         {% for value in filter.values %}
-                          {% assign swatch_name = value.label | downcase %}
-                          {% assign swatch_color = '#d4d1cc' %}
-                          {% case swatch_name %}
-                            {% when 'onyx', 'black' %}
-                              {% assign swatch_color = '#0a0a0a' %}
-                            {% when 'cloud', 'white' %}
-                              {% assign swatch_color = '#f5f4f2' %}
-                            {% when 'bone' %}
-                              {% assign swatch_color = '#e7dfd1' %}
-                            {% when 'butter' %}
-                              {% assign swatch_color = '#eadf9d' %}
-                            {% when 'slate', 'grey', 'gray' %}
-                              {% assign swatch_color = '#73767b' %}
-                            {% when 'olive' %}
-                              {% assign swatch_color = '#677056' %}
-                            {% when 'gold' %}
-                              {% assign swatch_color = '#c4a46a' %}
-                            {% when 'silver' %}
-                              {% assign swatch_color = '#bfc3c7' %}
-                          {% endcase %}
+                          {% capture swatch_color %}{% render 'swatch-color', value: value.label %}{% endcapture %}
                           <a
                             href="{{ value.url }}"
                             class="filter-swatch{% if value.active %} filter-swatch--active{% endif %}"
-                            style="background-color: {{ swatch_color }}"
+                            style="background-color: {{ swatch_color | strip }}"
                             title="{{ value.label }} ({{ value.count }})"
                             aria-label="{{ value.label }}, {{ value.count }} products"
                           >

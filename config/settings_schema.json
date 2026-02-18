@@ -326,6 +326,13 @@
         "id": "product_back_in_stock",
         "label": "Enable back-in-stock notifications",
         "default": true
+      },
+      {
+        "type": "textarea",
+        "id": "product_swatch_color_map",
+        "label": "Custom swatch color map",
+        "info": "One per line: Color Name: #HEX (or rgb()). Example: Onyx: #0a0a0a",
+        "default": "Onyx: #0a0a0a\nCloud: #f5f4f2\nBone: #e7dfd1\nButter: #eadf9d\nSlate: #73767b\nOlive: #677056"
       }
     ]
   },

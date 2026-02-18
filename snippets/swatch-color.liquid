@@ -1,0 +1,41 @@
+{%- assign swatch_name = value | default: '' | strip | downcase -%}
+{%- assign swatch_color = '' -%}
+
+{%- assign custom_lines = settings.product_swatch_color_map | newline_to_br | split: '<br />' -%}
+{%- for line in custom_lines -%}
+  {%- assign cleaned = line | strip -%}
+  {%- if cleaned != blank and cleaned contains ':' -%}
+    {%- assign parts = cleaned | split: ':' -%}
+    {%- assign key = parts[0] | strip | downcase -%}
+    {%- assign mapped = parts[1] | strip -%}
+    {%- if key == swatch_name and mapped != blank -%}
+      {%- assign swatch_color = mapped -%}
+      {%- break -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- if swatch_color == blank -%}
+  {%- case swatch_name -%}
+    {%- when 'onyx', 'black' -%}
+      {%- assign swatch_color = '#0a0a0a' -%}
+    {%- when 'cloud', 'white' -%}
+      {%- assign swatch_color = '#f5f4f2' -%}
+    {%- when 'bone' -%}
+      {%- assign swatch_color = '#e7dfd1' -%}
+    {%- when 'butter' -%}
+      {%- assign swatch_color = '#eadf9d' -%}
+    {%- when 'slate', 'grey', 'gray' -%}
+      {%- assign swatch_color = '#73767b' -%}
+    {%- when 'olive' -%}
+      {%- assign swatch_color = '#677056' -%}
+    {%- when 'gold' -%}
+      {%- assign swatch_color = '#c4a46a' -%}
+    {%- when 'silver' -%}
+      {%- assign swatch_color = '#bfc3c7' -%}
+    {%- else -%}
+      {%- assign swatch_color = '#d4d1cc' -%}
+  {%- endcase -%}
+{%- endif -%}
+
+{{- swatch_color -}}

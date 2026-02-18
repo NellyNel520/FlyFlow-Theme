@@ -210,6 +210,8 @@
   {%- comment -%} Back to top button {%- endcomment -%}
   {% render 'back-to-top' %}
 
+  <script type="application/json" id="swatch-color-map-data">{{ settings.product_swatch_color_map | json }}</script>
+
   {%- comment -%} Core JavaScript — deferred for performance {%- endcomment -%}
   <script src="{{ 'theme.js' | asset_url }}" defer></script>
 
