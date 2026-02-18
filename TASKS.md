@@ -29,7 +29,7 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - [x] Quick add from collection cards
 - [x] Sticky add-to-cart
 - [ ] True 360° media support
-- [ ] Reviews app integration (current state: placeholder hook)
+- [x] Reviews app integration (OS 2.0 app block-ready with fallback)
 
 ### Collection Pages
 - [x] Filtering and sort controls
@@ -79,7 +79,7 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - [x] Upgrade seed to full streetwear variant matrix (sizes + colorways)
 
 ### Phase 3: Optimization & Launch Hardening
-- [ ] Integrate reviews app block cleanly
+- [x] Integrate reviews app block cleanly
 - [ ] Final cart/search/product regression pass on mobile + desktop
 - [ ] Lighthouse and Core Web Vitals measurement pass
 - [ ] Reduce remaining lint/theme warnings where practical
@@ -106,3 +106,4 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - 2026-02-18: Expanded seed to a full stress-test catalog: 18 streetwear products and 114 variants (graphic tees, shorts, pants, sweatsuit, hoodies, sneakers, purses, hats, beanies) with media mapping and filter tags.
 - 2026-02-18: Applied demo-ready swatch mapping palette in live theme settings to support custom color names without manual setup.
 - 2026-02-18: Completed Phase 2 validation pass with live catalog data; hardened collection color filter detection to support `Color`/`Colour` and case variants.
+- 2026-02-18: Completed Phase 3 reviews integration wiring: product tabs now support OS 2.0 app blocks for reviews with graceful fallback messaging and default template reviews tab enabled.

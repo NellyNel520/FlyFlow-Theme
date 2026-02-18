@@ -8,9 +8,19 @@
 
 <section class="product-tabs section" data-section-id="{{ section.id }}">
   <div class="container">
+    {% assign has_reviews_app_block = false %}
+    {% for block in section.blocks %}
+      {% if block.type == '@app' %}
+        {% assign has_reviews_app_block = true %}
+      {% endif %}
+    {% endfor %}
+
     {%- comment -%} Desktop tabs {%- endcomment -%}
     <div class="product-tabs__nav" role="tablist">
       {% for block in section.blocks %}
+        {% if block.type == '@app' %}
+          {% continue %}
+        {% endif %}
         <button
           class="product-tabs__btn{% if forloop.first %} product-tabs__btn--active{% endif %}"
           role="tab"
@@ -33,6 +43,9 @@
 
     {%- comment -%} Tab panels (desktop) {%- endcomment -%}
     {% for block in section.blocks %}
+      {% if block.type == '@app' %}
+        {% continue %}
+      {% endif %}
       <div
         class="product-tabs__content{% if forloop.first %} product-tabs__content--active{% endif %} hidden-mobile"
         role="tabpanel"
@@ -50,7 +63,17 @@
             </button>
           {% when 'reviews' %}
             <div id="product-reviews">
-              <p class="text-sm text-secondary">Reviews integration point — connect your preferred reviews app here.</p>
+              {% if has_reviews_app_block %}
+                {% for app_block in section.blocks %}
+                  {% if app_block.type == '@app' %}
+                    <div class="product-tabs__app-block" {{ app_block.shopify_attributes }}>
+                      {% render app_block %}
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              {% else %}
+                <p class="text-sm text-secondary">Install a reviews app and add its app block here to show verified customer reviews.</p>
+              {% endif %}
             </div>
           {% when 'shipping' %}
             <div class="rte text-sm">{{ block.settings.content }}</div>
@@ -62,6 +85,9 @@
 
     {%- comment -%} Accordion (mobile) {%- endcomment -%}
     {% for block in section.blocks %}
+      {% if block.type == '@app' %}
+        {% continue %}
+      {% endif %}
       <div class="accordion" {{ block.shopify_attributes }}>
         <button
           class="accordion__trigger"
@@ -90,7 +116,17 @@
                   {{ 'products.size_guide.title' | t }}
                 </button>
               {% when 'reviews' %}
-                <p class="text-secondary">Reviews integration point.</p>
+                {% if has_reviews_app_block %}
+                  {% for app_block in section.blocks %}
+                    {% if app_block.type == '@app' %}
+                      <div class="product-tabs__app-block" {{ app_block.shopify_attributes }}>
+                        {% render app_block %}
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                {% else %}
+                  <p class="text-secondary">Install a reviews app and add its app block here to show verified customer reviews.</p>
+                {% endif %}
               {% when 'shipping' %}
                 <div class="rte">{{ block.settings.content }}</div>
               {% when 'custom' %}
@@ -172,6 +208,9 @@
           "label": "Content"
         }
       ]
+    },
+    {
+      "type": "@app"
     }
   ]
 }

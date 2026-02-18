@@ -15,12 +15,16 @@
           "type": "size-guide",
           "settings": {}
         },
+        "reviews": {
+          "type": "reviews",
+          "settings": {}
+        },
         "shipping": {
           "type": "shipping",
           "settings": {}
         }
       },
-      "block_order": ["description", "size-guide", "shipping"],
+      "block_order": ["description", "size-guide", "reviews", "shipping"],
       "settings": {}
     },
     "related-products": {
