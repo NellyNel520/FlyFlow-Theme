@@ -1266,10 +1266,17 @@ small {
   margin-bottom: var(--space-sm);
 }
 
-.product-info__rating-stars {
-  letter-spacing: 0.08em;
-  color: #b58f4a;
-  font-size: 0.85rem;
+.product-info__rating-svg {
+  width: 92px;
+  height: 18px;
+}
+
+.product-info__rating-stars-base {
+  fill: rgba(0, 0, 0, 0.16);
+}
+
+.product-info__rating-stars-fill {
+  fill: #b58f4a;
 }
 
 .product-info__rating-text {

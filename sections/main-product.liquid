@@ -22,6 +22,13 @@
       {% render 'product-gallery', product: product, parent_section_id: section.id %}
 
       <div class="product-info">
+        {% assign has_product_app_block = false %}
+        {% for section_block in section.blocks %}
+          {% if section_block.type == '@app' %}
+            {% assign has_product_app_block = true %}
+          {% endif %}
+        {% endfor %}
+
         {% form 'product', product, data-product-form: '' %}
           <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
 
@@ -51,18 +58,54 @@
                   </div>
 
                 {% when 'rating' %}
+                  {% assign rating_source = settings.rating_source | default: 'auto' %}
                   {% assign rating_value = product.metafields.reviews.rating.value.rating | default: product.metafields.reviews.rating.value %}
                   {% assign rating_count = product.metafields.reviews.rating_count | default: product.metafields.spr.reviews %}
-                  {% if rating_value != blank %}
-                    <div class="product-info__rating" aria-label="Rated {{ rating_value }} out of 5">
-                      <span class="product-info__rating-stars" aria-hidden="true">
-                        {% assign rating_rounded = rating_value | round %}
-                        {% for i in (1..5) %}
-                          {% if i <= rating_rounded %}★{% else %}☆{% endif %}
-                        {% endfor %}
-                      </span>
+                  {% assign show_metafield_rating = false %}
+
+                  {% if settings.show_star_rating %}
+                    {% if rating_source == 'metafield_only' %}
+                      {% if rating_value != blank %}{% assign show_metafield_rating = true %}{% endif %}
+                    {% elsif rating_source == 'app_only' %}
+                      {% assign show_metafield_rating = false %}
+                    {% else %}
+                      {% if has_product_app_block %}
+                        {% assign show_metafield_rating = false %}
+                      {% elsif rating_value != blank %}
+                        {% assign show_metafield_rating = true %}
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+
+                  {% if show_metafield_rating %}
+                    {% assign rating_value_number = rating_value | plus: 0 %}
+                    {% assign rating_percentage = rating_value_number | times: 100.0 | divided_by: 5 %}
+                    {% assign rating_clip_id = 'rating-clip-' | append: section.id | append: '-' | append: block.id %}
+                    <div class="product-info__rating" aria-label="Rated {{ rating_value_number }} out of 5">
+                      <svg class="product-info__rating-svg" viewBox="0 0 120 24" aria-hidden="true" role="img">
+                        <defs>
+                          <clipPath id="{{ rating_clip_id }}">
+                            <rect x="0" y="0" width="{{ rating_percentage }}%" height="100%"></rect>
+                          </clipPath>
+                        </defs>
+                        <g class="product-info__rating-stars-base">
+                          <path d="M12 2.5l2.8 5.6 6.2.9-4.5 4.3 1.1 6.1L12 16.6 6.4 19.4l1.1-6.1L3 9l6.2-.9L12 2.5z"></path>
+                          <path transform="translate(24 0)" d="M12 2.5l2.8 5.6 6.2.9-4.5 4.3 1.1 6.1L12 16.6 6.4 19.4l1.1-6.1L3 9l6.2-.9L12 2.5z"></path>
+                          <path transform="translate(48 0)" d="M12 2.5l2.8 5.6 6.2.9-4.5 4.3 1.1 6.1L12 16.6 6.4 19.4l1.1-6.1L3 9l6.2-.9L12 2.5z"></path>
+                          <path transform="translate(72 0)" d="M12 2.5l2.8 5.6 6.2.9-4.5 4.3 1.1 6.1L12 16.6 6.4 19.4l1.1-6.1L3 9l6.2-.9L12 2.5z"></path>
+                          <path transform="translate(96 0)" d="M12 2.5l2.8 5.6 6.2.9-4.5 4.3 1.1 6.1L12 16.6 6.4 19.4l1.1-6.1L3 9l6.2-.9L12 2.5z"></path>
+                        </g>
+                        <g class="product-info__rating-stars-fill" clip-path="url(#{{ rating_clip_id }})">
+                          <path d="M12 2.5l2.8 5.6 6.2.9-4.5 4.3 1.1 6.1L12 16.6 6.4 19.4l1.1-6.1L3 9l6.2-.9L12 2.5z"></path>
+                          <path transform="translate(24 0)" d="M12 2.5l2.8 5.6 6.2.9-4.5 4.3 1.1 6.1L12 16.6 6.4 19.4l1.1-6.1L3 9l6.2-.9L12 2.5z"></path>
+                          <path transform="translate(48 0)" d="M12 2.5l2.8 5.6 6.2.9-4.5 4.3 1.1 6.1L12 16.6 6.4 19.4l1.1-6.1L3 9l6.2-.9L12 2.5z"></path>
+                          <path transform="translate(72 0)" d="M12 2.5l2.8 5.6 6.2.9-4.5 4.3 1.1 6.1L12 16.6 6.4 19.4l1.1-6.1L3 9l6.2-.9L12 2.5z"></path>
+                          <path transform="translate(96 0)" d="M12 2.5l2.8 5.6 6.2.9-4.5 4.3 1.1 6.1L12 16.6 6.4 19.4l1.1-6.1L3 9l6.2-.9L12 2.5z"></path>
+                        </g>
+                      </svg>
+                      <span class="sr-only">Rated {{ rating_value_number }} out of 5</span>
                       <span class="product-info__rating-text">
-                        {{ rating_value }}/5{% if rating_count != blank %} ({{ rating_count }}){% endif %}
+                        {{ rating_value_number }}/5{% if settings.show_rating_count and rating_count != blank %} ({{ rating_count }}){% endif %}
                       </span>
                     </div>
                   {% endif %}
@@ -194,6 +237,11 @@
                       </div>
                     {% endif %}
                   </div>
+
+                {% when 'product_share' %}
+                  {% if settings.show_product_share %}
+                    {% render 'product-share', product: product, current_variant: product.selected_or_first_available_variant %}
+                  {% endif %}
 
                 {% when 'description' %}
                   {% if product.description != blank %}
@@ -340,6 +388,11 @@
       ]
     },
     {
+      "type": "product_share",
+      "name": "Product share",
+      "limit": 1
+    },
+    {
       "type": "description",
       "name": "Description",
       "limit": 1
@@ -365,6 +418,7 @@
         { "type": "variant_picker" },
         { "type": "quantity_selector" },
         { "type": "buy_buttons" },
+        { "type": "product_share" },
         { "type": "description" }
       ]
     }

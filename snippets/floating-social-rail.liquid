@@ -1,0 +1,66 @@
+{% comment %}
+  FlyFlow Theme - Floating Social Rail
+  Purpose: Persistent site-wide social rail with desktop fixed stack and optional mobile collapse.
+{% endcomment %}
+
+{% if settings.enable_floating_social_rail %}
+  {% assign has_links = false %}
+  {% if settings.social_facebook_url != blank or settings.social_x_url != blank or settings.social_instagram_url != blank or settings.social_youtube_url != blank or settings.social_tiktok_url != blank %}
+    {% assign has_links = true %}
+  {% endif %}
+
+  {% if has_links %}
+    <aside
+      class="floating-social-rail floating-social-rail--{{ settings.social_rail_position }}{% if settings.social_rail_show_on_mobile %} floating-social-rail--mobile-enabled{% endif %}"
+      data-social-rail
+      style="--social-rail-top: {{ settings.social_rail_offset_top }}px; --social-rail-side: {{ settings.social_rail_offset_side }}px;"
+      aria-label="Social links"
+    >
+      {% if settings.social_rail_show_on_mobile %}
+        <button
+          type="button"
+          class="floating-social-rail__toggle"
+          data-social-rail-toggle
+          aria-expanded="false"
+          aria-controls="floating-social-rail-links"
+          aria-label="Open social links"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10l4 4v14H3V3h4zm0 7h10M7 15h10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span>Social</span>
+        </button>
+      {% endif %}
+
+      <div class="floating-social-rail__links" id="floating-social-rail-links" data-social-rail-links>
+        {% if settings.social_facebook_url != blank %}
+          <a href="{{ settings.social_facebook_url }}" target="_blank" rel="noopener" aria-label="Visit Facebook" class="floating-social-rail__link">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 8H16V5h-2.5c-2.5 0-4 1.7-4 4.2V11H7v3h2.5v5H13v-5h2.7l.3-3H13V9.5c0-.9.4-1.5 1.5-1.5z" fill="currentColor"/></svg>
+          </a>
+        {% endif %}
+
+        {% if settings.social_x_url != blank %}
+          <a href="{{ settings.social_x_url }}" target="_blank" rel="noopener" aria-label="Visit X" class="floating-social-rail__link">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.2 3h2.9l-6.3 7.1L22 21h-5.6l-4.4-5.8L6.9 21H4l6.8-7.7L2 3h5.7l4 5.3L18.2 3zm-1 16h1.6L7.1 4.9H5.4L17.2 19z" fill="currentColor"/></svg>
+          </a>
+        {% endif %}
+
+        {% if settings.social_instagram_url != blank %}
+          <a href="{{ settings.social_instagram_url }}" target="_blank" rel="noopener" aria-label="Visit Instagram" class="floating-social-rail__link">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor"/></svg>
+          </a>
+        {% endif %}
+
+        {% if settings.social_youtube_url != blank %}
+          <a href="{{ settings.social_youtube_url }}" target="_blank" rel="noopener" aria-label="Visit YouTube" class="floating-social-rail__link">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 7.2a2.8 2.8 0 0 0-2-2C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.6.5a2.8 2.8 0 0 0-2 2A29 29 0 0 0 2 12a29 29 0 0 0 .4 4.8 2.8 2.8 0 0 0 2 2c1.8.5 7.6.5 7.6.5s5.8 0 7.6-.5a2.8 2.8 0 0 0 2-2A29 29 0 0 0 22 12a29 29 0 0 0-.4-4.8zM10 15.5v-7l6 3.5-6 3.5z" fill="currentColor"/></svg>
+          </a>
+        {% endif %}
+
+        {% if settings.social_tiktok_url != blank %}
+          <a href="{{ settings.social_tiktok_url }}" target="_blank" rel="noopener" aria-label="Visit TikTok" class="floating-social-rail__link">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h3.1c.2 1.4 1.2 2.7 2.9 3v3.1a6.5 6.5 0 0 1-3-.8v6.4a5.7 5.7 0 1 1-5.7-5.7c.4 0 .8 0 1.2.1v3.1a2.6 2.6 0 1 0 1.5 2.4V3z" fill="currentColor"/></svg>
+          </a>
+        {% endif %}
+      </div>
+    </aside>
+  {% endif %}
+{% endif %}

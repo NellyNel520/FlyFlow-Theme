@@ -146,7 +146,9 @@
 
   {%- comment -%} Main stylesheet — loaded non-blocking {%- endcomment -%}
   <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="{{ 'floating-social-rail.css' | asset_url }}" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="{{ 'theme.css' | asset_url }}"></noscript>
+  <noscript><link rel="stylesheet" href="{{ 'floating-social-rail.css' | asset_url }}"></noscript>
 
   {%- comment -%} Dark mode init — runs before paint to prevent flash {%- endcomment -%}
   <script>
@@ -181,6 +183,9 @@
   {%- comment -%} Footer section group {%- endcomment -%}
   {% sections 'footer-group' %}
 
+  {%- comment -%} Floating social rail {%- endcomment -%}
+  {% render 'floating-social-rail' %}
+
   {%- comment -%} Cart drawer (rendered globally for ajax cart) {%- endcomment -%}
   {% if settings.cart_type == 'drawer' %}
     {% section 'cart-drawer' %}
@@ -208,6 +213,7 @@
 
   {%- comment -%} Core JavaScript — deferred for performance {%- endcomment -%}
   <script src="{{ 'theme.js' | asset_url }}" defer></script>
+  <script src="{{ 'social-ui.js' | asset_url }}" defer></script>
 
   {%- comment -%} Dark mode toggle logic {%- endcomment -%}
   {% if settings.dark_mode_enabled %}

@@ -328,6 +328,35 @@
         "default": true
       },
       {
+        "type": "checkbox",
+        "id": "show_product_share",
+        "label": "Show product share row",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_star_rating",
+        "label": "Show star rating",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "rating_source",
+        "label": "Rating source",
+        "options": [
+          { "value": "auto", "label": "Auto (prefer app if present)" },
+          { "value": "metafield_only", "label": "Metafield only" },
+          { "value": "app_only", "label": "App only" }
+        ],
+        "default": "auto"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_rating_count",
+        "label": "Show rating count",
+        "default": true
+      },
+      {
         "type": "textarea",
         "id": "product_swatch_color_map",
         "label": "Custom swatch color map",
@@ -434,6 +463,78 @@
         "id": "newsletter_popup_button",
         "label": "Button text",
         "default": "Subscribe"
+      }
+    ]
+  },
+  {
+    "name": "Social Links & Rail",
+    "settings": [
+      {
+        "type": "url",
+        "id": "social_facebook_url",
+        "label": "Facebook URL"
+      },
+      {
+        "type": "url",
+        "id": "social_x_url",
+        "label": "X URL"
+      },
+      {
+        "type": "url",
+        "id": "social_instagram_url",
+        "label": "Instagram URL"
+      },
+      {
+        "type": "url",
+        "id": "social_youtube_url",
+        "label": "YouTube URL"
+      },
+      {
+        "type": "url",
+        "id": "social_tiktok_url",
+        "label": "TikTok URL"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_floating_social_rail",
+        "label": "Enable floating social rail",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "social_rail_position",
+        "label": "Rail position",
+        "options": [
+          { "value": "left", "label": "Left" },
+          { "value": "right", "label": "Right" }
+        ],
+        "default": "left"
+      },
+      {
+        "type": "checkbox",
+        "id": "social_rail_show_on_mobile",
+        "label": "Show on mobile as collapsed button",
+        "default": false
+      },
+      {
+        "type": "range",
+        "id": "social_rail_offset_top",
+        "label": "Desktop top offset",
+        "min": 80,
+        "max": 220,
+        "step": 4,
+        "default": 140,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "social_rail_offset_side",
+        "label": "Side offset",
+        "min": 8,
+        "max": 32,
+        "step": 2,
+        "default": 16,
+        "unit": "px"
       }
     ]
   },
