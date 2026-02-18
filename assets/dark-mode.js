@@ -15,8 +15,8 @@
 'use strict';
 
 (function () {
-  var STORAGE_KEY = 'flyflow-theme-preference';
-  var root = document.documentElement;
+  const STORAGE_KEY = 'flyflow-theme-preference';
+  const root = document.documentElement;
 
   /**
    * Get the current theme from the DOM
@@ -41,10 +41,10 @@
    * @param {'light'|'dark'} theme - Current theme
    */
   function updateToggleButton(theme) {
-    var toggles = document.querySelectorAll('[data-theme-toggle]');
+    const toggles = document.querySelectorAll('[data-theme-toggle]');
     toggles.forEach(function (btn) {
-      var sunIcon = btn.querySelector('[data-icon-sun]');
-      var moonIcon = btn.querySelector('[data-icon-moon]');
+      const sunIcon = btn.querySelector('[data-icon-sun]');
+      const moonIcon = btn.querySelector('[data-icon-moon]');
 
       if (sunIcon && moonIcon) {
         // Show sun icon in dark mode (click to switch to light)
@@ -74,8 +74,8 @@
    * Toggle between light and dark themes
    */
   function toggle() {
-    var current = getCurrentTheme();
-    var next = current === 'dark' ? 'light' : 'dark';
+    const current = getCurrentTheme();
+    const next = current === 'dark' ? 'light' : 'dark';
     applyTheme(next);
     localStorage.setItem(STORAGE_KEY, next);
   }
@@ -86,7 +86,7 @@
   function init() {
     // Set up toggle button click handlers
     document.addEventListener('click', function (e) {
-      var btn = e.target.closest('[data-theme-toggle]');
+      const btn = e.target.closest('[data-theme-toggle]');
       if (btn) {
         e.preventDefault();
         toggle();

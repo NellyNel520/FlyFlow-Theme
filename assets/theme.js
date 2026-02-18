@@ -57,7 +57,9 @@ FlyFlow.fetchAPI = async function fetchAPI(endpoint, body = null) {
       Accept: 'application/json',
     },
   };
-  if (body) options.body = JSON.stringify(body);
+  if (body) {
+    options.body = JSON.stringify(body);
+  }
 
   const response = await fetch(endpoint, options);
   if (!response.ok) {
@@ -104,7 +106,9 @@ FlyFlow.trapFocus = function trapFocus(element) {
   const last = focusable[focusable.length - 1];
 
   function handler(e) {
-    if (e.key !== 'Tab') return;
+    if (e.key !== 'Tab') {
+      return;
+    }
     if (e.shiftKey) {
       if (document.activeElement === first) {
         e.preventDefault();
@@ -119,7 +123,9 @@ FlyFlow.trapFocus = function trapFocus(element) {
   }
 
   element.addEventListener('keydown', handler);
-  if (first) first.focus();
+  if (first) {
+    first.focus();
+  }
 
   return function removeTrap() {
     element.removeEventListener('keydown', handler);
@@ -137,7 +143,7 @@ FlyFlow.Cart = (function () {
   let cartSubtotalElement;
   let overlay;
   let removeFocusTrap;
-  let pendingLineKeys = new Set();
+  const pendingLineKeys = new Set();
   let noteSaveTimer = null;
 
   /**
@@ -157,7 +163,9 @@ FlyFlow.Cart = (function () {
       overlay.addEventListener('click', close);
     }
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') close();
+      if (e.key === 'Escape') {
+        close();
+      }
     });
   }
 
@@ -184,7 +192,9 @@ FlyFlow.Cart = (function () {
     if (removeBtn) {
       e.preventDefault();
       const key = removeBtn.dataset.cartRemove;
-      if (pendingLineKeys.has(key)) return;
+      if (pendingLineKeys.has(key)) {
+        return;
+      }
       updateItem(key, 0);
       return;
     }
@@ -202,10 +212,14 @@ FlyFlow.Cart = (function () {
    */
   function handleChange(e) {
     const input = e.target.closest('[data-cart-qty-input]');
-    if (!input) return;
+    if (!input) {
+      return;
+    }
 
     const key = getLineKeyFromElement(input);
-    if (!key || pendingLineKeys.has(key)) return;
+    if (!key || pendingLineKeys.has(key)) {
+      return;
+    }
 
     const quantity = Math.max(0, parseInt(input.value, 10) || 0);
     input.value = quantity;
@@ -218,7 +232,9 @@ FlyFlow.Cart = (function () {
    */
   function handleInput(e) {
     const noteField = e.target.closest('[data-cart-note-drawer]');
-    if (!noteField || !noteField.closest('[data-cart-drawer]')) return;
+    if (!noteField || !noteField.closest('[data-cart-drawer]')) {
+      return;
+    }
 
     if (noteSaveTimer) {
       window.clearTimeout(noteSaveTimer);
@@ -254,7 +270,9 @@ FlyFlow.Cart = (function () {
       }
     }
 
-    if (!variantId) return;
+    if (!variantId) {
+      return;
+    }
 
     /* Prevent form submission */
     if (form) {
@@ -279,7 +297,7 @@ FlyFlow.Cart = (function () {
         btn.disabled = false;
         btn.textContent = btn.dataset.addText || originalText;
       }, 1500);
-    } catch (error) {
+    } catch {
       btn.disabled = false;
       btn.textContent = btn.dataset.addText || originalText;
       FlyFlow.announce('Could not add item to bag');
@@ -292,7 +310,9 @@ FlyFlow.Cart = (function () {
    */
   function handleQuantityChange(btn) {
     const key = btn.dataset.lineKey;
-    if (!key || pendingLineKeys.has(key)) return;
+    if (!key || pendingLineKeys.has(key)) {
+      return;
+    }
     const direction = btn.dataset.cartQty;
     const input = btn.parentElement.querySelector('[data-cart-qty-input]');
     let qty = parseInt(input.value, 10);
@@ -316,7 +336,7 @@ FlyFlow.Cart = (function () {
       if (quantity === 0) {
         FlyFlow.announce('Item removed from cart');
       }
-    } catch (error) {
+    } catch {
       FlyFlow.announce('Could not update cart');
     } finally {
       pendingLineKeys.delete(key);
@@ -348,7 +368,7 @@ FlyFlow.Cart = (function () {
           cartItemsContainer.innerHTML = newItems.innerHTML;
         }
       }
-    } catch (error) {
+    } catch {
       // Fallback: reload page on section rendering failure
       window.location.reload();
     }
@@ -371,13 +391,17 @@ FlyFlow.Cart = (function () {
    */
   function updateShippingBar(totalCents) {
     const bar = document.querySelector('[data-shipping-bar]');
-    if (!bar) return;
+    if (!bar) {
+      return;
+    }
 
     const threshold = parseFloat(bar.dataset.threshold) * 100;
     const fill = bar.querySelector('[data-shipping-fill]');
     const message = bar.querySelector('[data-shipping-message]');
 
-    if (!threshold || !fill || !message) return;
+    if (!threshold || !fill || !message) {
+      return;
+    }
 
     const progress = Math.min((totalCents / threshold) * 100, 100);
     fill.style.width = progress + '%';
@@ -401,17 +425,25 @@ FlyFlow.Cart = (function () {
       return;
     }
     cartDrawer.classList.add('cart-drawer--open');
-    if (overlay) overlay.classList.add('overlay--visible');
+    if (overlay) {
+      overlay.classList.add('overlay--visible');
+    }
     document.body.classList.add('drawer-open');
-    if (removeFocusTrap) removeFocusTrap();
+    if (removeFocusTrap) {
+      removeFocusTrap();
+    }
     removeFocusTrap = FlyFlow.trapFocus(cartDrawer);
   }
 
   /** Close cart drawer */
   function close() {
-    if (!cartDrawer) return;
+    if (!cartDrawer) {
+      return;
+    }
     cartDrawer.classList.remove('cart-drawer--open');
-    if (overlay) overlay.classList.remove('overlay--visible');
+    if (overlay) {
+      overlay.classList.remove('overlay--visible');
+    }
     document.body.classList.remove('drawer-open');
     if (removeFocusTrap) {
       removeFocusTrap();
@@ -439,7 +471,9 @@ FlyFlow.Cart = (function () {
    */
   function getLineKeyFromElement(element) {
     const lineContainer = element.closest('[data-line-key], [data-cart-item]');
-    if (!lineContainer) return null;
+    if (!lineContainer) {
+      return null;
+    }
     return lineContainer.dataset.lineKey || lineContainer.dataset.cartItem || null;
   }
 
@@ -539,20 +573,28 @@ FlyFlow.Navigation = (function () {
 
   /** Open mobile menu */
   function openMobileMenu() {
-    if (!mobileMenu) return;
+    if (!mobileMenu) {
+      return;
+    }
     mobileMenu.classList.add('mobile-menu--open');
     const overlay = document.querySelector('[data-overlay]');
-    if (overlay) overlay.classList.add('overlay--visible');
+    if (overlay) {
+      overlay.classList.add('overlay--visible');
+    }
     document.body.classList.add('drawer-open');
     FlyFlow.trapFocus(mobileMenu);
   }
 
   /** Close mobile menu */
   function closeMobileMenu() {
-    if (!mobileMenu) return;
+    if (!mobileMenu) {
+      return;
+    }
     mobileMenu.classList.remove('mobile-menu--open');
     const overlay = document.querySelector('[data-overlay]');
-    if (overlay) overlay.classList.remove('overlay--visible');
+    if (overlay) {
+      overlay.classList.remove('overlay--visible');
+    }
     document.body.classList.remove('drawer-open');
   }
 
@@ -571,7 +613,9 @@ FlyFlow.Navigation = (function () {
    */
   function toggleSubmenu(trigger) {
     const submenu = trigger.nextElementSibling;
-    if (!submenu) return;
+    if (!submenu) {
+      return;
+    }
 
     const isOpen = submenu.classList.contains('mobile-menu__submenu--open');
     submenu.classList.toggle('mobile-menu__submenu--open');
@@ -589,7 +633,7 @@ FlyFlow.Search = (function () {
   let searchInput;
   let resultsContainer;
   let trendingContainer;
-  let cache = {};
+  const cache = {};
   let activeQuery = '';
 
   /**
@@ -600,7 +644,9 @@ FlyFlow.Search = (function () {
     resultsContainer = document.querySelector('[data-predictive-search-results]');
     trendingContainer = document.querySelector('[data-search-trending]');
 
-    if (!searchInput || !resultsContainer) return;
+    if (!searchInput || !resultsContainer) {
+      return;
+    }
 
     searchInput.addEventListener('input', FlyFlow.debounce(handleInput, 300));
 
@@ -643,10 +689,12 @@ FlyFlow.Search = (function () {
     try {
       const url = `/search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product,collection,page&resources[limit]=6`;
       const data = await FlyFlow.fetchAPI(url);
-      if (query !== activeQuery) return;
+      if (query !== activeQuery) {
+        return;
+      }
       cache[normalizedQuery] = data;
       renderResults(data);
-    } catch (error) {
+    } catch {
       resultsContainer.classList.remove('predictive-search__results--open');
     }
   }
@@ -657,7 +705,9 @@ FlyFlow.Search = (function () {
    */
   function renderResults(data) {
     const resources = data.resources;
-    if (!resources || !resources.results) return;
+    if (!resources || !resources.results) {
+      return;
+    }
 
     let html = '';
     const products = resources.results.products || [];
@@ -727,7 +777,9 @@ FlyFlow.Search = (function () {
   }
 
   function toggleTrending(show) {
-    if (!trendingContainer) return;
+    if (!trendingContainer) {
+      return;
+    }
     trendingContainer.style.display = show ? '' : 'none';
   }
 
@@ -761,7 +813,9 @@ FlyFlow.ProductGallery = (function () {
    */
   function init() {
     const gallery = document.querySelector('[data-product-gallery]');
-    if (!gallery) return;
+    if (!gallery) {
+      return;
+    }
 
     mainImage = gallery.querySelector('[data-gallery-main-image]');
     thumbnails = gallery.querySelectorAll('[data-gallery-thumbnail]');
@@ -811,7 +865,9 @@ FlyFlow.ProductGallery = (function () {
    * @param {number} index - Slide index
    */
   function goToSlide(index) {
-    if (index < 0 || index >= images.length) return;
+    if (index < 0 || index >= images.length) {
+      return;
+    }
     currentIndex = index;
 
     if (mainImage) {
@@ -895,18 +951,20 @@ FlyFlow.ProductGallery = (function () {
 
 FlyFlow.VariantSelector = (function () {
   let productData;
-  let selectedOptions = {};
+  const selectedOptions = {};
 
   /**
    * Initialize variant selector for product page
    */
   function init() {
     const productJson = document.querySelector('[data-product-json]');
-    if (!productJson) return;
+    if (!productJson) {
+      return;
+    }
 
     try {
       productData = JSON.parse(productJson.textContent);
-    } catch (e) {
+    } catch {
       return;
     }
 
@@ -924,7 +982,9 @@ FlyFlow.VariantSelector = (function () {
    * @param {HTMLElement} swatch - The clicked swatch element
    */
   function selectOption(swatch) {
-    if (swatch.getAttribute('aria-disabled') === 'true') return;
+    if (swatch.getAttribute('aria-disabled') === 'true') {
+      return;
+    }
 
     const optionName = swatch.dataset.optionName;
     const optionValue = swatch.dataset.optionValue;
@@ -943,7 +1003,9 @@ FlyFlow.VariantSelector = (function () {
 
       // Update selected label
       const label = group.querySelector('[data-option-selected]');
-      if (label) label.textContent = optionValue;
+      if (label) {
+        label.textContent = optionValue;
+      }
     }
 
     // Find matching variant
@@ -962,7 +1024,9 @@ FlyFlow.VariantSelector = (function () {
    * @returns {Object|null} Matching variant or null
    */
   function findVariant() {
-    if (!productData || !productData.variants) return null;
+    if (!productData || !productData.variants) {
+      return null;
+    }
 
     return productData.variants.find(function (variant) {
       return variant.options.every(function (option, index) {
@@ -1019,7 +1083,9 @@ FlyFlow.VariantSelector = (function () {
    */
   function updateStockIndicator(variant) {
     const indicator = document.querySelector('[data-stock-indicator]');
-    if (!indicator) return;
+    if (!indicator) {
+      return;
+    }
 
     const threshold = parseInt(indicator.dataset.threshold, 10) || 5;
     const qty = parseInt(variant.inventory_quantity || 0, 10);
@@ -1082,23 +1148,23 @@ FlyFlow.VariantSelector = (function () {
 FlyFlow.QuantityButtons = (function () {
   function init() {
     document.addEventListener('click', function (e) {
-      var minusBtn = e.target.closest('[data-qty-minus]');
-      var plusBtn = e.target.closest('[data-qty-plus]');
+      const minusBtn = e.target.closest('[data-qty-minus]');
+      const plusBtn = e.target.closest('[data-qty-plus]');
 
       if (minusBtn) {
         e.preventDefault();
-        var input = minusBtn.parentElement.querySelector('.quantity-selector__input');
+        const input = minusBtn.parentElement.querySelector('.quantity-selector__input');
         if (input) {
-          var val = parseInt(input.value, 10) || 1;
+          const val = parseInt(input.value, 10) || 1;
           input.value = Math.max(1, val - 1);
         }
       }
 
       if (plusBtn) {
         e.preventDefault();
-        var input = plusBtn.parentElement.querySelector('.quantity-selector__input');
+        const input = plusBtn.parentElement.querySelector('.quantity-selector__input');
         if (input) {
-          var val = parseInt(input.value, 10) || 1;
+          const val = parseInt(input.value, 10) || 1;
           input.value = val + 1;
         }
       }
@@ -1155,20 +1221,28 @@ FlyFlow.Filters = (function () {
 
   /** Open filter drawer on mobile */
   function openFilterDrawer() {
-    if (!filterDrawer) return;
+    if (!filterDrawer) {
+      return;
+    }
     filterDrawer.classList.add('filter-drawer--open');
     const overlay = document.querySelector('[data-overlay]');
-    if (overlay) overlay.classList.add('overlay--visible');
+    if (overlay) {
+      overlay.classList.add('overlay--visible');
+    }
     document.body.classList.add('drawer-open');
     FlyFlow.trapFocus(filterDrawer);
   }
 
   /** Close filter drawer */
   function closeFilterDrawer() {
-    if (!filterDrawer) return;
+    if (!filterDrawer) {
+      return;
+    }
     filterDrawer.classList.remove('filter-drawer--open');
     const overlay = document.querySelector('[data-overlay]');
-    if (overlay) overlay.classList.remove('overlay--visible');
+    if (overlay) {
+      overlay.classList.remove('overlay--visible');
+    }
     document.body.classList.remove('drawer-open');
   }
 
@@ -1184,7 +1258,9 @@ FlyFlow.LazyLoad = (function () {
    * Initialize lazy loading with Intersection Observer
    */
   function init() {
-    if (!('IntersectionObserver' in window)) return;
+    if (!('IntersectionObserver' in window)) {
+      return;
+    }
 
     const observer = new IntersectionObserver(
       function (entries) {
@@ -1194,7 +1270,9 @@ FlyFlow.LazyLoad = (function () {
 
             if (el.tagName === 'IMG' && el.dataset.src) {
               el.src = el.dataset.src;
-              if (el.dataset.srcset) el.srcset = el.dataset.srcset;
+              if (el.dataset.srcset) {
+                el.srcset = el.dataset.srcset;
+              }
               el.removeAttribute('data-src');
               el.removeAttribute('data-srcset');
             }
@@ -1202,8 +1280,11 @@ FlyFlow.LazyLoad = (function () {
             // Initialize lazy sections/components
             if (el.dataset.lazyInit) {
               const fn = FlyFlow[el.dataset.lazyInit];
-              if (typeof fn === 'function') fn();
-              else if (fn && typeof fn.init === 'function') fn.init();
+              if (typeof fn === 'function') {
+                fn();
+              } else if (fn && typeof fn.init === 'function') {
+                fn.init();
+              }
             }
 
             observer.unobserve(el);
@@ -1261,24 +1342,34 @@ FlyFlow.Modal = (function () {
    */
   function open(id) {
     const modal = document.getElementById(id);
-    if (!modal) return;
+    if (!modal) {
+      return;
+    }
 
     activeModal = modal;
     modal.classList.add('modal--open');
     const overlay = document.querySelector('[data-overlay]');
-    if (overlay) overlay.classList.add('overlay--visible');
+    if (overlay) {
+      overlay.classList.add('overlay--visible');
+    }
     document.body.classList.add('drawer-open');
     removeTrap = FlyFlow.trapFocus(modal);
   }
 
   /** Close active modal */
   function close() {
-    if (!activeModal) return;
+    if (!activeModal) {
+      return;
+    }
     activeModal.classList.remove('modal--open');
     const overlay = document.querySelector('[data-overlay]');
-    if (overlay) overlay.classList.remove('overlay--visible');
+    if (overlay) {
+      overlay.classList.remove('overlay--visible');
+    }
     document.body.classList.remove('drawer-open');
-    if (removeTrap) removeTrap();
+    if (removeTrap) {
+      removeTrap();
+    }
     activeModal = null;
   }
 
@@ -1296,11 +1387,15 @@ FlyFlow.Accordion = (function () {
   function init() {
     document.addEventListener('click', function (e) {
       const trigger = e.target.closest('[data-accordion-trigger]');
-      if (!trigger) return;
+      if (!trigger) {
+        return;
+      }
 
       e.preventDefault();
       const content = trigger.nextElementSibling;
-      if (!content) return;
+      if (!content) {
+        return;
+      }
 
       const isOpen = content.classList.contains('accordion__content--open');
       content.classList.toggle('accordion__content--open');
@@ -1323,7 +1418,9 @@ FlyFlow.StickyATC = (function () {
     const stickyBar = document.querySelector('[data-sticky-atc]');
     const addToCartSection = document.querySelector('[data-add-to-cart-section]');
 
-    if (!stickyBar || !addToCartSection) return;
+    if (!stickyBar || !addToCartSection) {
+      return;
+    }
 
     const observer = new IntersectionObserver(
       function (entries) {
@@ -1362,8 +1459,12 @@ FlyFlow.HeroMedia = (function () {
       let timer = null;
 
       if (slides.length <= 1) {
-        if (prevBtn) prevBtn.style.display = 'none';
-        if (nextBtn) nextBtn.style.display = 'none';
+        if (prevBtn) {
+          prevBtn.style.display = 'none';
+        }
+        if (nextBtn) {
+          nextBtn.style.display = 'none';
+        }
         return;
       }
 
@@ -1378,7 +1479,9 @@ FlyFlow.HeroMedia = (function () {
       }
 
       function startAutoplay() {
-        if (!autoplay) return;
+        if (!autoplay) {
+          return;
+        }
         stopAutoplay();
         timer = window.setInterval(function () {
           goTo(currentIndex + 1);
@@ -1423,10 +1526,14 @@ FlyFlow.HeroMedia = (function () {
   }
 
   function initParallax() {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
 
     const containers = document.querySelectorAll('[data-hero-parallax]');
-    if (!containers.length) return;
+    if (!containers.length) {
+      return;
+    }
 
     let ticking = false;
 
@@ -1479,12 +1586,14 @@ FlyFlow.SwatchColors = (function () {
 
   function parseCustomMap() {
     const node = document.getElementById('swatch-color-map-data');
-    if (!node) return {};
+    if (!node) {
+      return {};
+    }
 
     let raw = '';
     try {
       raw = JSON.parse(node.textContent || '""');
-    } catch (e) {
+    } catch {
       raw = '';
     }
 
@@ -1493,11 +1602,15 @@ FlyFlow.SwatchColors = (function () {
       .split(/\r?\n/)
       .forEach(function (line) {
         const cleaned = line.trim();
-        if (!cleaned || !cleaned.includes(':')) return;
+        if (!cleaned || !cleaned.includes(':')) {
+          return;
+        }
         const splitIndex = cleaned.indexOf(':');
         const name = cleaned.slice(0, splitIndex).trim().toLowerCase();
         const color = cleaned.slice(splitIndex + 1).trim();
-        if (name && color) parsed[name] = color;
+        if (name && color) {
+          parsed[name] = color;
+        }
       });
 
     return parsed;
@@ -1531,7 +1644,9 @@ FlyFlow.SwatchColors = (function () {
 FlyFlow.BackToTop = (function () {
   function init() {
     const button = document.querySelector('[data-back-to-top]');
-    if (!button) return;
+    if (!button) {
+      return;
+    }
 
     function onScroll() {
       button.classList.toggle('back-to-top--visible', window.scrollY > 500);
@@ -1557,7 +1672,9 @@ FlyFlow.NewsletterPopup = (function () {
 
   function init() {
     const popup = document.querySelector('[data-newsletter-popup]');
-    if (!popup) return;
+    if (!popup) {
+      return;
+    }
 
     const closeBtn = popup.querySelector('[data-newsletter-popup-close]');
     const delaySeconds =
@@ -1565,7 +1682,9 @@ FlyFlow.NewsletterPopup = (function () {
     const frequencyDays =
       parseInt(document.documentElement.dataset.newsletterPopupFrequency || '7', 10) || 7;
 
-    if (isSuppressed(frequencyDays)) return;
+    if (isSuppressed(frequencyDays)) {
+      return;
+    }
 
     window.setTimeout(function () {
       popup.classList.add('newsletter-popup--visible');
@@ -1581,9 +1700,13 @@ FlyFlow.NewsletterPopup = (function () {
 
   function isSuppressed(frequencyDays) {
     const raw = localStorage.getItem(storageKey);
-    if (!raw) return false;
+    if (!raw) {
+      return false;
+    }
     const dismissedAt = parseInt(raw, 10);
-    if (!dismissedAt) return false;
+    if (!dismissedAt) {
+      return false;
+    }
     const nextEligible = dismissedAt + frequencyDays * 24 * 60 * 60 * 1000;
     return Date.now() < nextEligible;
   }
