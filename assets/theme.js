@@ -138,7 +138,6 @@ FlyFlow.trapFocus = function trapFocus(element) {
 
 FlyFlow.Cart = (function () {
   let cartDrawer;
-  let cartItemsContainer;
   let cartCountElements;
   let cartSubtotalElement;
   let overlay;
@@ -151,9 +150,7 @@ FlyFlow.Cart = (function () {
    */
   function init() {
     cartDrawer = document.querySelector('[data-cart-drawer]');
-    cartItemsContainer = document.querySelector('[data-cart-items]');
-    cartCountElements = document.querySelectorAll('[data-cart-count]');
-    cartSubtotalElement = document.querySelector('[data-cart-subtotal]');
+    cacheElements();
     overlay = document.querySelector('[data-overlay]');
 
     document.addEventListener('click', handleClick);
@@ -167,6 +164,14 @@ FlyFlow.Cart = (function () {
         close();
       }
     });
+  }
+
+  /**
+   * Cache frequently accessed cart UI elements.
+   */
+  function cacheElements() {
+    cartCountElements = document.querySelectorAll('[data-cart-count]');
+    cartSubtotalElement = document.querySelector('[data-cart-subtotal]');
   }
 
   /**
@@ -363,9 +368,10 @@ FlyFlow.Cart = (function () {
       if (sections['cart-drawer'] && cartDrawer) {
         const temp = document.createElement('div');
         temp.innerHTML = sections['cart-drawer'];
-        const newItems = temp.querySelector('[data-cart-items]');
-        if (newItems && cartItemsContainer) {
-          cartItemsContainer.innerHTML = newItems.innerHTML;
+        const nextDrawer = temp.querySelector('[data-cart-drawer]');
+        if (nextDrawer) {
+          cartDrawer.innerHTML = nextDrawer.innerHTML;
+          cacheElements();
         }
       }
     } catch {
@@ -951,6 +957,7 @@ FlyFlow.ProductGallery = (function () {
 
 FlyFlow.VariantSelector = (function () {
   let productData;
+  let sectionRoot;
   const selectedOptions = {};
 
   /**
@@ -961,6 +968,7 @@ FlyFlow.VariantSelector = (function () {
     if (!productJson) {
       return;
     }
+    sectionRoot = productJson.closest('[data-section-id]') || document;
 
     try {
       productData = JSON.parse(productJson.textContent);
@@ -970,6 +978,9 @@ FlyFlow.VariantSelector = (function () {
 
     document.addEventListener('click', function (e) {
       const swatch = e.target.closest('[data-option-value]');
+      if (!swatch || !sectionRoot.contains(swatch)) {
+        return;
+      }
       if (swatch) {
         e.preventDefault();
         selectOption(swatch);
@@ -1042,11 +1053,11 @@ FlyFlow.VariantSelector = (function () {
    */
   function updateProductInfo(variant) {
     // Update price
-    document.querySelectorAll('[data-product-price]').forEach(function (priceEl) {
+    sectionRoot.querySelectorAll('[data-product-price]').forEach(function (priceEl) {
       priceEl.textContent = FlyFlow.formatMoney(variant.price);
     });
 
-    document.querySelectorAll('[data-product-compare-price]').forEach(function (comparePriceEl) {
+    sectionRoot.querySelectorAll('[data-product-compare-price]').forEach(function (comparePriceEl) {
       if (variant.compare_at_price && variant.compare_at_price > variant.price) {
         comparePriceEl.textContent = FlyFlow.formatMoney(variant.compare_at_price);
         comparePriceEl.style.display = '';
@@ -1056,13 +1067,13 @@ FlyFlow.VariantSelector = (function () {
     });
 
     // Update hidden variant ID input
-    const variantInput = document.querySelector('[name="id"]');
+    const variantInput = sectionRoot.querySelector('[data-product-form] [name="id"]');
     if (variantInput) {
       variantInput.value = variant.id;
     }
 
     // Update add to cart button
-    document.querySelectorAll('[data-add-to-cart]').forEach(function (addBtn) {
+    sectionRoot.querySelectorAll('[data-add-to-cart]').forEach(function (addBtn) {
       if (variant.available) {
         addBtn.disabled = false;
         addBtn.textContent = addBtn.dataset.addText || 'Add to Cart';
@@ -1082,7 +1093,7 @@ FlyFlow.VariantSelector = (function () {
    * @param {Object} variant - The selected variant
    */
   function updateStockIndicator(variant) {
-    const indicator = document.querySelector('[data-stock-indicator]');
+    const indicator = sectionRoot.querySelector('[data-stock-indicator]');
     if (!indicator) {
       return;
     }

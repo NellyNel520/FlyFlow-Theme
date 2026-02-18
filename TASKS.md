@@ -111,3 +111,4 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - 2026-02-18: Completed JS lint cleanup pass (`assets/theme.js`, `assets/dark-mode.js`) and pushed commit `93b272d`; synced latest theme to live store.
 - 2026-02-18: Theme Check reduced to 2 expected `RemoteAsset` warnings in analytics snippets (GA4/Facebook pixel URLs); no actionable Liquid offenses remain.
 - 2026-02-18: Implemented functional collection view modes (grid/list/masonry) with persisted preference and section-level default view setting.
+- 2026-02-18: Fixed add-to-cart reliability by refreshing full cart drawer section state (empty/non-empty transitions) and scoping PDP variant updates to the product section only.
