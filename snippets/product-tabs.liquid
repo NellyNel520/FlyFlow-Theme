@@ -69,7 +69,10 @@
   {% assign size_guide_page = section.settings.size_guide_default_page %}
 {% endif %}
 
-{% assign shipping_page = section.settings.shipping_returns_page %}
+{% assign shipping_page = blank %}
+{% if section.settings.shipping_returns_page_handle != blank %}
+  {% assign shipping_page = pages[section.settings.shipping_returns_page_handle] %}
+{% endif %}
 {% assign rating_value = product.metafields.reviews.rating.value.rating | default: product.metafields.reviews.rating.value %}
 {% assign rating_count = product.metafields.reviews.rating_count | default: product.metafields.spr.reviews %}
 {% assign highlights_lines = highlights | newline_to_br | split: '<br />' %}
