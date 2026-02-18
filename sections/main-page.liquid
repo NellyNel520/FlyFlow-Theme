@@ -5,11 +5,130 @@
 {% endcomment %}
 
 <section class="section" data-section-id="{{ section.id }}">
-  <div class="container" style="max-width:800px">
-    <h1 class="text-center mb-xl">{{ page.title }}</h1>
-    <div class="rte">{{ page.content }}</div>
-  </div>
+  {% if page.handle == 'about' %}
+    <div class="container">
+      <div class="about-page">
+        <header class="about-page__hero">
+          <p class="overline">About FlyFlow</p>
+          <h1>Engineered for Everyday Momentum</h1>
+          <p class="text-secondary">
+            FlyFlow builds premium streetwear for movement, utility, and modern identity. Every release is tested for fit, comfort, and longevity before it reaches your rotation.
+          </p>
+        </header>
+
+        <section class="about-page__grid" aria-label="Brand pillars">
+          <article class="about-page__card">
+            <h2>Design Language</h2>
+            <p>Refined silhouettes, clean lines, and tactile materials that elevate daily wear.</p>
+          </article>
+          <article class="about-page__card">
+            <h2>Material Standard</h2>
+            <p>Heavyweight knits, durable trims, and detail-driven construction built to last.</p>
+          </article>
+          <article class="about-page__card">
+            <h2>Drop Strategy</h2>
+            <p>Focused capsule launches over bulk assortments so every piece earns its place.</p>
+          </article>
+        </section>
+
+        <section class="about-page__story">
+          <h2>Built between street culture and technical function.</h2>
+          <p>
+            From prototype to production, each item goes through movement checks and wear testing. The goal is simple: style that performs as hard as it looks.
+          </p>
+          <p>
+            FlyFlow is designed for transition: commute to studio, daytime to nightlife, weekday to travel.
+          </p>
+          <div class="about-page__actions">
+            <a href="/collections/new-arrivals" class="btn btn--primary">Shop New Arrivals</a>
+            <a href="/pages/contact" class="btn btn--secondary">Contact Team</a>
+          </div>
+        </section>
+
+        {% if page.content != blank %}
+          <section class="about-page__extra rte">
+            {{ page.content }}
+          </section>
+        {% endif %}
+      </div>
+    </div>
+  {% else %}
+    <div class="container" style="max-width:800px">
+      <h1 class="text-center mb-xl">{{ page.title }}</h1>
+      <div class="rte">{{ page.content }}</div>
+    </div>
+  {% endif %}
 </section>
+
+{% if page.handle == 'about' %}
+  <style>
+    .about-page {
+      display: grid;
+      gap: var(--space-2xl);
+    }
+
+    .about-page__hero {
+      max-width: 760px;
+    }
+
+    .about-page__hero h1 {
+      margin-bottom: var(--space-md);
+    }
+
+    .about-page__grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-md);
+    }
+
+    .about-page__card {
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      border-radius: var(--border-radius);
+      padding: var(--space-lg);
+    }
+
+    .about-page__card h2 {
+      font-size: 0.8125rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: var(--space-sm);
+    }
+
+    .about-page__card p {
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+    }
+
+    .about-page__story {
+      border: 1px solid var(--color-border);
+      padding: clamp(1.25rem, 3vw, 2.25rem);
+      border-radius: var(--border-radius);
+      background: var(--color-background);
+    }
+
+    .about-page__story h2 {
+      margin-bottom: var(--space-md);
+    }
+
+    .about-page__story p + p {
+      margin-top: var(--space-sm);
+    }
+
+    .about-page__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-top: var(--space-lg);
+    }
+
+    @media (max-width: 900px) {
+      .about-page__grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+{% endif %}
 
 {% schema %}
 {

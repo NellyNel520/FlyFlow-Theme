@@ -115,3 +115,4 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - 2026-02-18: Hardened add-to-cart requests across PDP/sticky/quick-view/quick-buy with FormData submission support and native `/cart/add` fallback redirect when AJAX add fails.
 - 2026-02-18: Unified mobile bottom nav with header mobile menu source, improved bottom-nav reappearance behavior during downward scroll, and parallelized cart refresh API calls to reduce update latency.
 - 2026-02-18: Added native POST `/cart/add` fail-safe fallback in cart JS so add-to-cart always completes even if AJAX path fails.
+- 2026-02-18: Completed About page fallback build in `main-page.liquid` for `/pages/about` with finished FlyFlow brand story layout, pillars, and CTAs (no template reassignment required).
