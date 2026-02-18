@@ -111,10 +111,28 @@
                       {% if filter.label == 'Color' %}
                         <div class="filter-swatches">
                           {% for value in filter.values %}
+                            {% assign swatch_name = value.label | downcase %}
+                            {% assign swatch_color = '#d4d1cc' %}
+                            {% case swatch_name %}
+                              {% when 'onyx', 'black' %}
+                                {% assign swatch_color = '#0a0a0a' %}
+                              {% when 'cloud', 'white' %}
+                                {% assign swatch_color = '#f5f4f2' %}
+                              {% when 'bone' %}
+                                {% assign swatch_color = '#e7dfd1' %}
+                              {% when 'slate', 'grey', 'gray' %}
+                                {% assign swatch_color = '#73767b' %}
+                              {% when 'olive' %}
+                                {% assign swatch_color = '#677056' %}
+                              {% when 'gold' %}
+                                {% assign swatch_color = '#c4a46a' %}
+                              {% when 'silver' %}
+                                {% assign swatch_color = '#bfc3c7' %}
+                            {% endcase %}
                             <a
                               href="{{ value.url }}"
                               class="filter-swatch{% if value.active %} filter-swatch--active{% endif %}"
-                              style="background-color: {{ value.label | handleize }}"
+                              style="background-color: {{ swatch_color }}"
                               title="{{ value.label }} ({{ value.count }})"
                               aria-label="{{ value.label }}, {{ value.count }} products"
                             >
@@ -266,18 +284,89 @@
             </button>
             <div class="accordion__content accordion__content--open">
               <div class="accordion__body">
-                {% for value in filter.values %}
-                  <label style="display:flex;align-items:center;gap:var(--space-sm);padding:var(--space-sm) 0;font-size:0.875rem;cursor:pointer;min-height:44px">
-                    <input
-                      type="checkbox"
-                      {% if value.active %}checked{% endif %}
-                      onchange="window.location.href='{{ value.url }}'"
-                      style="width:20px;height:20px;accent-color:var(--color-accent)"
-                    >
-                    {{ value.label }}
-                    <span class="text-secondary text-xs">({{ value.count }})</span>
-                  </label>
-                {% endfor %}
+                {% case filter.type %}
+                  {% when 'list' %}
+                    {% if filter.label == 'Color' %}
+                      <div class="filter-swatches">
+                        {% for value in filter.values %}
+                          {% assign swatch_name = value.label | downcase %}
+                          {% assign swatch_color = '#d4d1cc' %}
+                          {% case swatch_name %}
+                            {% when 'onyx', 'black' %}
+                              {% assign swatch_color = '#0a0a0a' %}
+                            {% when 'cloud', 'white' %}
+                              {% assign swatch_color = '#f5f4f2' %}
+                            {% when 'bone' %}
+                              {% assign swatch_color = '#e7dfd1' %}
+                            {% when 'slate', 'grey', 'gray' %}
+                              {% assign swatch_color = '#73767b' %}
+                            {% when 'olive' %}
+                              {% assign swatch_color = '#677056' %}
+                            {% when 'gold' %}
+                              {% assign swatch_color = '#c4a46a' %}
+                            {% when 'silver' %}
+                              {% assign swatch_color = '#bfc3c7' %}
+                          {% endcase %}
+                          <a
+                            href="{{ value.url }}"
+                            class="filter-swatch{% if value.active %} filter-swatch--active{% endif %}"
+                            style="background-color: {{ swatch_color }}"
+                            title="{{ value.label }} ({{ value.count }})"
+                            aria-label="{{ value.label }}, {{ value.count }} products"
+                          >
+                            {% if value.count > 0 %}
+                              <span class="filter-swatch__count">{{ value.count }}</span>
+                            {% endif %}
+                          </a>
+                        {% endfor %}
+                      </div>
+                    {% else %}
+                      {% for value in filter.values %}
+                        <label style="display:flex;align-items:center;gap:var(--space-sm);padding:var(--space-sm) 0;font-size:0.875rem;cursor:pointer;min-height:44px">
+                          <input
+                            type="checkbox"
+                            {% if value.active %}checked{% endif %}
+                            onchange="window.location.href='{{ value.url }}'"
+                            style="width:20px;height:20px;accent-color:var(--color-accent)"
+                          >
+                          {{ value.label }}
+                          <span class="text-secondary text-xs">({{ value.count }})</span>
+                        </label>
+                      {% endfor %}
+                    {% endif %}
+                  {% when 'price_range' %}
+                    <div class="price-range">
+                      <div class="price-range__values">
+                        <span>{{ filter.min_value.value | default: 0 | money }}</span>
+                        <span>{{ filter.range_max | money }}</span>
+                      </div>
+                      <form>
+                        <div class="flex flex--gap-sm mt-sm">
+                          <input
+                            type="number"
+                            name="{{ filter.min_value.param_name }}"
+                            class="form__input"
+                            placeholder="Min"
+                            value="{{ filter.min_value.value | money_without_currency | remove: ',' }}"
+                            min="0"
+                            max="{{ filter.range_max | money_without_currency | remove: ',' }}"
+                            style="font-size:0.8125rem"
+                          >
+                          <span style="align-self:center">&ndash;</span>
+                          <input
+                            type="number"
+                            name="{{ filter.max_value.param_name }}"
+                            class="form__input"
+                            placeholder="Max"
+                            value="{{ filter.max_value.value | money_without_currency | remove: ',' }}"
+                            min="0"
+                            max="{{ filter.range_max | money_without_currency | remove: ',' }}"
+                            style="font-size:0.8125rem"
+                          >
+                        </div>
+                      </form>
+                    </div>
+                {% endcase %}
               </div>
             </div>
           </div>

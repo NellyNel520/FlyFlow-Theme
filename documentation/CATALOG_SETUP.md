@@ -6,6 +6,13 @@
 3. Upload `/Users/DeveloperNel/Archform-Labs/FlyFlow-Theme/documentation/flyflow-product-seed.csv`.
 4. Run import and publish all imported products.
 
+This seed is now the primary streetwear set with full variant matrices:
+- Premium sneakers: multiple sizes and colors
+- Hoodies: sizes S/M/L and two colorways
+- Joggers: sizes S/M/L and two colorways
+- Tees: sizes S/M/L/XL and two colorways
+- Accessories: designer crossbody colorways
+
 ## Create Smart Collections (Required)
 Create these collections as **Automated (Smart)** with condition `Product tag is equal to`:
 - `new-arrivals` -> tag `new-arrivals`

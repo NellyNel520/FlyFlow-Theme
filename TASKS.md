@@ -76,6 +76,7 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - [x] Update section defaults/content copy to FlyFlow tone across templates
 - [ ] Validate collection filters against real catalog attributes (size/color/material/style)
 - [x] Generate import-ready starter catalog seed (luxe streetwear)
+- [x] Upgrade seed to full streetwear variant matrix (sizes + colorways)
 
 ### Phase 3: Optimization & Launch Hardening
 - [ ] Integrate reviews app block cleanly
@@ -100,3 +101,4 @@ Deliver an elevated, minimalist fashion storefront with premium UX, strong story
 - 2026-02-18: Completed remaining Phase 1 homepage features: hero video/carousel/parallax support and new Instagram feed section.
 - 2026-02-18: Phase 2 in-theme merchandising pass completed: canonical collection handles applied (`new-arrivals`, `best-sellers`, `sneakers`, `apparel`, `accessories`) and homepage/editorial/cart defaults rebound to these collections.
 - 2026-02-18: Added Shopify import assets for fresh FlyFlow catalog seeding: `documentation/flyflow-product-seed.csv` and `documentation/CATALOG_SETUP.md`.
+- 2026-02-18: Replaced seed catalog with designer streetwear-focused assortment and full size/color variant matrices (sneakers, hoodies, joggers, tees, accessories); aligned collection color swatch handling for Onyx/Cloud/Bone/Slate tones.
