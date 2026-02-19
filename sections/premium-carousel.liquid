@@ -163,15 +163,14 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 999px;
-    border: 1px solid rgba(0, 0, 0, 0.14);
-    background: #ffffff;
-    transition: transform var(--transition-fast), border-color var(--transition-fast);
+    border-radius: 0;
+    border: 0;
+    background: transparent;
+    transition: transform var(--transition-fast);
   }
 
   .premium-carousel--{{ section.id }} .premium-carousel__btn:hover {
     transform: translateY(-1px);
-    border-color: rgba(0, 0, 0, 0.24);
   }
 
   .premium-carousel--{{ section.id }} .premium-carousel__btn svg {
@@ -300,7 +299,7 @@
   .premium-carousel--{{ section.id }} .premium-carousel__progress {
     margin-top: 10px;
     height: 2px;
-    border-radius: 999px;
+    border-radius: 0;
     background: rgba(0, 0, 0, 0.12);
     overflow: hidden;
   }
