@@ -1175,7 +1175,7 @@
         button.classList.toggle('size-btn--active', isActive && button.classList.contains('size-btn'));
         button.classList.toggle('swatch--sold-out', !isAvailable && button.classList.contains('swatch'));
         button.classList.toggle('size-btn--sold-out', !isAvailable && button.classList.contains('size-btn'));
-        button.disabled = !isAvailable;
+        button.disabled = false;
         button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
         button.setAttribute('aria-disabled', isAvailable ? 'false' : 'true');
       });
@@ -1375,6 +1375,10 @@
             button.textContent = value;
             button.setAttribute('aria-label', optionName + ' ' + value);
           }
+
+          button.addEventListener('click', function() {
+            setOption(index, value);
+          });
 
           valuesWrap.appendChild(button);
         });
