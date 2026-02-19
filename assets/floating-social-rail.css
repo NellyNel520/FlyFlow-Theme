@@ -21,6 +21,11 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  padding: 10px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(3px);
 }
 
 .floating-social-rail__link,
@@ -87,6 +92,7 @@
     position: absolute;
     bottom: calc(100% + 10px);
     gap: 8px;
+    padding: 8px 6px;
     opacity: 0;
     pointer-events: none;
     transform: translateY(8px);
