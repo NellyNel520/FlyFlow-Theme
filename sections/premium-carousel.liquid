@@ -1,160 +1,352 @@
 {% comment %}
-  FlyFlow Theme - Premium Carousel
-  Purpose: Product/collection rail under hero with manual controls and progress.
+  FlyFlow Theme - Featured Product Rail (Premium)
+  Purpose: Signature gallery rail for manual, best sellers, and new arrivals merchandising.
   Last modified: 2026-02-19
 {% endcomment %}
 
 {% liquid
-  assign rail_limit = section.settings.rail_item_limit | default: 8
+  assign rail_limit = section.settings.item_limit | default: section.settings.rail_item_limit | default: 8
+  assign source_mode = section.settings.source_mode | default: 'manual'
+  assign progress_mode = section.settings.progress_indicator | default: section.settings.show_progress | default: 'bar'
+  assign density_mode = section.settings.section_density | default: section.settings.section_spacing | default: 'standard'
+  assign quick_add_mode = section.settings.quick_add_mode | default: 'off'
+
+  if quick_add_mode == blank and section.settings.enable_quick_add
+    assign quick_add_mode = 'drawer'
+  endif
+
+  assign heading_label = section.settings.label_text
+  if heading_label == blank
+    case source_mode
+      when 'best_sellers'
+        assign heading_label = 'BEST SELLERS'
+      when 'new_arrivals'
+        assign heading_label = 'NEW DROP'
+      else
+        assign heading_label = 'FEATURED'
+    endcase
+  endif
+
+  assign source_collection = section.settings.collection
+  if source_collection == blank and collections['all'] != blank
+    assign source_collection = collections['all']
+  endif
+
+  assign badge_text = 'New'
+  case section.settings.badge_text_mode
+    when 'drop'
+      assign badge_text = 'Drop'
+    when 'bestseller'
+      assign badge_text = 'Best seller'
+  endcase
 %}
 
 <section
-  class="premium-carousel premium-carousel--{{ section.id }} chapter-section chapter-section--spacing-{{ section.settings.section_density | default: section.settings.section_spacing | default: 'standard' }} chapter-section--container-{{ section.settings.container_width | default: 'contained' }}{% if section.settings.show_divider_top %} chapter-section--divider-top{% endif %}{% if section.settings.enable_reveal %} chapter-section--reveal{% endif %}"
+  class="premium-carousel premium-carousel--{{ section.id }} chapter-section chapter-section--spacing-{{ density_mode }} chapter-section--container-{{ section.settings.container_width | default: 'contained' }}{% if section.settings.show_divider_top %} chapter-section--divider-top{% endif %}{% if section.settings.enable_reveal %} chapter-section--reveal{% endif %}"
   data-section-id="{{ section.id }}"
   data-enable-reveal="{{ section.settings.enable_reveal }}"
+  data-quick-add-mode="{{ quick_add_mode }}"
 >
   <div class="container">
-    <div class="premium-carousel__shell">
-      <div class="premium-carousel__head">
-        {% if section.settings.heading != blank %}
-          <h2 class="premium-carousel__heading">{{ section.settings.heading }}</h2>
-        {% endif %}
+    <div class="premium-carousel__shell premium-carousel__shell--{{ section.settings.card_style | default: 'clean_edge' }} premium-carousel__quick-add-{{ section.settings.quick_add_visibility | default: 'hover' }}">
+      <div class="premium-carousel__chapter">
+        <div class="premium-carousel__intro">
+          {% if heading_label != blank %}
+            <p class="premium-carousel__label">{{ heading_label }}</p>
+          {% endif %}
 
-        {% if section.settings.show_controls %}
-          <div class="premium-carousel__controls">
-            <button type="button" class="premium-carousel__btn" data-pc-prev aria-label="Previous rail items">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <button type="button" class="premium-carousel__btn" data-pc-next aria-label="Next rail items">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-          </div>
-        {% endif %}
-      </div>
+          {% if section.settings.heading != blank %}
+            <h2 class="premium-carousel__heading">{{ section.settings.heading }}</h2>
+          {% endif %}
 
-      <div class="premium-carousel__viewport{% if section.settings.peek_next %} is-peek{% endif %}" data-pc-viewport tabindex="0" aria-label="FlyFlow gallery rail">
-        <div class="premium-carousel__track" data-pc-track>
-          {% assign rendered_items = 0 %}
+          {% if section.settings.subheading != blank %}
+            <p class="premium-carousel__subheading">{{ section.settings.subheading }}</p>
+          {% endif %}
 
-          {% if section.settings.rail_source == 'products' %}
-            {% for block in section.blocks %}
-              {% if rendered_items >= rail_limit %}{% break %}{% endif %}
-              {% if block.settings.product != blank %}
-                {% assign product = block.settings.product %}
-                <article class="premium-carousel__card" data-pc-card {{ block.shopify_attributes }}>
-                  <a href="{{ product.url }}" class="premium-carousel__card-link">
-                    <div class="premium-carousel__media">
-                      {% if product.featured_image %}
-                        {{ product.featured_image | image_url: width: 960 | image_tag: class: 'premium-carousel__image', loading: 'lazy', widths: '280,420,640,840,960', sizes: '(min-width: 990px) 23vw, 76vw', alt: product.title }}
+          {% if section.settings.header_link_label != blank and section.settings.header_link != blank %}
+            <a class="premium-carousel__intro-link" href="{{ section.settings.header_link }}">{{ section.settings.header_link_label }}</a>
+          {% endif %}
+        </div>
+
+        <div class="premium-carousel__rail-wrap">
+          {% if section.settings.show_controls %}
+            <div class="premium-carousel__controls">
+              <button type="button" class="premium-carousel__btn" data-pc-prev aria-label="Previous featured products">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <button type="button" class="premium-carousel__btn" data-pc-next aria-label="Next featured products">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          {% endif %}
+
+          <div class="premium-carousel__viewport{% if section.settings.peek_next %} is-peek{% endif %}" data-pc-viewport tabindex="0" aria-label="FlyFlow featured product rail">
+            <div class="premium-carousel__track" data-pc-track>
+              {% assign rendered_items = 0 %}
+
+              {% if source_mode == 'manual' %}
+                {% for block in section.blocks %}
+                  {% if rendered_items >= rail_limit %}{% break %}{% endif %}
+                  {% if block.settings.product != blank %}
+                    {% assign product = block.settings.product %}
+                    <article class="premium-carousel__card" data-pc-card {{ block.shopify_attributes }}>
+                      <a href="{{ product.url }}" class="premium-carousel__card-link">
+                        <div class="premium-carousel__media">
+                          {% if product.featured_image %}
+                            {{ product.featured_image | image_url: width: 960 | image_tag: class: 'premium-carousel__image', loading: 'lazy', widths: '320,480,640,840,960', sizes: '(min-width: 1200px) 22vw, (min-width: 768px) 32vw, 78vw', alt: product.title }}
+                          {% endif %}
+
+                          {% if section.settings.show_badge %}
+                            <span class="premium-carousel__badge">{{ badge_text }}</span>
+                          {% endif %}
+                        </div>
+
+                        <div class="premium-carousel__meta">
+                          <h3 class="premium-carousel__title">{{ product.title }}</h3>
+                          {% if section.settings.show_price %}
+                            <p class="premium-carousel__price">{{ product.price | money }}</p>
+                          {% endif %}
+                        </div>
+                      </a>
+
+                      {% if quick_add_mode != 'off' and product.selected_or_first_available_variant != blank %}
+                        {% assign has_multiple_variants = false %}
+                        {% unless product.has_only_default_variant %}
+                          {% assign has_multiple_variants = true %}
+                        {% endunless %}
+
+                        {% if quick_add_mode == 'drawer' and has_multiple_variants %}
+                          <button
+                            type="button"
+                            class="premium-carousel__quick-add"
+                            data-pc-open-drawer
+                            aria-label="Choose options for {{ product.title }}"
+                          >
+                            Choose options
+                          </button>
+                          <script type="application/json" data-pc-product-json>
+                            {
+                              "id": {{ product.id }},
+                              "title": {{ product.title | json }},
+                              "url": {{ product.url | json }},
+                              "image": {{ product.featured_image | image_url: width: 420 | json }},
+                              "options": [{% for option_name in product.options %}{{ option_name | json }}{% unless forloop.last %},{% endunless %}{% endfor %}],
+                              "variants": [
+                                {% for variant in product.variants %}
+                                  {
+                                    "id": {{ variant.id }},
+                                    "title": {{ variant.title | json }},
+                                    "available": {{ variant.available | json }},
+                                    "price": {{ variant.price | json }},
+                                    "options": [{% for option_value in variant.options %}{{ option_value | json }}{% unless forloop.last %},{% endunless %}{% endfor %}]
+                                  }{% unless forloop.last %},{% endunless %}
+                                {% endfor %}
+                              ]
+                            }
+                          </script>
+                        {% else %}
+                          <button
+                            type="button"
+                            class="premium-carousel__quick-add"
+                            data-add-to-cart
+                            data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                            data-add-text="Quick add"
+                            aria-label="Quick add {{ product.title }}"
+                          >
+                            Quick add
+                          </button>
+                        {% endif %}
                       {% endif %}
-                    </div>
-                    <div class="premium-carousel__meta">
-                      <p class="premium-carousel__kicker">Product</p>
-                      <h3 class="premium-carousel__title">{{ product.title }}</h3>
-                      <p class="premium-carousel__price">{{ product.price | money }}</p>
-                    </div>
-                  </a>
-
-                  {% if section.settings.enable_quick_add and product.selected_or_first_available_variant != blank %}
-                    <button
-                      type="button"
-                      class="premium-carousel__quick-add"
-                      data-add-to-cart
-                      data-variant-id="{{ product.selected_or_first_available_variant.id }}"
-                      data-add-text="Quick add"
-                      aria-label="Quick add {{ product.title }}"
-                    >
-                      Quick add
-                    </button>
+                    </article>
+                    {% assign rendered_items = rendered_items | plus: 1 %}
                   {% endif %}
-                </article>
-                {% assign rendered_items = rendered_items | plus: 1 %}
-              {% endif %}
-            {% endfor %}
-          {% endif %}
+                {% endfor %}
+              {% else %}
+                {% if source_collection != blank %}
+                  {% if source_mode == 'new_arrivals' %}
+                    {% assign source_products = source_collection.products | sort: 'published_at' | reverse %}
+                  {% else %}
+                    {% assign source_products = source_collection.products %}
+                  {% endif %}
 
-          {% if section.settings.rail_source == 'collections' %}
-            {% for block in section.blocks %}
-              {% if rendered_items >= rail_limit %}{% break %}{% endif %}
-              {% if block.settings.collection != blank %}
-                {% assign collection = block.settings.collection %}
-                <article class="premium-carousel__card" data-pc-card {{ block.shopify_attributes }}>
-                  <a href="{{ collection.url }}" class="premium-carousel__card-link">
-                    <div class="premium-carousel__media">
-                      {% if collection.image %}
-                        {{ collection.image | image_url: width: 960 | image_tag: class: 'premium-carousel__image', loading: 'lazy', widths: '280,420,640,840,960', sizes: '(min-width: 990px) 23vw, 76vw', alt: collection.title }}
-                      {% elsif collection.products.first.featured_image %}
-                        {{ collection.products.first.featured_image | image_url: width: 960 | image_tag: class: 'premium-carousel__image', loading: 'lazy', widths: '280,420,640,840,960', sizes: '(min-width: 990px) 23vw, 76vw', alt: collection.title }}
-                      {% endif %}
-                    </div>
-                    <div class="premium-carousel__meta">
-                      <p class="premium-carousel__kicker">Collection</p>
-                      <h3 class="premium-carousel__title">{{ collection.title }}</h3>
-                      <p class="premium-carousel__price">{{ collection.products_count }} items</p>
-                    </div>
-                  </a>
-                </article>
-                {% assign rendered_items = rendered_items | plus: 1 %}
-              {% endif %}
-            {% endfor %}
-          {% endif %}
+                  {% for product in source_products limit: rail_limit %}
+                    <article class="premium-carousel__card" data-pc-card>
+                      <a href="{{ product.url }}" class="premium-carousel__card-link">
+                        <div class="premium-carousel__media">
+                          {% if product.featured_image %}
+                            {{ product.featured_image | image_url: width: 960 | image_tag: class: 'premium-carousel__image', loading: 'lazy', widths: '320,480,640,840,960', sizes: '(min-width: 1200px) 22vw, (min-width: 768px) 32vw, 78vw', alt: product.title }}
+                          {% endif %}
 
-          {% if rendered_items == 0 %}
-            {% for block in section.blocks %}
-              {% if rendered_items >= rail_limit %}{% break %}{% endif %}
-              {% if block.settings.image != blank or block.settings.heading != blank %}
-                <article class="premium-carousel__card" data-pc-card {{ block.shopify_attributes }}>
-                  <a href="{{ block.settings.link | default: routes.collections_url }}" class="premium-carousel__card-link">
-                    <div class="premium-carousel__media">
-                      {% if block.settings.image %}
-                        {{ block.settings.image | image_url: width: 960 | image_tag: class: 'premium-carousel__image', loading: 'lazy', widths: '280,420,640,840,960', sizes: '(min-width: 990px) 23vw, 76vw', alt: block.settings.heading }}
-                      {% else %}
-                        {{ 'lifestyle-2' | placeholder_svg_tag: 'premium-carousel__image premium-carousel__placeholder' }}
+                          {% if section.settings.show_badge %}
+                            <span class="premium-carousel__badge">{{ badge_text }}</span>
+                          {% endif %}
+                        </div>
+
+                        <div class="premium-carousel__meta">
+                          <h3 class="premium-carousel__title">{{ product.title }}</h3>
+                          {% if section.settings.show_price %}
+                            <p class="premium-carousel__price">{{ product.price | money }}</p>
+                          {% endif %}
+                        </div>
+                      </a>
+
+                      {% if quick_add_mode != 'off' and product.selected_or_first_available_variant != blank %}
+                        {% assign has_multiple_variants = false %}
+                        {% unless product.has_only_default_variant %}
+                          {% assign has_multiple_variants = true %}
+                        {% endunless %}
+
+                        {% if quick_add_mode == 'drawer' and has_multiple_variants %}
+                          <button
+                            type="button"
+                            class="premium-carousel__quick-add"
+                            data-pc-open-drawer
+                            aria-label="Choose options for {{ product.title }}"
+                          >
+                            Choose options
+                          </button>
+                          <script type="application/json" data-pc-product-json>
+                            {
+                              "id": {{ product.id }},
+                              "title": {{ product.title | json }},
+                              "url": {{ product.url | json }},
+                              "image": {{ product.featured_image | image_url: width: 420 | json }},
+                              "options": [{% for option_name in product.options %}{{ option_name | json }}{% unless forloop.last %},{% endunless %}{% endfor %}],
+                              "variants": [
+                                {% for variant in product.variants %}
+                                  {
+                                    "id": {{ variant.id }},
+                                    "title": {{ variant.title | json }},
+                                    "available": {{ variant.available | json }},
+                                    "price": {{ variant.price | json }},
+                                    "options": [{% for option_value in variant.options %}{{ option_value | json }}{% unless forloop.last %},{% endunless %}{% endfor %}]
+                                  }{% unless forloop.last %},{% endunless %}
+                                {% endfor %}
+                              ]
+                            }
+                          </script>
+                        {% else %}
+                          <button
+                            type="button"
+                            class="premium-carousel__quick-add"
+                            data-add-to-cart
+                            data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                            data-add-text="Quick add"
+                            aria-label="Quick add {{ product.title }}"
+                          >
+                            Quick add
+                          </button>
+                        {% endif %}
                       {% endif %}
-                    </div>
-                    <div class="premium-carousel__meta">
-                      {% if block.settings.subheading != blank %}<p class="premium-carousel__kicker">{{ block.settings.subheading }}</p>{% endif %}
-                      {% if block.settings.heading != blank %}<h3 class="premium-carousel__title">{{ block.settings.heading }}</h3>{% endif %}
-                    </div>
-                  </a>
-                </article>
-                {% assign rendered_items = rendered_items | plus: 1 %}
+                    </article>
+                    {% assign rendered_items = rendered_items | plus: 1 %}
+                  {% endfor %}
+                {% endif %}
               {% endif %}
-            {% endfor %}
+
+              {% if rendered_items == 0 %}
+                {% for i in (1..3) %}
+                  <article class="premium-carousel__card" data-pc-card>
+                    <a href="{{ routes.collections_url }}" class="premium-carousel__card-link">
+                      <div class="premium-carousel__media">
+                        {{ 'product-' | append: i | placeholder_svg_tag: 'premium-carousel__image premium-carousel__placeholder' }}
+                      </div>
+                      <div class="premium-carousel__meta">
+                        <h3 class="premium-carousel__title">Add products in theme editor</h3>
+                      </div>
+                    </a>
+                  </article>
+                {% endfor %}
+              {% endif %}
+            </div>
+          </div>
+
+          {% if progress_mode == 'bar' %}
+            <div class="premium-carousel__progress" aria-hidden="true">
+              <span class="premium-carousel__progress-fill" data-pc-progress></span>
+            </div>
           {% endif %}
         </div>
       </div>
+    </div>
+  </div>
 
-      {% if section.settings.show_progress == 'bar' %}
-        <div class="premium-carousel__progress" aria-hidden="true">
-          <span class="premium-carousel__progress-fill" data-pc-progress></span>
-        </div>
-      {% endif %}
+  <div class="premium-carousel__drawer" data-pc-drawer aria-hidden="true" hidden>
+    <button class="premium-carousel__drawer-backdrop" type="button" data-pc-drawer-close tabindex="-1" aria-label="Close quick add"></button>
+    <div class="premium-carousel__drawer-panel" role="dialog" aria-modal="true" aria-labelledby="pc-quick-add-title-{{ section.id }}">
+      <button class="premium-carousel__drawer-close" type="button" data-pc-drawer-close aria-label="Close quick add">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <div class="premium-carousel__drawer-head">
+        <p class="premium-carousel__drawer-label">Quick add</p>
+        <h3 class="premium-carousel__drawer-title" id="pc-quick-add-title-{{ section.id }}"></h3>
+        <p class="premium-carousel__drawer-price" data-pc-drawer-price></p>
+      </div>
+      <div class="premium-carousel__drawer-options" data-pc-drawer-options></div>
+      <button class="premium-carousel__drawer-submit" type="button" data-pc-drawer-submit data-add-text="Add to bag">Add to bag</button>
     </div>
   </div>
 </section>
 
 <style>
   .premium-carousel--{{ section.id }} .premium-carousel__shell {
-    padding-block: clamp(10px, 1.8vw, 18px);
+    padding-block: clamp(12px, 2vw, 22px);
   }
 
-  .premium-carousel--{{ section.id }} .premium-carousel__head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 10px;
+  .premium-carousel--{{ section.id }} .premium-carousel__chapter {
+    display: grid;
+    grid-template-columns: minmax(190px, 260px) minmax(0, 1fr);
+    gap: clamp(16px, 2.4vw, 28px);
+    align-items: start;
+  }
+
+  .premium-carousel--{{ section.id }} .premium-carousel__intro {
+    padding-top: 2px;
+  }
+
+  .premium-carousel--{{ section.id }} .premium-carousel__label {
+    margin: 0 0 8px;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
   }
 
   .premium-carousel--{{ section.id }} .premium-carousel__heading {
     margin: 0;
-    font-size: clamp(1rem, 1.8vw, 1.45rem);
+    font-size: clamp(1.1rem, 2vw, 1.55rem);
+    line-height: 1.1;
+  }
+
+  .premium-carousel--{{ section.id }} .premium-carousel__subheading {
+    margin: 8px 0 0;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+  }
+
+  .premium-carousel--{{ section.id }} .premium-carousel__intro-link {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--transition-fast);
+  }
+
+  .premium-carousel--{{ section.id }} .premium-carousel__intro-link:hover {
+    border-color: currentcolor;
+  }
+
+  .premium-carousel--{{ section.id }} .premium-carousel__rail-wrap {
+    min-width: 0;
   }
 
   .premium-carousel--{{ section.id }} .premium-carousel__controls {
     display: inline-flex;
     gap: 8px;
+    margin-bottom: 10px;
   }
 
   .premium-carousel--{{ section.id }} .premium-carousel__btn {
@@ -192,45 +384,22 @@
   .premium-carousel--{{ section.id }} .premium-carousel__track {
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: minmax(190px, 23%);
+    grid-auto-columns: minmax(190px, 27%);
     gap: 14px;
     padding-right: 14px;
   }
 
   .premium-carousel--{{ section.id }} .premium-carousel__viewport.is-peek .premium-carousel__track {
-    grid-auto-columns: minmax(190px, 23%);
+    grid-auto-columns: minmax(190px, 27%);
   }
 
   .premium-carousel--{{ section.id }} .premium-carousel__viewport:not(.is-peek) .premium-carousel__track {
-    grid-auto-columns: minmax(190px, 24%);
+    grid-auto-columns: minmax(190px, 30%);
     padding-right: 0;
   }
 
-  @media (max-width: 1280px) {
-    .premium-carousel--{{ section.id }} .premium-carousel__track {
-      grid-auto-columns: minmax(190px, 29%);
-    }
-  }
-
-  @media (max-width: 1023px) {
-    .premium-carousel--{{ section.id }} .premium-carousel__track {
-      grid-auto-columns: minmax(190px, 42%);
-    }
-  }
-
-  @media (max-width: 767px) {
-    .premium-carousel--{{ section.id }} .premium-carousel__track {
-      grid-auto-columns: minmax(180px, 74%);
-      gap: 12px;
-    }
-
-    .premium-carousel--{{ section.id }} .premium-carousel__btn {
-      width: 34px;
-      height: 34px;
-    }
-  }
-
   .premium-carousel--{{ section.id }} .premium-carousel__card {
+    position: relative;
     scroll-snap-align: start;
     border-radius: 0;
     border: 0;
@@ -239,14 +408,20 @@
     overflow: hidden;
   }
 
+  .premium-carousel--{{ section.id }} .premium-carousel__shell--soft_mask .premium-carousel__card {
+    border-radius: 14px;
+    box-shadow: 0 10px 26px rgba(15, 16, 20, 0.08);
+  }
+
   .premium-carousel--{{ section.id }} .premium-carousel__card-link {
     display: block;
   }
 
   .premium-carousel--{{ section.id }} .premium-carousel__media {
+    position: relative;
     aspect-ratio: 4 / 5;
     overflow: hidden;
-    background: #ffffff;
+    background: #f8f8f8;
   }
 
   .premium-carousel--{{ section.id }} .premium-carousel__image {
@@ -256,44 +431,72 @@
     transition: transform var(--transition-base);
   }
 
-  .premium-carousel--{{ section.id }} .premium-carousel__card-link:hover .premium-carousel__image {
-    transform: scale(1.04);
+  .premium-carousel--{{ section.id }} .premium-carousel__badge {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    padding: 4px 9px;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #111111;
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(4px);
   }
 
   .premium-carousel--{{ section.id }} .premium-carousel__meta {
-    padding: 11px 12px 13px;
-  }
-
-  .premium-carousel--{{ section.id }} .premium-carousel__kicker {
-    margin: 0 0 4px;
-    font-size: 0.6rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--color-text-secondary);
+    padding: 11px 0 0;
+    display: grid;
+    gap: 4px;
   }
 
   .premium-carousel--{{ section.id }} .premium-carousel__title {
     margin: 0;
-    font-size: 0.9rem;
-    line-height: 1.3;
+    font-size: 0.92rem;
+    line-height: 1.35;
+    border-bottom: 1px solid transparent;
+    width: fit-content;
+    transition: border-color var(--transition-fast);
   }
 
   .premium-carousel--{{ section.id }} .premium-carousel__price {
-    margin: 5px 0 0;
+    margin: 0;
     font-size: 0.8rem;
     color: var(--color-text-secondary);
   }
 
   .premium-carousel--{{ section.id }} .premium-carousel__quick-add {
-    width: calc(100% - 20px);
-    min-height: 36px;
-    margin: 0 10px 10px;
-    border-radius: 0;
+    width: 100%;
+    min-height: 38px;
+    margin-top: 10px;
     border: 0;
-    background: #f7f7f7;
+    border-radius: 0;
+    background: #f4f4f4;
     font-size: 0.72rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
+    transition: transform var(--transition-fast), background-color var(--transition-fast), opacity var(--transition-fast);
+  }
+
+  .premium-carousel--{{ section.id }} .premium-carousel__quick-add-hover .premium-carousel__quick-add {
+    opacity: 0;
+    transform: translateY(4px);
+    pointer-events: none;
+  }
+
+  .premium-carousel--{{ section.id }} .premium-carousel__quick-add-hover .premium-carousel__card:hover .premium-carousel__quick-add,
+  .premium-carousel--{{ section.id }} .premium-carousel__quick-add-hover .premium-carousel__card:focus-within .premium-carousel__quick-add {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .premium-carousel--{{ section.id }} .premium-carousel__card:hover .premium-carousel__image {
+    transform: scale(1.03);
+  }
+
+  .premium-carousel--{{ section.id }} .premium-carousel__card:hover .premium-carousel__title {
+    border-color: currentcolor;
   }
 
   .premium-carousel--{{ section.id }} .premium-carousel__progress {
@@ -314,7 +517,8 @@
 
   .premium-carousel--{{ section.id }} .premium-carousel__btn:focus-visible,
   .premium-carousel--{{ section.id }} .premium-carousel__viewport:focus-visible,
-  .premium-carousel--{{ section.id }} .premium-carousel__quick-add:focus-visible {
+  .premium-carousel--{{ section.id }} .premium-carousel__quick-add:focus-visible,
+  .premium-carousel--{{ section.id }} .premium-carousel__intro-link:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
@@ -335,9 +539,151 @@
     transition: opacity var(--transition-base), transform var(--transition-base);
   }
 
+  .premium-carousel__drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+  }
+
+  .premium-carousel__drawer-backdrop {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  .premium-carousel__drawer-panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: min(440px, 100%);
+    height: 100%;
+    background: #ffffff;
+    padding: 20px 16px;
+    overflow-y: auto;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 14px;
+  }
+
+  .premium-carousel__drawer-close {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    background: transparent;
+    justify-self: end;
+  }
+
+  .premium-carousel__drawer-close svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .premium-carousel__drawer-label {
+    margin: 0;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  .premium-carousel__drawer-title {
+    margin: 4px 0 0;
+    font-size: 1.08rem;
+    line-height: 1.2;
+  }
+
+  .premium-carousel__drawer-price {
+    margin: 6px 0 0;
+    font-size: 0.86rem;
+    color: var(--color-text-secondary);
+  }
+
+  .premium-carousel__drawer-options {
+    display: grid;
+    gap: 12px;
+    align-content: start;
+  }
+
+  .premium-carousel__drawer-option {
+    display: grid;
+    gap: 6px;
+  }
+
+  .premium-carousel__drawer-option label {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  .premium-carousel__drawer-option select {
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid rgba(0, 0, 0, 0.14);
+    background: #ffffff;
+    padding: 0 11px;
+  }
+
+  .premium-carousel__drawer-submit {
+    min-height: 44px;
+    border: 0;
+    background: #101014;
+    color: #ffffff;
+    font-size: 0.74rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .premium-carousel__drawer-submit[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 1280px) {
+    .premium-carousel--{{ section.id }} .premium-carousel__track {
+      grid-auto-columns: minmax(190px, 30%);
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .premium-carousel--{{ section.id }} .premium-carousel__chapter {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .premium-carousel--{{ section.id }} .premium-carousel__track {
+      grid-auto-columns: minmax(190px, 42%);
+    }
+
+    .premium-carousel--{{ section.id }} .premium-carousel__quick-add-hover .premium-carousel__quick-add {
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .premium-carousel--{{ section.id }} .premium-carousel__track {
+      grid-auto-columns: minmax(180px, 74%);
+      gap: 12px;
+    }
+
+    .premium-carousel--{{ section.id }} .premium-carousel__btn {
+      width: 34px;
+      height: 34px;
+    }
+
+    .premium-carousel__drawer-panel {
+      width: 100%;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .premium-carousel--{{ section.id }} .premium-carousel__btn,
     .premium-carousel--{{ section.id }} .premium-carousel__image,
+    .premium-carousel--{{ section.id }} .premium-carousel__title,
+    .premium-carousel--{{ section.id }} .premium-carousel__quick-add,
     .premium-carousel--{{ section.id }} .premium-carousel__progress-fill,
     .premium-carousel--{{ section.id }} [data-pc-card] {
       transition: none !important;
@@ -358,9 +704,25 @@
     var progress = section.querySelector('[data-pc-progress]');
     var cards = section.querySelectorAll('[data-pc-card]');
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var drawer = section.querySelector('[data-pc-drawer]');
+    var drawerOptions = section.querySelector('[data-pc-drawer-options]');
+    var drawerSubmit = section.querySelector('[data-pc-drawer-submit]');
+    var drawerTitle = section.querySelector('.premium-carousel__drawer-title');
+    var drawerPrice = section.querySelector('[data-pc-drawer-price]');
+    var lastTrigger = null;
+    var activeProduct = null;
+    var activeVariant = null;
+    var removeTrap = null;
 
     function clamp(n, min, max) {
       return Math.min(Math.max(n, min), max);
+    }
+
+    function formatMoney(cents) {
+      if (window.FlyFlow && typeof window.FlyFlow.formatMoney === 'function') {
+        return window.FlyFlow.formatMoney(cents);
+      }
+      return '$' + ((Number(cents) || 0) / 100).toFixed(2);
     }
 
     function updateProgress() {
@@ -374,6 +736,164 @@
       if (!viewport) return;
       var amount = viewport.clientWidth * ({% if section.settings.peek_next %}0.86{% else %}1{% endif %});
       viewport.scrollBy({ left: amount * direction, behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+
+    function trapFocus(node) {
+      var focusable = node.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (!focusable.length) return function() {};
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      function handleTab(event) {
+        if (event.key !== 'Tab') return;
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+      node.addEventListener('keydown', handleTab);
+      return function() { node.removeEventListener('keydown', handleTab); };
+    }
+
+    async function addItem(variantId, button) {
+      if (!variantId) return;
+      var original = button.textContent;
+      button.disabled = true;
+      button.textContent = 'Adding...';
+
+      try {
+        if (window.FlyFlow && typeof window.FlyFlow.fetchAPI === 'function') {
+          await window.FlyFlow.fetchAPI('/cart/add.js', { items: [{ id: variantId, quantity: 1 }] });
+        } else {
+          await fetch('/cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items: [{ id: variantId, quantity: 1 }] })
+          });
+        }
+
+        if (window.FlyFlow && window.FlyFlow.Cart && typeof window.FlyFlow.Cart.refreshCart === 'function') {
+          await window.FlyFlow.Cart.refreshCart();
+        }
+        if (window.FlyFlow && window.FlyFlow.Cart && typeof window.FlyFlow.Cart.open === 'function') {
+          window.FlyFlow.Cart.open();
+        }
+
+        button.textContent = 'Added';
+        setTimeout(function() {
+          button.disabled = false;
+          button.textContent = button.dataset.addText || original;
+        }, 900);
+      } catch (_error) {
+        button.disabled = false;
+        button.textContent = button.dataset.addText || original;
+        window.location.href = '/cart';
+      }
+    }
+
+    function closeDrawer() {
+      if (!drawer || drawer.hidden) return;
+      drawer.hidden = true;
+      drawer.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('drawer-open');
+      if (removeTrap) {
+        removeTrap();
+        removeTrap = null;
+      }
+      if (lastTrigger) {
+        lastTrigger.focus();
+      }
+      activeProduct = null;
+      activeVariant = null;
+    }
+
+    function getVariantFromSelections() {
+      if (!activeProduct || !Array.isArray(activeProduct.variants)) return null;
+      var selects = drawerOptions.querySelectorAll('[data-pc-option-index]');
+      var selectedValues = [];
+      selects.forEach(function(select) {
+        selectedValues[parseInt(select.dataset.pcOptionIndex, 10)] = select.value;
+      });
+
+      return activeProduct.variants.find(function(variant) {
+        if (!Array.isArray(variant.options)) return false;
+        return variant.options.every(function(value, index) {
+          return selectedValues[index] === value;
+        });
+      }) || null;
+    }
+
+    function syncDrawerState() {
+      activeVariant = getVariantFromSelections();
+      if (!activeVariant) {
+        drawerSubmit.disabled = true;
+        drawerSubmit.textContent = 'Unavailable';
+        return;
+      }
+      drawerSubmit.disabled = !activeVariant.available;
+      drawerSubmit.dataset.variantId = activeVariant.id;
+      drawerSubmit.textContent = activeVariant.available ? 'Add to bag' : 'Sold out';
+      drawerPrice.textContent = formatMoney(activeVariant.price);
+    }
+
+    function buildDrawerOptions(productData) {
+      drawerOptions.innerHTML = '';
+
+      productData.options.forEach(function(optionName, optionIndex) {
+        var values = [];
+        productData.variants.forEach(function(variant) {
+          var val = variant.options[optionIndex];
+          if (values.indexOf(val) === -1) {
+            values.push(val);
+          }
+        });
+
+        var wrapper = document.createElement('div');
+        wrapper.className = 'premium-carousel__drawer-option';
+
+        var label = document.createElement('label');
+        label.textContent = optionName;
+
+        var select = document.createElement('select');
+        select.setAttribute('data-pc-option-index', String(optionIndex));
+
+        values.forEach(function(value) {
+          var option = document.createElement('option');
+          option.value = value;
+          option.textContent = value;
+          select.appendChild(option);
+        });
+
+        select.addEventListener('change', syncDrawerState);
+
+        wrapper.appendChild(label);
+        wrapper.appendChild(select);
+        drawerOptions.appendChild(wrapper);
+      });
+
+      syncDrawerState();
+    }
+
+    function openDrawer(trigger, productData) {
+      if (!drawer || !drawerOptions || !drawerSubmit || !productData) return;
+      lastTrigger = trigger;
+      activeProduct = productData;
+      drawerTitle.textContent = productData.title || 'Quick add';
+      drawerPrice.textContent = productData.variants && productData.variants[0] ? formatMoney(productData.variants[0].price) : '';
+
+      buildDrawerOptions(productData);
+
+      drawer.hidden = false;
+      drawer.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('drawer-open');
+      removeTrap = trapFocus(drawer);
+
+      var firstField = drawer.querySelector('button, select');
+      if (firstField) {
+        firstField.focus();
+      }
     }
 
     if (prev) {
@@ -398,6 +918,41 @@
       });
       updateProgress();
     }
+
+    section.addEventListener('click', function(event) {
+      var drawerOpenBtn = event.target.closest('[data-pc-open-drawer]');
+      if (drawerOpenBtn) {
+        var card = drawerOpenBtn.closest('.premium-carousel__card');
+        var dataNode = card ? card.querySelector('[data-pc-product-json]') : null;
+        if (dataNode) {
+          try {
+            var parsed = JSON.parse(dataNode.textContent);
+            openDrawer(drawerOpenBtn, parsed);
+          } catch (_e) {
+            // Invalid JSON fallback: do nothing
+          }
+        }
+      }
+
+      var closeBtn = event.target.closest('[data-pc-drawer-close]');
+      if (closeBtn) {
+        closeDrawer();
+      }
+    });
+
+    if (drawerSubmit) {
+      drawerSubmit.addEventListener('click', function() {
+        var variantId = parseInt(drawerSubmit.dataset.variantId || '', 10);
+        if (!variantId) return;
+        addItem(variantId, drawerSubmit).then(closeDrawer);
+      });
+    }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeDrawer();
+      }
+    });
 
     if (section.dataset.enableReveal === 'true' && !reduceMotion) {
       section.classList.add('is-pending-reveal');
@@ -425,28 +980,109 @@
   "settings": [
     {
       "type": "text",
+      "id": "label_text",
+      "label": "Label text",
+      "default": "FEATURED"
+    },
+    {
+      "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Gallery Rail"
+      "default": "Featured Product Rail"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "header_link_label",
+      "label": "Header link label"
+    },
+    {
+      "type": "url",
+      "id": "header_link",
+      "label": "Header link"
     },
     {
       "type": "select",
-      "id": "rail_source",
-      "label": "Rail source",
-      "default": "products",
+      "id": "source_mode",
+      "label": "Source mode",
+      "default": "manual",
       "options": [
-        { "value": "products", "label": "Products" },
-        { "value": "collections", "label": "Collections" }
+        { "value": "manual", "label": "Manual" },
+        { "value": "best_sellers", "label": "Best sellers" },
+        { "value": "new_arrivals", "label": "New arrivals" }
       ]
     },
     {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection source"
+    },
+    {
       "type": "range",
-      "id": "rail_item_limit",
-      "label": "Rail item limit",
+      "id": "item_limit",
+      "label": "Item limit",
       "min": 4,
-      "max": 16,
+      "max": 12,
       "step": 1,
       "default": 8
+    },
+    {
+      "type": "select",
+      "id": "card_style",
+      "label": "Card style",
+      "default": "clean_edge",
+      "options": [
+        { "value": "clean_edge", "label": "Clean edge" },
+        { "value": "soft_mask", "label": "Soft mask" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show price",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badge",
+      "label": "Show badge",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "badge_text_mode",
+      "label": "Badge text",
+      "default": "new",
+      "options": [
+        { "value": "new", "label": "New" },
+        { "value": "drop", "label": "Drop" },
+        { "value": "bestseller", "label": "Best seller" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "quick_add_mode",
+      "label": "Quick add mode",
+      "default": "drawer",
+      "options": [
+        { "value": "drawer", "label": "Drawer" },
+        { "value": "inline", "label": "Inline" },
+        { "value": "off", "label": "Off" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "quick_add_visibility",
+      "label": "Quick add visibility",
+      "default": "hover",
+      "options": [
+        { "value": "hover", "label": "On hover" },
+        { "value": "always", "label": "Always" }
+      ]
     },
     {
       "type": "checkbox",
@@ -456,8 +1092,8 @@
     },
     {
       "type": "select",
-      "id": "show_progress",
-      "label": "Progress style",
+      "id": "progress_indicator",
+      "label": "Progress indicator",
       "default": "bar",
       "options": [
         { "value": "bar", "label": "Bar" },
@@ -467,14 +1103,8 @@
     {
       "type": "checkbox",
       "id": "peek_next",
-      "label": "Peek next",
+      "label": "Peek next card",
       "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_quick_add",
-      "label": "Enable quick add",
-      "default": false
     },
     {
       "type": "select",
@@ -489,23 +1119,6 @@
     },
     {
       "type": "select",
-      "id": "section_spacing",
-      "label": "Section spacing",
-      "default": "standard",
-      "options": [
-        { "value": "compact", "label": "Compact" },
-        { "value": "standard", "label": "Standard" },
-        { "value": "spacious", "label": "Spacious" }
-      ]
-    },
-    {
-      "type": "checkbox",
-      "id": "show_divider_top",
-      "label": "Show top divider",
-      "default": false
-    },
-    {
-      "type": "select",
       "id": "container_width",
       "label": "Container width",
       "default": "contained",
@@ -513,6 +1126,12 @@
         { "value": "full", "label": "Full" },
         { "value": "contained", "label": "Contained" }
       ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider_top",
+      "label": "Show top divider",
+      "default": false
     },
     {
       "type": "checkbox",
@@ -524,37 +1143,12 @@
   "blocks": [
     {
       "type": "slide",
-      "name": "Rail item",
+      "name": "Product",
       "settings": [
         {
           "type": "product",
           "id": "product",
           "label": "Product"
-        },
-        {
-          "type": "collection",
-          "id": "collection",
-          "label": "Collection"
-        },
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Fallback image"
-        },
-        {
-          "type": "text",
-          "id": "heading",
-          "label": "Fallback heading"
-        },
-        {
-          "type": "text",
-          "id": "subheading",
-          "label": "Fallback subheading"
-        },
-        {
-          "type": "url",
-          "id": "link",
-          "label": "Fallback link"
         }
       ]
     }
