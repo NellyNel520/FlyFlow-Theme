@@ -1196,6 +1196,33 @@
 
     function setOption(optionIndex, optionValue) {
       selectedOptions[optionIndex] = optionValue;
+      var candidateVariants = activeProduct.variants.filter(function(variant) {
+        return variant.options[optionIndex] === optionValue;
+      });
+
+      var nextVariant = candidateVariants.find(function(variant) {
+        if (!variant.available) return false;
+        return variant.options.every(function(value, index) {
+          if (index === optionIndex) return true;
+          var selected = selectedOptions[index];
+          return selected == null || selected === value;
+        });
+      });
+
+      if (!nextVariant) {
+        nextVariant = candidateVariants.find(function(variant) {
+          return variant.available;
+        });
+      }
+
+      if (!nextVariant) {
+        nextVariant = candidateVariants[0] || null;
+      }
+
+      if (nextVariant) {
+        selectedOptions = nextVariant.options.slice();
+      }
+
       updateOptionStates();
       syncDrawer();
     }
