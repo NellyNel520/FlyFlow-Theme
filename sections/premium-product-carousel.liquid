@@ -211,6 +211,7 @@
     --ppc-overlay-blur: blur(4px);
     --ppc-peek: {% if section.settings.peek_next %}8%{% else %}0px{% endif %};
     --ppc-cards: {{ desktop_cards }};
+    background: transparent;
   }
 
   .premium-product-carousel--{{ section.id }} .premium-product-carousel__container {
@@ -264,7 +265,7 @@
 
   .premium-product-carousel--{{ section.id }} .premium-product-carousel__media {
     aspect-ratio: 4 / 5;
-    background: #f2f2f3;
+    background: #ffffff;
     overflow: hidden;
   }
 
