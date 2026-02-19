@@ -1384,7 +1384,15 @@
             button.setAttribute('aria-label', optionName + ' ' + value);
           }
 
-          button.addEventListener('click', function() {
+          button.addEventListener('pointerdown', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            setOption(index, value);
+          });
+
+          button.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
             setOption(index, value);
           });
 
@@ -1455,15 +1463,6 @@
     });
 
     section.addEventListener('click', function(event) {
-      var optionButton = event.target.closest('[data-ppc-option-value]');
-      if (optionButton && !optionButton.disabled) {
-        var optionIndex = parseInt(optionButton.dataset.ppcOptionIndex || '', 10);
-        var optionValue = optionButton.dataset.ppcOptionValue;
-        if (Number.isFinite(optionIndex) && optionValue) {
-          setOption(optionIndex, optionValue);
-        }
-      }
-
       var thumbButton = event.target.closest('[data-ppc-thumb-index]');
       if (thumbButton) {
         var thumbIndex = parseInt(thumbButton.dataset.ppcThumbIndex || '', 10);
