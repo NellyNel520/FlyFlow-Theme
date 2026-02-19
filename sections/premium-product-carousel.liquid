@@ -1161,16 +1161,7 @@
       }
 
       return activeProduct.variants.some(function(variant) {
-        if (!variant.available || variant.options[optionIndex] !== optionValue) {
-          return false;
-        }
-        return variant.options.every(function(value, index) {
-          if (index === optionIndex) {
-            return true;
-          }
-          var selected = selectedOptions[index];
-          return selected == null || selected === value;
-        });
+        return variant.options[optionIndex] === optionValue;
       });
     }
 
@@ -1190,14 +1181,14 @@
         var isAvailable = isValueAvailable(optionIndex, optionValue);
 
         button.classList.toggle('is-active', isActive);
-        button.classList.toggle('is-unavailable', !isAvailable);
+        button.classList.toggle('is-unavailable', false);
         button.classList.toggle('swatch--active', isActive && button.classList.contains('swatch'));
         button.classList.toggle('size-btn--active', isActive && button.classList.contains('size-btn'));
-        button.classList.toggle('swatch--sold-out', !isAvailable && button.classList.contains('swatch'));
-        button.classList.toggle('size-btn--sold-out', !isAvailable && button.classList.contains('size-btn'));
+        button.classList.toggle('swatch--sold-out', false);
+        button.classList.toggle('size-btn--sold-out', false);
         button.disabled = false;
         button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-        button.setAttribute('aria-disabled', isAvailable ? 'false' : 'true');
+        button.setAttribute('aria-disabled', 'false');
       });
     }
 
