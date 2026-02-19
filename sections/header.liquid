@@ -7,7 +7,8 @@
 {% endcomment %}
 
 <header class="header" data-header data-section-id="{{ section.id }}">
-  <div class="header__inner container">
+  <div class="header__shell">
+    <div class="header__inner container">
     {%- comment -%} Mobile menu toggle (visible < 1024px) {%- endcomment -%}
     <button
       class="header__icon-btn hidden-desktop"
@@ -37,115 +38,107 @@
       </a>
     </div>
 
-    {%- comment -%} Desktop navigation {%- endcomment -%}
-    <nav class="nav" aria-label="Main navigation">
-      {% for link in section.settings.menu.links %}
-        <div class="nav__item" {% if link.links.size > 0 %}aria-haspopup="true"{% endif %}>
-          <a
-            href="{{ link.url }}"
-            class="nav__link{% if link.active %} nav__link--active{% endif %}"
-          >
-            {{ link.title }}
-          </a>
+      {%- comment -%} Desktop navigation {%- endcomment -%}
+      <nav class="nav" aria-label="Main navigation">
+        {% for link in section.settings.menu.links %}
+          <div class="nav__item" {% if link.links.size > 0 %}aria-haspopup="true"{% endif %}>
+            <a
+              href="{{ link.url }}"
+              class="nav__link{% if link.active %} nav__link--active{% endif %}"
+            >
+              {{ link.title }}
+            </a>
 
-          {% if link.links.size > 0 %}
-            <div class="mega-menu" aria-label="{{ link.title }} submenu">
-              <div class="container">
-                <div class="mega-menu__grid">
-                  {% for child in link.links %}
-                    <a href="{{ child.url }}" class="mega-menu__category-card">
-                      {% if child.object.image %}
-                        {{ child.object.image | image_url: width: 400 | image_tag:
-                          class: 'mega-menu__category-image',
-                          alt: child.title,
-                          loading: 'lazy',
-                          width: 400,
-                          height: 533
-                        }}
-                      {% endif %}
-                      <span class="mega-menu__category-title">{{ child.title }}</span>
-                    </a>
-                  {% endfor %}
+            {% if link.links.size > 0 %}
+              <div class="mega-menu" aria-label="{{ link.title }} submenu">
+                <div class="container">
+                  <div class="mega-menu__grid">
+                    {% for child in link.links %}
+                      <a href="{{ child.url }}" class="mega-menu__category-card">
+                        {% if child.object.image %}
+                          {{ child.object.image | image_url: width: 400 | image_tag:
+                            class: 'mega-menu__category-image',
+                            alt: child.title,
+                            loading: 'lazy',
+                            width: 400,
+                            height: 533
+                          }}
+                        {% endif %}
+                        <span class="mega-menu__category-title">{{ child.title }}</span>
+                      </a>
+                    {% endfor %}
+                  </div>
                 </div>
               </div>
-            </div>
-          {% endif %}
-        </div>
-      {% endfor %}
-      {% if pages['about'] != blank %}
-        <div class="nav__item">
-          <a
-            href="{{ pages['about'].url }}"
-            class="nav__link{% if request.path == pages['about'].url %} nav__link--active{% endif %}"
-          >
-            About
-          </a>
-        </div>
-      {% endif %}
-    </nav>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </nav>
 
-    {%- comment -%} Header actions (search, dark mode, account, cart) {%- endcomment -%}
-    <div class="header__actions">
-      {%- comment -%} Search toggle — opens overlay {%- endcomment -%}
-      <button class="header__icon-btn" data-search-open aria-label="{{ 'header.search_button' | t }}">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="11" cy="11" r="8"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-      </button>
-
-      {%- comment -%} Dark mode toggle {%- endcomment -%}
-      {% if settings.dark_mode_enabled %}
-        <button
-          class="header__icon-btn"
-          data-theme-toggle
-          aria-label="{{ 'accessibility.dark_mode_toggle' | t }}"
-        >
-          <svg data-icon-moon viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-          </svg>
-          <svg data-icon-sun viewBox="0 0 24 24" aria-hidden="true" style="display:none">
-            <circle cx="12" cy="12" r="5"/>
-            <line x1="12" y1="1" x2="12" y2="3"/>
-            <line x1="12" y1="21" x2="12" y2="23"/>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-            <line x1="1" y1="12" x2="3" y2="12"/>
-            <line x1="21" y1="12" x2="23" y2="12"/>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      {%- comment -%} Header actions (search, dark mode, account, cart) {%- endcomment -%}
+      <div class="header__actions">
+        {%- comment -%} Search toggle — opens overlay {%- endcomment -%}
+        <button class="header__icon-btn" data-search-open aria-label="{{ 'header.search_button' | t }}">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
         </button>
-      {% endif %}
 
-      {%- comment -%} Account link {%- endcomment -%}
-      <a href="{{ routes.account_url }}" class="header__icon-btn hidden-mobile" aria-label="{{ 'header.account' | t }}">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
-        </svg>
-      </a>
+        {%- comment -%} Dark mode toggle {%- endcomment -%}
+        {% if settings.dark_mode_enabled %}
+          <button
+            class="header__icon-btn"
+            data-theme-toggle
+            aria-label="{{ 'accessibility.dark_mode_toggle' | t }}"
+          >
+            <svg data-icon-moon viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+            <svg data-icon-sun viewBox="0 0 24 24" aria-hidden="true" style="display:none">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+          </button>
+        {% endif %}
 
-      {%- comment -%} Cart toggle {%- endcomment -%}
-      <button class="header__icon-btn" data-cart-toggle aria-label="{{ 'accessibility.open_cart' | t }}">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-          <line x1="3" y1="6" x2="21" y2="6"/>
-          <path d="M16 10a4 4 0 0 1-8 0"/>
-        </svg>
-        <span
-          class="header__cart-count"
-          data-cart-count
-          {% if cart.item_count == 0 %}style="display:none"{% endif %}
-        >
-          {{ cart.item_count }}
-        </span>
-        <span class="sr-only" aria-live="polite" data-cart-count-sr>
-          {{ 'accessibility.cart_count' | t: count: cart.item_count }}
-        </span>
-      </button>
+        {%- comment -%} Account link {%- endcomment -%}
+        <a href="{{ routes.account_url }}" class="header__icon-btn hidden-mobile" aria-label="{{ 'header.account' | t }}">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </a>
+
+        {%- comment -%} Cart toggle {%- endcomment -%}
+        <button class="header__icon-btn" data-cart-toggle aria-label="{{ 'accessibility.open_cart' | t }}">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          <span
+            class="header__cart-count"
+            data-cart-count
+            {% if cart.item_count == 0 %}style="display:none"{% endif %}
+          >
+            {{ cart.item_count }}
+          </span>
+          <span class="sr-only" aria-live="polite" data-cart-count-sr>
+            {{ 'accessibility.cart_count' | t: count: cart.item_count }}
+          </span>
+        </button>
+      </div>
     </div>
   </div>
+  <div class="header__hairline" aria-hidden="true"></div>
 </header>
 
 {%- comment -%} Mobile menu drawer {%- endcomment -%}
@@ -162,24 +155,76 @@
 
   <nav aria-label="Mobile navigation">
     <div class="mobile-menu__item" style="margin-top:var(--space-md);padding-top:var(--space-md);border-top:1px solid var(--color-border)">
-      <p class="text-xs text-secondary" style="text-transform:uppercase;letter-spacing:0.12em;margin-bottom:var(--space-sm)">
-        Quick Access
-      </p>
-
-      <a href="{{ routes.root_url }}" class="mobile-menu__link">Home</a>
-      <a href="{{ routes.collections_url }}" class="mobile-menu__link">Shop</a>
-      <a href="{{ routes.search_url }}" class="mobile-menu__link">Search</a>
-
-      {% if pages['about'] != blank %}
-        <a href="{{ pages['about'].url }}" class="mobile-menu__link">About</a>
-      {% endif %}
-      {% if pages['brand-story'] != blank %}
-        <a href="{{ pages['brand-story'].url }}" class="mobile-menu__link">Brand Story</a>
-      {% endif %}
-
+      {% for link in section.settings.menu.links %}
+        {% if link.links.size > 0 %}
+          <button class="mobile-menu__link" type="button" data-submenu-toggle aria-expanded="false">
+            {{ link.title }}
+            <span aria-hidden="true">+</span>
+          </button>
+          <div class="mobile-menu__submenu">
+            {% for child in link.links %}
+              <a href="{{ child.url }}" class="mobile-menu__sublink">{{ child.title }}</a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <a href="{{ link.url }}" class="mobile-menu__link">{{ link.title }}</a>
+        {% endif %}
+      {% endfor %}
       <a href="{{ routes.account_url }}" class="mobile-menu__link">Account</a>
       <button class="mobile-menu__link" type="button" data-cart-toggle data-mobile-menu-close>Cart</button>
     </div>
+
+    {% if section.settings.show_mobile_social_icons %}
+      <div class="mobile-menu__item mobile-menu__social">
+        {% if settings.social_facebook_url != blank %}
+          <a href="{{ settings.social_facebook_url }}" aria-label="Visit Facebook" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.2 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.6 1.7-1.6h1.5V3.8c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1V10H7v3h3V21h3.2z"/></svg>
+          </a>
+        {% endif %}
+        {% if settings.social_x_url != blank %}
+          <a href="{{ settings.social_x_url }}" aria-label="Visit X" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 3H22l-6.8 7.7L23 21h-6.1l-4.8-6.2L6.7 21H3.6l7.3-8.2L3 3h6.2l4.3 5.7L18.9 3zm-1.1 16.1h1.7L8.3 4.8H6.4l11.4 14.3z"/></svg>
+          </a>
+        {% endif %}
+        {% if settings.social_instagram_url != blank %}
+          <a href="{{ settings.social_instagram_url }}" aria-label="Visit Instagram" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.2"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.8" cy="6.2" r="1.1"/></svg>
+          </a>
+        {% endif %}
+        {% if settings.social_youtube_url != blank %}
+          <a href="{{ settings.social_youtube_url }}" aria-label="Visit YouTube" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 7.2a2.7 2.7 0 0 0-1.9-1.9C18 4.8 12 4.8 12 4.8s-6 0-7.7.5a2.7 2.7 0 0 0-1.9 1.9c-.5 1.7-.5 5.3-.5 5.3s0 3.6.5 5.3a2.7 2.7 0 0 0 1.9 1.9c1.7.5 7.7.5 7.7.5s6 0 7.7-.5a2.7 2.7 0 0 0 1.9-1.9c.5-1.7.5-5.3.5-5.3s0-3.6-.5-5.3zM9.9 15.3V9.7l4.9 2.8-4.9 2.8z"/></svg>
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if localization.available_languages.size > 1 or localization.available_countries.size > 1 %}
+      {% form 'localization', id: 'MobileMenuLocalizationForm' %}
+        <div class="mobile-menu__item mobile-menu__localization">
+          {% if localization.available_languages.size > 1 %}
+            <label class="sr-only" for="MobileMenuLanguage">Language</label>
+            <select id="MobileMenuLanguage" name="locale_code" onchange="this.form.submit()">
+              {% for language in localization.available_languages %}
+                <option value="{{ language.iso_code }}" {% if language.iso_code == localization.language.iso_code %}selected{% endif %}>
+                  {{ language.endonym_name | capitalize }}
+                </option>
+              {% endfor %}
+            </select>
+          {% endif %}
+          {% if localization.available_countries.size > 1 %}
+            <label class="sr-only" for="MobileMenuCountry">Country and currency</label>
+            <select id="MobileMenuCountry" name="country_code" onchange="this.form.submit()">
+              {% for country in localization.available_countries %}
+                <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
+                  {{ country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
+                </option>
+              {% endfor %}
+            </select>
+          {% endif %}
+        </div>
+      {% endform %}
+    {% endif %}
   </nav>
 </div>
 
@@ -211,6 +256,12 @@
       "id": "menu",
       "label": "Navigation menu",
       "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_mobile_social_icons",
+      "label": "Show social icons in mobile drawer",
+      "default": true
     }
   ]
 }

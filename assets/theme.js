@@ -517,6 +517,8 @@ FlyFlow.Navigation = (function () {
   let header;
   let mobileMenu;
   let bottomNav;
+  let overlay;
+  let removeMenuFocusTrap = null;
   let lastScrollY = 0;
   let bottomNavTimer = null;
   let ticking = false;
@@ -528,6 +530,7 @@ FlyFlow.Navigation = (function () {
     header = document.querySelector('[data-header]');
     mobileMenu = document.querySelector('[data-mobile-menu]');
     bottomNav = document.querySelector('[data-bottom-nav]');
+    overlay = document.querySelector('[data-overlay]');
 
     // Mobile menu toggle
     document.addEventListener('click', function (e) {
@@ -551,6 +554,16 @@ FlyFlow.Navigation = (function () {
       }
     });
 
+    if (overlay) {
+      overlay.addEventListener('click', closeMobileMenu);
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        closeMobileMenu();
+      }
+    });
+
     // Header hide/show on scroll
     if (header) {
       window.addEventListener('scroll', onScroll, { passive: true });
@@ -565,15 +578,13 @@ FlyFlow.Navigation = (function () {
       window.requestAnimationFrame(function () {
         const currentScrollY = window.scrollY;
         const deltaY = currentScrollY - lastScrollY;
-        const scrollingDown = deltaY > 2 && currentScrollY > 100;
         const scrollingUp = deltaY < -2;
 
         if (header) {
-          header.classList.toggle('header--hidden', scrollingDown);
           header.classList.toggle('header--scrolled', currentScrollY > 10);
         }
         if (bottomNav) {
-          if (scrollingDown) {
+          if (deltaY > 2 && currentScrollY > 100) {
             bottomNav.classList.add('bottom-nav--hidden');
           } else if (scrollingUp || currentScrollY <= 100) {
             bottomNav.classList.remove('bottom-nav--hidden');
@@ -607,7 +618,10 @@ FlyFlow.Navigation = (function () {
       overlay.classList.add('overlay--visible');
     }
     document.body.classList.add('drawer-open');
-    FlyFlow.trapFocus(mobileMenu);
+    if (removeMenuFocusTrap) {
+      removeMenuFocusTrap();
+    }
+    removeMenuFocusTrap = FlyFlow.trapFocus(mobileMenu);
   }
 
   /** Close mobile menu */
@@ -621,6 +635,10 @@ FlyFlow.Navigation = (function () {
       overlay.classList.remove('overlay--visible');
     }
     document.body.classList.remove('drawer-open');
+    if (removeMenuFocusTrap) {
+      removeMenuFocusTrap();
+      removeMenuFocusTrap = null;
+    }
   }
 
   /** Toggle mobile menu */
@@ -648,6 +666,120 @@ FlyFlow.Navigation = (function () {
   }
 
   return { init, openMobileMenu, closeMobileMenu };
+})();
+
+/* ==========================================================================
+   Utility Bar Module
+   ========================================================================== */
+FlyFlow.UtilityBar = (function () {
+  function init() {
+    initAnnouncementPagers();
+    initCountdowns();
+    initShippingBars();
+  }
+
+  function initAnnouncementPagers() {
+    document.querySelectorAll('[data-utility-announcements]').forEach(function (pager) {
+      const slides = pager.querySelectorAll('[data-utility-slide]');
+      const prev = pager.querySelector('[data-utility-prev]');
+      const next = pager.querySelector('[data-utility-next]');
+      if (!slides.length || !prev || !next) {
+        return;
+      }
+
+      let activeIndex = 0;
+      const setActiveSlide = function (index) {
+        activeIndex = (index + slides.length) % slides.length;
+        slides.forEach(function (slide, slideIndex) {
+          const isActive = slideIndex === activeIndex;
+          slide.classList.toggle('is-active', isActive);
+          slide.setAttribute('aria-hidden', String(!isActive));
+        });
+      };
+
+      prev.addEventListener('click', function () {
+        setActiveSlide(activeIndex - 1);
+      });
+
+      next.addEventListener('click', function () {
+        setActiveSlide(activeIndex + 1);
+      });
+
+      if (slides.length <= 1) {
+        prev.setAttribute('disabled', 'disabled');
+        next.setAttribute('disabled', 'disabled');
+      }
+
+      setActiveSlide(0);
+    });
+  }
+
+  function initCountdowns() {
+    document.querySelectorAll('[data-utility-countdown]').forEach(function (countdown) {
+      const endValue = countdown.dataset.countdownEnd;
+      const output = countdown.querySelector('[data-countdown-value]');
+      if (!endValue || !output) {
+        return;
+      }
+
+      const endTime = new Date(endValue).getTime();
+      if (!Number.isFinite(endTime)) {
+        return;
+      }
+
+      const update = function () {
+        const remainingMs = endTime - Date.now();
+        if (remainingMs <= 0) {
+          output.textContent = '00:00:00';
+          return;
+        }
+
+        const hours = Math.floor(remainingMs / 36e5);
+        const minutes = Math.floor((remainingMs % 36e5) / 6e4);
+        const seconds = Math.floor((remainingMs % 6e4) / 1e3);
+        output.textContent =
+          String(hours).padStart(2, '0') +
+          ':' +
+          String(minutes).padStart(2, '0') +
+          ':' +
+          String(seconds).padStart(2, '0');
+      };
+
+      update();
+      window.setInterval(update, 1000);
+    });
+  }
+
+  function initShippingBars() {
+    document.querySelectorAll('[data-utility-shipping]').forEach(function (bar) {
+      const threshold = parseInt(bar.dataset.thresholdCents || '0', 10);
+      const total = parseInt(bar.dataset.cartTotalCents || '0', 10);
+      const currencyCode = bar.dataset.currencyCode || 'USD';
+      const fill = bar.querySelector('[data-utility-shipping-fill]');
+      const message = bar.querySelector('[data-utility-shipping-message]');
+      if (!threshold || !fill || !message) {
+        return;
+      }
+
+      const progress = Math.min(Math.max((total / threshold) * 100, 0), 100);
+      fill.style.width = progress + '%';
+      bar.style.display = 'flex';
+
+      if (total >= threshold) {
+        message.textContent = 'Free shipping unlocked';
+        return;
+      }
+
+      const remainingCents = threshold - total;
+      const remaining = new Intl.NumberFormat(document.documentElement.lang || 'en-US', {
+        style: 'currency',
+        currency: currencyCode,
+      }).format(remainingCents / 100);
+      message.textContent = 'Spend ' + remaining + ' more for free shipping';
+    });
+  }
+
+  return { init };
 })();
 
 /* ==========================================================================
@@ -2330,5 +2462,6 @@ document.addEventListener('DOMContentLoaded', function () {
   FlyFlow.CollectionView.init();
   FlyFlow.BackToTop.init();
   FlyFlow.NewsletterPopup.init();
+  FlyFlow.UtilityBar.init();
   FlyFlow.Analytics.init();
 });

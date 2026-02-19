@@ -1,25 +1,153 @@
 {% comment %}
-  FlyFlow Theme - Announcement Bar Section
-  Purpose: Top-of-page promotional banner with optional link.
-  Dependencies: None
-  Last modified: 2026-02-17
+  FlyFlow Theme - Utility Bar
+  Purpose: Slim top utility strip with social links, announcement pager, and localization.
+  Dependencies: theme.js (FlyFlow.UtilityBar)
+  Last modified: 2026-02-19
 {% endcomment %}
 
 {% if section.settings.show_announcement %}
-  <div class="announcement-bar" data-section-id="{{ section.id }}">
-    <div class="container">
-      {% if section.settings.link != blank %}
-        <a href="{{ section.settings.link }}">{{ section.settings.text }}</a>
-      {% else %}
-        <p>{{ section.settings.text }}</p>
-      {% endif %}
+  <div class="utility-bar" data-utility-bar data-section-id="{{ section.id }}">
+    <div class="utility-bar__inner container">
+      <div class="utility-bar__social" aria-label="Social links">
+        {% if section.settings.show_social_icons %}
+          {% if settings.social_facebook_url != blank %}
+            <a href="{{ settings.social_facebook_url }}" class="utility-bar__social-link" aria-label="Visit Facebook" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.2 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.6 1.7-1.6h1.5V3.8c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1V10H7v3h3V21h3.2z"/></svg>
+            </a>
+          {% endif %}
+          {% if settings.social_x_url != blank %}
+            <a href="{{ settings.social_x_url }}" class="utility-bar__social-link" aria-label="Visit X" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 3H22l-6.8 7.7L23 21h-6.1l-4.8-6.2L6.7 21H3.6l7.3-8.2L3 3h6.2l4.3 5.7L18.9 3zm-1.1 16.1h1.7L8.3 4.8H6.4l11.4 14.3z"/></svg>
+            </a>
+          {% endif %}
+          {% if settings.social_instagram_url != blank %}
+            <a href="{{ settings.social_instagram_url }}" class="utility-bar__social-link" aria-label="Visit Instagram" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.2"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.8" cy="6.2" r="1.1"/></svg>
+            </a>
+          {% endif %}
+          {% if settings.social_youtube_url != blank %}
+            <a href="{{ settings.social_youtube_url }}" class="utility-bar__social-link" aria-label="Visit YouTube" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 7.2a2.7 2.7 0 0 0-1.9-1.9C18 4.8 12 4.8 12 4.8s-6 0-7.7.5a2.7 2.7 0 0 0-1.9 1.9c-.5 1.7-.5 5.3-.5 5.3s0 3.6.5 5.3a2.7 2.7 0 0 0 1.9 1.9c1.7.5 7.7.5 7.7.5s6 0 7.7-.5a2.7 2.7 0 0 0 1.9-1.9c.5-1.7.5-5.3.5-5.3s0-3.6-.5-5.3zM9.9 15.3V9.7l4.9 2.8-4.9 2.8z"/></svg>
+            </a>
+          {% endif %}
+        {% endif %}
+      </div>
+
+      <div class="utility-bar__announcements" data-utility-announcements>
+        <button class="utility-bar__arrow" type="button" data-utility-prev aria-label="Previous announcement">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.6 4.7L7.3 10l5.3 5.3"/></svg>
+        </button>
+        <div class="utility-bar__viewport">
+          <ul class="utility-bar__track" data-utility-track>
+            {% if section.blocks.size > 0 %}
+              {% for block in section.blocks %}
+                <li class="utility-bar__slide{% if forloop.first %} is-active{% endif %}" data-utility-slide {{ block.shopify_attributes }}>
+                  {% if block.settings.link != blank %}
+                    <a href="{{ block.settings.link }}">{{ block.settings.text }}</a>
+                  {% else %}
+                    <span>{{ block.settings.text }}</span>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            {% else %}
+              <li class="utility-bar__slide is-active" data-utility-slide>
+                {% if section.settings.link != blank %}
+                  <a href="{{ section.settings.link }}">{{ section.settings.text }}</a>
+                {% else %}
+                  <span>{{ section.settings.text }}</span>
+                {% endif %}
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+        <button class="utility-bar__arrow" type="button" data-utility-next aria-label="Next announcement">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.4 4.7L12.7 10l-5.3 5.3"/></svg>
+        </button>
+      </div>
+
+      <div class="utility-bar__meta">
+        {% if section.settings.show_free_shipping_progress and section.settings.free_shipping_threshold != blank %}
+          {% assign threshold_cents = section.settings.free_shipping_threshold | times: 100 %}
+          {% assign progress_percent = 0 %}
+          {% if threshold_cents > 0 %}
+            {% assign progress_percent = cart.total_price | times: 100 | divided_by: threshold_cents %}
+          {% endif %}
+          <div
+            class="utility-bar__shipping"
+            data-utility-shipping
+            data-threshold-cents="{{ threshold_cents }}"
+            data-cart-total-cents="{{ cart.total_price }}"
+            data-currency-code="{{ cart.currency.iso_code | default: shop.currency }}"
+          >
+            <span class="utility-bar__shipping-message" data-utility-shipping-message></span>
+            <span class="utility-bar__shipping-track">
+              <span class="utility-bar__shipping-fill" data-utility-shipping-fill style="width:{{ progress_percent | at_most: 100 }}%"></span>
+            </span>
+          </div>
+        {% endif %}
+
+        {% if section.settings.show_countdown and section.settings.countdown_end != blank %}
+          <span class="utility-bar__countdown" data-utility-countdown data-countdown-end="{{ section.settings.countdown_end }}">
+            Ends in <strong data-countdown-value>--:--:--</strong>
+          </span>
+        {% endif %}
+
+        {% if section.settings.show_localization %}
+          {% if localization.available_languages.size > 1 or localization.available_countries.size > 1 %}
+            {% form 'localization', id: 'UtilityLocalizationForm' %}
+              <div class="utility-bar__localization">
+                {% if localization.available_languages.size > 1 %}
+                  <label class="sr-only" for="UtilityLanguage">Language</label>
+                  <select id="UtilityLanguage" name="locale_code" onchange="this.form.submit()">
+                    {% for language in localization.available_languages %}
+                      <option value="{{ language.iso_code }}" {% if language.iso_code == localization.language.iso_code %}selected{% endif %}>
+                        {{ language.endonym_name | capitalize }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                {% endif %}
+                {% if localization.available_countries.size > 1 %}
+                  <label class="sr-only" for="UtilityCountry">Country and currency</label>
+                  <select id="UtilityCountry" name="country_code" onchange="this.form.submit()">
+                    {% for country in localization.available_countries %}
+                      <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
+                        {{ country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
+                      </option>
+                    {% endfor %}
+                  </select>
+                {% endif %}
+              </div>
+            {% endform %}
+          {% endif %}
+        {% endif %}
+      </div>
     </div>
   </div>
 {% endif %}
 
 {% schema %}
 {
-  "name": "Announcement Bar",
+  "name": "Announcement bar",
+  "max_blocks": 8,
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "Announcement",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "A question? Visit our contact page"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
   "settings": [
     {
       "type": "checkbox",
@@ -37,6 +165,44 @@
       "type": "url",
       "id": "link",
       "label": "Link (optional)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social_icons",
+      "label": "Show social icons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_localization",
+      "label": "Show localization selectors",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_free_shipping_progress",
+      "label": "Show free shipping progress",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "free_shipping_threshold",
+      "label": "Free shipping threshold",
+      "default": "150",
+      "info": "Amount in store currency."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_countdown",
+      "label": "Show countdown",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "countdown_end",
+      "label": "Countdown end (ISO datetime)",
+      "default": "2026-12-31T23:59:59Z",
+      "info": "Use ISO format, for example 2026-12-31T23:59:59Z"
     }
   ]
 }
