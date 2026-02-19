@@ -1161,7 +1161,16 @@
       }
 
       return activeProduct.variants.some(function(variant) {
-        return variant.available && variant.options[optionIndex] === optionValue;
+        if (!variant.available || variant.options[optionIndex] !== optionValue) {
+          return false;
+        }
+        return variant.options.every(function(value, index) {
+          if (index === optionIndex) {
+            return true;
+          }
+          var selected = selectedOptions[index];
+          return selected == null || selected === value;
+        });
       });
     }
 
@@ -1181,14 +1190,14 @@
         var isAvailable = isValueAvailable(optionIndex, optionValue);
 
         button.classList.toggle('is-active', isActive);
-        button.classList.toggle('is-unavailable', false);
+        button.classList.toggle('is-unavailable', !isAvailable);
         button.classList.toggle('swatch--active', isActive && button.classList.contains('swatch'));
         button.classList.toggle('size-btn--active', isActive && button.classList.contains('size-btn'));
-        button.classList.toggle('swatch--sold-out', false);
-        button.classList.toggle('size-btn--sold-out', false);
+        button.classList.toggle('swatch--sold-out', !isAvailable && button.classList.contains('swatch'));
+        button.classList.toggle('size-btn--sold-out', !isAvailable && button.classList.contains('size-btn'));
         button.disabled = false;
         button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-        button.setAttribute('aria-disabled', 'false');
+        button.setAttribute('aria-disabled', isAvailable ? 'false' : 'true');
       });
     }
 
@@ -1198,41 +1207,6 @@
 
     function setOption(optionIndex, optionValue) {
       selectedOptions[optionIndex] = optionValue;
-      var candidates = activeProduct.variants.filter(function(variant) {
-        return variant.options[optionIndex] === optionValue;
-      });
-
-      var nextVariant = candidates.find(function(variant) {
-        if (!variant.available) {
-          return false;
-        }
-        return variant.options.every(function(value, index) {
-          if (index === optionIndex) {
-            return true;
-          }
-          var selected = selectedOptions[index];
-          return selected == null || selected === value;
-        });
-      });
-
-      if (!nextVariant) {
-        nextVariant = candidates.find(function(variant) {
-          return variant.available;
-        });
-      }
-
-      if (!nextVariant) {
-        nextVariant = candidates[0] || null;
-      }
-
-      if (!nextVariant) {
-        nextVariant = findFirstVariantMatching(selectedOptions, true) || findFirstVariantMatching(selectedOptions, false);
-      }
-
-      if (nextVariant) {
-        selectedOptions = nextVariant.options.slice();
-      }
-
       updateOptionStates();
       syncDrawer();
     }
