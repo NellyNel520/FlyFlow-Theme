@@ -1,220 +1,140 @@
-{% liquid
-  assign rail_limit = section.settings.rail_item_limit | default: 8
-  assign rail_source = section.settings.rail_source | default: 'products'
-%}
+{% comment %}
+  FlyFlow Theme - Premium Carousel
+  Purpose: High-end editorial carousel with 3/2/1 responsive cards, infinite looping,
+           group-based navigation, autoplay, keyboard, and swipe support.
+{% endcomment %}
 
 <section
   class="premium-carousel premium-carousel--{{ section.id }} chapter-section chapter-section--spacing-{{ section.settings.section_density | default: section.settings.section_spacing | default: 'standard' }} chapter-section--container-{{ section.settings.container_width | default: 'contained' }}{% if section.settings.show_divider_top %} chapter-section--divider-top{% endif %}{% if section.settings.enable_reveal %} chapter-section--reveal{% endif %}"
   data-section-id="{{ section.id }}"
   data-enable-reveal="{{ section.settings.enable_reveal }}"
+  style="
+    --pc-bg: {{ section.settings.background_color }};
+    --pc-pt: {{ section.settings.padding_top }}px;
+    --pc-pb: {{ section.settings.padding_bottom }}px;
+  "
 >
   <div class="container">
-    <div class="premium-carousel__shell" data-brand-carousel-root>
-      <div class="premium-carousel__header">
-        {% if section.settings.show_drop_label %}
-          <span class="premium-carousel__drop-label">{{ section.settings.drop_label | default: 'DROP' }}</span>
-        {% endif %}
-
-        {% if section.settings.heading != blank %}
-          <h2 class="premium-carousel__heading">{{ section.settings.heading }}</h2>
-        {% endif %}
-
-        {% if section.settings.show_controls %}
-          <div class="premium-carousel__controls">
-            <button class="premium-carousel__btn" type="button" data-pc-prev aria-label="Previous rail items">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <button class="premium-carousel__btn" type="button" data-pc-next aria-label="Next rail items">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-          </div>
-        {% endif %}
-      </div>
-
-      <div class="premium-carousel__viewport{% if section.settings.peek_next %} is-peek{% endif %}" data-pc-viewport tabindex="0" aria-label="Premium brand rail">
-        <div class="premium-carousel__track" data-pc-track>
-          {% assign rendered_items = 0 %}
-
-          {% if rail_source == 'products' or rail_source == 'mixed' %}
-            {% for product in section.settings.rail_products limit: rail_limit %}
-              {% if rendered_items >= rail_limit %}{% break %}{% endif %}
-              <article class="premium-carousel__card{% if section.settings.card_style == 'soft-mask' %} premium-carousel__card--soft{% endif %}" data-pc-card>
-                <a href="{{ product.url }}" class="premium-carousel__link">
-                  <div class="premium-carousel__media">
-                    {% if product.featured_image %}
-                      {{ product.featured_image | image_url: width: 1200 | image_tag: class: 'premium-carousel__image', loading: 'lazy', widths: '280,420,560,720,900,1200', sizes: '(min-width: 990px) 28vw, 78vw', alt: product.title }}
-                    {% endif %}
-                  </div>
-                  <div class="premium-carousel__meta">
-                    <p class="premium-carousel__kicker">Product</p>
-                    <h3 class="premium-carousel__title">{{ product.title }}</h3>
-                    <p class="premium-carousel__price">{{ product.price | money }}</p>
-                  </div>
-                </a>
-              </article>
-              {% assign rendered_items = rendered_items | plus: 1 %}
-            {% endfor %}
-          {% endif %}
-
-          {% if rail_source == 'collections' or rail_source == 'mixed' %}
-            {% for collection in section.settings.rail_collections limit: rail_limit %}
-              {% if rendered_items >= rail_limit %}{% break %}{% endif %}
-              <article class="premium-carousel__card{% if section.settings.card_style == 'soft-mask' %} premium-carousel__card--soft{% endif %}" data-pc-card>
-                <a href="{{ collection.url }}" class="premium-carousel__link">
-                  <div class="premium-carousel__media">
-                    {% if collection.image %}
-                      {{ collection.image | image_url: width: 1200 | image_tag: class: 'premium-carousel__image', loading: 'lazy', widths: '280,420,560,720,900,1200', sizes: '(min-width: 990px) 28vw, 78vw', alt: collection.title }}
-                    {% elsif collection.products.first.featured_image %}
-                      {{ collection.products.first.featured_image | image_url: width: 1200 | image_tag: class: 'premium-carousel__image', loading: 'lazy', widths: '280,420,560,720,900,1200', sizes: '(min-width: 990px) 28vw, 78vw', alt: collection.title }}
-                    {% endif %}
-                  </div>
-                  <div class="premium-carousel__meta">
-                    <p class="premium-carousel__kicker">Collection</p>
-                    <h3 class="premium-carousel__title">{{ collection.title }}</h3>
-                    <p class="premium-carousel__price">{{ collection.products_count }} items</p>
-                  </div>
-                </a>
-              </article>
-              {% assign rendered_items = rendered_items | plus: 1 %}
-            {% endfor %}
-          {% endif %}
+    <div class="premium-carousel__shell">
+      <div
+        class="premium-carousel__viewport"
+        data-premium-carousel
+        data-autoplay="{{ section.settings.autoplay }}"
+        data-autoplay-speed="{{ section.settings.autoplay_speed | times: 1000 }}"
+        aria-label="Featured carousel"
+      >
+        <div class="premium-carousel__track" data-premium-carousel-track>
+          {% for block in section.blocks %}
+            {% assign slide_link = block.settings.link | default: routes.collections_url %}
+            <article class="premium-carousel__slide" data-premium-carousel-slide {{ block.shopify_attributes }}>
+              <a class="premium-carousel__card" href="{{ slide_link }}" aria-label="{{ block.settings.heading | default: 'View item' }}">
+                <div class="premium-carousel__media">
+                  {% if block.settings.image %}
+                    {{
+                      block.settings.image
+                      | image_url: width: 1600
+                      | image_tag:
+                        class: 'premium-carousel__image',
+                        loading: 'lazy',
+                        widths: '480, 720, 960, 1200, 1440, 1600',
+                        sizes: '(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 90vw',
+                        alt: block.settings.heading
+                    }}
+                  {% else %}
+                    {{ 'lifestyle-1' | placeholder_svg_tag: 'premium-carousel__image premium-carousel__placeholder' }}
+                  {% endif %}
+                </div>
+                <div class="premium-carousel__overlay">
+                  {% if block.settings.subheading != blank %}
+                    <p class="premium-carousel__label">{{ block.settings.subheading }}</p>
+                  {% endif %}
+                  {% if block.settings.heading != blank %}
+                    <h3 class="premium-carousel__title">{{ block.settings.heading }}</h3>
+                  {% endif %}
+                </div>
+              </a>
+            </article>
+          {% endfor %}
         </div>
+
+        <button class="premium-carousel__control premium-carousel__control--prev" type="button" data-premium-carousel-prev aria-label="Previous slides">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="premium-carousel__control premium-carousel__control--next" type="button" data-premium-carousel-next aria-label="Next slides">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <div class="premium-carousel__dots" data-premium-carousel-dots aria-label="Carousel pagination"></div>
       </div>
-
-      {% if section.settings.show_progress == 'bar' %}
-        <div class="premium-carousel__progress" aria-hidden="true">
-          <span class="premium-carousel__progress-fill" data-pc-progress></span>
-        </div>
-      {% endif %}
-
-      {% if section.settings.show_hairline_divider %}
-        <div class="premium-carousel__divider" aria-hidden="true"></div>
-      {% endif %}
     </div>
   </div>
 </section>
 
 <style>
+  .premium-carousel--{{ section.id }} {
+    background: var(--pc-bg);
+    padding-top: var(--pc-pt);
+    padding-bottom: var(--pc-pb);
+  }
+
   .premium-carousel--{{ section.id }} .premium-carousel__shell {
-    padding: clamp(12px, 1.8vw, 20px) 0;
-  }
-
-  .premium-carousel--{{ section.id }} .premium-carousel__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-
-  .premium-carousel--{{ section.id }} .premium-carousel__drop-label {
-    display: inline-flex;
-    align-items: center;
-    min-height: 30px;
-    padding: 0 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(0, 0, 0, 0.14);
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(3px);
-    font-size: 0.625rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
-
-  .premium-carousel--{{ section.id }} .premium-carousel__heading {
-    margin: 0;
-    font-size: clamp(1.2rem, 2vw, 1.9rem);
-  }
-
-  .premium-carousel--{{ section.id }} .premium-carousel__controls {
-    display: inline-flex;
-    gap: 8px;
-    margin-left: auto;
-  }
-
-  .premium-carousel--{{ section.id }} .premium-carousel__btn {
-    width: 38px;
-    height: 38px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 999px;
-    border: 1px solid rgba(0, 0, 0, 0.14);
-    background: #ffffff;
-    transition: transform var(--transition-fast), border-color var(--transition-fast);
-  }
-
-  .premium-carousel--{{ section.id }} .premium-carousel__btn svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  .premium-carousel--{{ section.id }} .premium-carousel__btn:hover {
-    transform: translateY(-1px);
-    border-color: rgba(0, 0, 0, 0.24);
+    position: relative;
   }
 
   .premium-carousel--{{ section.id }} .premium-carousel__viewport {
-    overflow-x: auto;
-    scrollbar-width: none;
-    scroll-snap-type: x mandatory;
-    min-width: 0;
-  }
-
-  .premium-carousel--{{ section.id }} .premium-carousel__viewport::-webkit-scrollbar {
-    display: none;
-  }
-
-  .premium-carousel--{{ section.id }} .premium-carousel__track {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(220px, 30%);
-    gap: 18px;
-    padding-right: 18px;
-  }
-
-  .premium-carousel--{{ section.id }} .premium-carousel__viewport.is-peek .premium-carousel__track {
-    grid-auto-columns: minmax(220px, 30%);
-  }
-
-  .premium-carousel--{{ section.id }} .premium-carousel__viewport:not(.is-peek) .premium-carousel__track {
-    grid-auto-columns: minmax(220px, 33.333%);
-    padding-right: 0;
+    --pc-gap: 24px;
+    --pc-per-view: 3;
+    position: relative;
+    outline: none;
   }
 
   @media (max-width: 1023px) {
-    .premium-carousel--{{ section.id }} .premium-carousel__track {
-      grid-auto-columns: minmax(220px, 46%);
+    .premium-carousel--{{ section.id }} .premium-carousel__viewport {
+      --pc-per-view: 2;
+      --pc-gap: 18px;
     }
   }
 
   @media (max-width: 767px) {
-    .premium-carousel--{{ section.id }} .premium-carousel__track {
-      grid-auto-columns: minmax(210px, 84%);
-      gap: 12px;
+    .premium-carousel--{{ section.id }} .premium-carousel__viewport {
+      --pc-per-view: 1;
+      --pc-gap: 14px;
     }
+  }
 
-    .premium-carousel--{{ section.id }} .premium-carousel__btn {
-      width: 34px;
-      height: 34px;
-    }
+  .premium-carousel--{{ section.id }} .premium-carousel__track {
+    display: flex;
+    gap: var(--pc-gap);
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+    transition: transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .premium-carousel--{{ section.id }} .premium-carousel__slide {
+    flex: 0 0 calc((100% - ((var(--pc-per-view) - 1) * var(--pc-gap))) / var(--pc-per-view));
+    min-width: 0;
   }
 
   .premium-carousel--{{ section.id }} .premium-carousel__card {
-    scroll-snap-align: start;
-    border-radius: 16px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    background: #ffffff;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    display: block;
+    position: relative;
     overflow: hidden;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.09);
+    transform: translate3d(0, 0, 0);
+    transition:
+      transform 320ms ease,
+      box-shadow 320ms ease;
   }
 
-  .premium-carousel--{{ section.id }} .premium-carousel__card--soft {
-    border-radius: 20px;
+  .premium-carousel--{{ section.id }} .premium-carousel__card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.12);
   }
 
   .premium-carousel--{{ section.id }} .premium-carousel__media {
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 4 / 3;
     overflow: hidden;
     background: var(--color-surface);
   }
@@ -223,162 +143,351 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform var(--transition-base);
+    transform: scale(1);
+    transition: transform 600ms cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
-  .premium-carousel--{{ section.id }} .premium-carousel__link:hover .premium-carousel__image {
-    transform: scale(1.04);
+  .premium-carousel--{{ section.id }} .premium-carousel__card:hover .premium-carousel__image {
+    transform: scale(1.045);
   }
 
-  .premium-carousel--{{ section.id }} .premium-carousel__meta {
-    padding: 12px 12px 14px;
+  .premium-carousel--{{ section.id }} .premium-carousel__overlay {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 18px 18px 16px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 8%, rgba(0, 0, 0, 0.72) 100%);
+    color: #fff;
   }
 
-  .premium-carousel--{{ section.id }} .premium-carousel__kicker {
-    margin: 0 0 4px;
-    font-size: 0.62rem;
-    letter-spacing: 0.13em;
+  .premium-carousel--{{ section.id }} .premium-carousel__label {
+    margin: 0 0 6px;
+    font-size: 0.625rem;
     text-transform: uppercase;
-    color: var(--color-text-secondary);
+    letter-spacing: 0.16em;
+    opacity: 0.85;
   }
 
   .premium-carousel--{{ section.id }} .premium-carousel__title {
     margin: 0;
-    font-size: 0.95rem;
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    letter-spacing: 0.01em;
     line-height: 1.3;
   }
 
-  .premium-carousel--{{ section.id }} .premium-carousel__price {
-    margin: 6px 0 0;
-    font-size: 0.8rem;
-    color: var(--color-text-secondary);
-  }
-
-  .premium-carousel--{{ section.id }} .premium-carousel__progress {
-    margin-top: 10px;
-    height: 2px;
+  .premium-carousel--{{ section.id }} .premium-carousel__control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
     border-radius: 999px;
-    background: rgba(0, 0, 0, 0.12);
-    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    background: rgba(12, 12, 12, 0.65);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    transition: background-color 180ms ease;
   }
 
-  .premium-carousel--{{ section.id }} .premium-carousel__progress-fill {
-    display: block;
-    width: 0;
-    height: 100%;
-    background: #111111;
-    transition: width var(--transition-fast);
+  .premium-carousel--{{ section.id }} .premium-carousel__control:hover {
+    background: rgba(12, 12, 12, 0.85);
   }
 
-  .premium-carousel--{{ section.id }} .premium-carousel__divider {
-    margin-top: 16px;
-    height: 1px;
-    background: rgba(0, 0, 0, 0.08);
+  .premium-carousel--{{ section.id }} .premium-carousel__control--prev {
+    left: 10px;
   }
 
-  .premium-carousel--{{ section.id }} .premium-carousel__btn:focus-visible,
-  .premium-carousel--{{ section.id }} .premium-carousel__viewport:focus-visible {
+  .premium-carousel--{{ section.id }} .premium-carousel__control--next {
+    right: 10px;
+  }
+
+  .premium-carousel--{{ section.id }} .premium-carousel__control svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .premium-carousel--{{ section.id }} .premium-carousel__dots {
+    margin-top: 18px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .premium-carousel--{{ section.id }} .premium-carousel__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.24);
+    border: none;
+    transition:
+      transform 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .premium-carousel--{{ section.id }} .premium-carousel__dot.is-active {
+    background: var(--color-accent);
+    transform: scale(1.25);
+  }
+
+  .premium-carousel--{{ section.id }} .premium-carousel__viewport:focus-visible,
+  .premium-carousel--{{ section.id }} .premium-carousel__control:focus-visible,
+  .premium-carousel--{{ section.id }} .premium-carousel__dot:focus-visible {
     outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
-
-  .premium-carousel--{{ section.id }} [data-pc-card] {
-    opacity: 1;
-    transform: none;
-  }
-
-  .premium-carousel--{{ section.id }}.is-pending-reveal [data-pc-card] {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-
-  .premium-carousel--{{ section.id }}.is-revealed [data-pc-card] {
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity var(--transition-base), transform var(--transition-base);
+    outline-offset: 3px;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .premium-carousel--{{ section.id }} .premium-carousel__btn,
+    .premium-carousel--{{ section.id }} .premium-carousel__track,
+    .premium-carousel--{{ section.id }} .premium-carousel__card,
     .premium-carousel--{{ section.id }} .premium-carousel__image,
-    .premium-carousel--{{ section.id }} .premium-carousel__progress-fill,
-    .premium-carousel--{{ section.id }} [data-pc-card] {
+    .premium-carousel--{{ section.id }} .premium-carousel__dot {
       transition: none !important;
-      transform: none !important;
-      opacity: 1 !important;
     }
   }
 </style>
 
 <script>
   (function() {
-    var section = document.querySelector('.premium-carousel--{{ section.id }}');
-    if (!section) return;
+    var root = document.querySelector('.premium-carousel--{{ section.id }} [data-premium-carousel]');
+    if (!root) return;
 
-    var viewport = section.querySelector('[data-pc-viewport]');
-    var prev = section.querySelector('[data-pc-prev]');
-    var next = section.querySelector('[data-pc-next]');
-    var progress = section.querySelector('[data-pc-progress]');
-    var cards = section.querySelectorAll('[data-pc-card]');
+    var track = root.querySelector('[data-premium-carousel-track]');
+    var prevBtn = root.querySelector('[data-premium-carousel-prev]');
+    var nextBtn = root.querySelector('[data-premium-carousel-next]');
+    var dotsWrap = root.querySelector('[data-premium-carousel-dots]');
+    var autoplay = root.dataset.autoplay === 'true';
+    var autoplaySpeed = parseInt(root.dataset.autoplaySpeed || '4000', 10);
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    function clamp(n, min, max) {
-      return Math.min(Math.max(n, min), max);
+    function debounce(fn, delay) {
+      var timeout;
+      return function() {
+        var args = arguments;
+        var context = this;
+        window.clearTimeout(timeout);
+        timeout = window.setTimeout(function() {
+          fn.apply(context, args);
+        }, delay);
+      };
     }
 
-    function updateProgress() {
-      if (!viewport || !progress) return;
-      var maxScroll = viewport.scrollWidth - viewport.clientWidth;
-      var ratio = maxScroll > 0 ? viewport.scrollLeft / maxScroll : 0;
-      progress.style.width = (clamp(ratio, 0, 1) * 100) + '%';
+    var timer = null;
+    var currentIndex = 0;
+    var perView = 3;
+    var totalSlides = 0;
+    var totalGroups = 0;
+    var isTransitioning = false;
+    var startX = 0;
+    var isTouch = false;
+
+    var originalSlides = Array.prototype.slice.call(track.querySelectorAll('[data-premium-carousel-slide]'));
+    totalSlides = originalSlides.length;
+    if (totalSlides < 1) return;
+
+    function getPerView() {
+      if (window.matchMedia('(max-width: 767px)').matches) return 1;
+      if (window.matchMedia('(max-width: 1023px)').matches) return 2;
+      return 3;
     }
 
-    function scrollByPage(direction) {
-      if (!viewport) return;
-      var amount = viewport.clientWidth * ({% if section.settings.peek_next %}0.86{% else %}1{% endif %});
-      viewport.scrollBy({ left: amount * direction, behavior: reduceMotion ? 'auto' : 'smooth' });
+    function buildTrack() {
+      perView = getPerView();
+      root.style.setProperty('--pc-per-view', String(perView));
+
+      var fragment = document.createDocumentFragment();
+      var prepend = originalSlides.map(function(node) { return node.cloneNode(true); });
+      var middle = originalSlides.map(function(node) { return node.cloneNode(true); });
+      var append = originalSlides.map(function(node) { return node.cloneNode(true); });
+
+      prepend.forEach(function(node) { fragment.appendChild(node); });
+      middle.forEach(function(node) { fragment.appendChild(node); });
+      append.forEach(function(node) { fragment.appendChild(node); });
+
+      track.innerHTML = '';
+      track.appendChild(fragment);
+
+      currentIndex = totalSlides;
+      totalGroups = Math.ceil(totalSlides / perView);
+      buildDots();
+      setPosition(false);
+      updateDots();
     }
 
-    if (prev) {
-      prev.addEventListener('click', function() { scrollByPage(-1); });
+    function getOffsetFor(index) {
+      var items = track.children;
+      if (!items[index]) return 0;
+      return items[index].offsetLeft;
     }
 
-    if (next) {
-      next.addEventListener('click', function() { scrollByPage(1); });
+    function setPosition(animate) {
+      if (!animate || reduceMotion) {
+        track.style.transition = 'none';
+      } else {
+        track.style.transition = 'transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1)';
+      }
+
+      var offset = getOffsetFor(currentIndex);
+      track.style.transform = 'translate3d(' + (-offset) + 'px, 0, 0)';
+
+      if (!animate || reduceMotion) {
+        track.offsetHeight;
+        track.style.transition = 'transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1)';
+      }
     }
 
-    if (viewport) {
-      viewport.addEventListener('scroll', updateProgress, { passive: true });
-      viewport.addEventListener('keydown', function(event) {
-        if (event.key === 'ArrowRight') {
-          event.preventDefault();
-          scrollByPage(1);
-        }
-        if (event.key === 'ArrowLeft') {
-          event.preventDefault();
-          scrollByPage(-1);
-        }
+    function normalizeIndex() {
+      if (currentIndex >= totalSlides * 2) {
+        currentIndex -= totalSlides;
+        setPosition(false);
+      } else if (currentIndex < totalSlides) {
+        currentIndex += totalSlides;
+        setPosition(false);
+      }
+    }
+
+    function next() {
+      if (isTransitioning) return;
+      isTransitioning = true;
+      currentIndex += perView;
+      setPosition(true);
+    }
+
+    function prev() {
+      if (isTransitioning) return;
+      isTransitioning = true;
+      currentIndex -= perView;
+      setPosition(true);
+    }
+
+    function goToGroup(groupIndex) {
+      if (isTransitioning) return;
+      var targetLogical = (groupIndex * perView) % totalSlides;
+      currentIndex = totalSlides + targetLogical;
+      setPosition(true);
+      isTransitioning = true;
+    }
+
+    function getLogicalIndex() {
+      var logical = (currentIndex - totalSlides) % totalSlides;
+      return logical < 0 ? logical + totalSlides : logical;
+    }
+
+    function getActiveGroup() {
+      return Math.floor(getLogicalIndex() / perView);
+    }
+
+    function buildDots() {
+      if (!dotsWrap) return;
+      dotsWrap.innerHTML = '';
+      for (var i = 0; i < totalGroups; i += 1) {
+        var dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'premium-carousel__dot';
+        dot.setAttribute('aria-label', 'Go to slide group ' + (i + 1));
+        dot.addEventListener('click', (function(group) {
+          return function() {
+            stopAutoplay();
+            goToGroup(group);
+            startAutoplay();
+          };
+        })(i));
+        dotsWrap.appendChild(dot);
+      }
+    }
+
+    function updateDots() {
+      if (!dotsWrap) return;
+      var active = getActiveGroup();
+      Array.prototype.forEach.call(dotsWrap.children, function(dot, idx) {
+        dot.classList.toggle('is-active', idx === active);
       });
-      updateProgress();
     }
 
-    if (section.dataset.enableReveal === 'true' && !reduceMotion) {
-      section.classList.add('is-pending-reveal');
-      cards.forEach(function(card, index) {
-        card.style.transitionDelay = (120 + (index * 70)) + 'ms';
-      });
-
-      var observer = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-          if (entry.isIntersecting) {
-            section.classList.add('is-revealed');
-            observer.disconnect();
-          }
-        });
-      }, { threshold: 0.22 });
-
-      observer.observe(section);
+    function startAutoplay() {
+      if (!autoplay || reduceMotion) return;
+      stopAutoplay();
+      timer = window.setInterval(next, autoplaySpeed);
     }
+
+    function stopAutoplay() {
+      if (timer) {
+        window.clearInterval(timer);
+        timer = null;
+      }
+    }
+
+    function onResize() {
+      var nextPerView = getPerView();
+      if (nextPerView === perView) return;
+      buildTrack();
+    }
+
+    prevBtn.addEventListener('click', function() {
+      stopAutoplay();
+      prev();
+      startAutoplay();
+    });
+
+    nextBtn.addEventListener('click', function() {
+      stopAutoplay();
+      next();
+      startAutoplay();
+    });
+
+    track.addEventListener('transitionend', function() {
+      isTransitioning = false;
+      normalizeIndex();
+      updateDots();
+    });
+
+    root.addEventListener('mouseenter', stopAutoplay);
+    root.addEventListener('mouseleave', startAutoplay);
+    root.addEventListener('focusin', stopAutoplay);
+    root.addEventListener('focusout', startAutoplay);
+
+    root.setAttribute('tabindex', '0');
+    root.addEventListener('keydown', function(event) {
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        stopAutoplay();
+        next();
+        startAutoplay();
+      } else if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        stopAutoplay();
+        prev();
+        startAutoplay();
+      }
+    });
+
+    root.addEventListener('touchstart', function(event) {
+      if (!event.touches || !event.touches.length) return;
+      isTouch = true;
+      startX = event.touches[0].clientX;
+      stopAutoplay();
+    }, { passive: true });
+
+    root.addEventListener('touchend', function(event) {
+      if (!isTouch || !event.changedTouches || !event.changedTouches.length) return;
+      var diff = event.changedTouches[0].clientX - startX;
+      if (Math.abs(diff) > 40) {
+        if (diff < 0) {
+          next();
+        } else {
+          prev();
+        }
+      }
+      isTouch = false;
+      startAutoplay();
+    }, { passive: true });
+
+    window.addEventListener('resize', debounce(onResize, 160));
+
+    buildTrack();
+    startAutoplay();
   })();
 </script>
 
@@ -387,96 +496,46 @@
   "name": "Premium Carousel",
   "settings": [
     {
-      "type": "text",
-      "id": "heading",
-      "label": "Heading",
-      "default": "Brand Carousel"
-    },
-    {
-      "type": "select",
-      "id": "rail_source",
-      "label": "Rail source",
-      "default": "products",
-      "options": [
-        { "value": "products", "label": "Products" },
-        { "value": "collections", "label": "Collections" },
-        { "value": "mixed", "label": "Mixed" }
-      ]
-    },
-    {
-      "type": "product_list",
-      "id": "rail_products",
-      "label": "Rail products"
-    },
-    {
-      "type": "collection_list",
-      "id": "rail_collections",
-      "label": "Rail collections"
-    },
-    {
-      "type": "range",
-      "id": "rail_item_limit",
-      "label": "Rail item limit",
-      "min": 3,
-      "max": 16,
-      "step": 1,
-      "default": 9
-    },
-    {
-      "type": "select",
-      "id": "show_progress",
-      "label": "Progress indicator",
-      "default": "bar",
-      "options": [
-        { "value": "bar", "label": "Bar" },
-        { "value": "none", "label": "None" }
-      ]
-    },
-    {
       "type": "checkbox",
-      "id": "show_controls",
-      "label": "Show controls",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "peek_next",
-      "label": "Peek next card",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_drop_label",
-      "label": "Show DROP label",
+      "id": "autoplay",
+      "label": "Enable autoplay",
       "default": false
     },
     {
-      "type": "text",
-      "id": "drop_label",
-      "label": "DROP label text",
-      "default": "DROP"
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Autoplay speed",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4,
+      "unit": "s"
     },
     {
-      "type": "select",
-      "id": "card_style",
-      "label": "Card style",
-      "default": "clean-edge",
-      "options": [
-        { "value": "clean-edge", "label": "Clean edge" },
-        { "value": "soft-mask", "label": "Soft mask" }
-      ]
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
     },
     {
-      "type": "checkbox",
-      "id": "enable_reveal",
-      "label": "Enable reveal motion",
-      "default": true
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "default": 60,
+      "unit": "px"
     },
     {
-      "type": "checkbox",
-      "id": "show_hairline_divider",
-      "label": "Show hairline divider",
-      "default": true
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "default": 60,
+      "unit": "px"
     },
     {
       "type": "select",
@@ -515,11 +574,59 @@
         { "value": "full", "label": "Full" },
         { "value": "contained", "label": "Contained" }
       ]
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_reveal",
+      "label": "Enable reveal",
+      "default": false
     }
   ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Editorial Feature"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading",
+          "default": "New Collection"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 12,
   "presets": [
     {
-      "name": "Premium Carousel"
+      "name": "Premium Carousel",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
     }
   ]
 }

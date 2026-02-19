@@ -1,525 +1,178 @@
-{% liquid
-  assign rail_limit = section.settings.rail_item_limit | default: 8
-  assign media_type = section.settings.media_type | default: 'image'
-  assign media_position = section.settings.media_position | default: 'background'
-  assign show_progress = section.settings.show_progress | default: 'bar'
-  assign show_controls = section.settings.show_controls
-  assign rail_source = section.settings.rail_source | default: 'products'
-  assign peek_next = section.settings.peek_next
-%}
+{% assign media_mode = section.settings.media_mode %}
+{% assign has_carousel = false %}
+{% if media_mode == 'carousel' and section.blocks.size > 0 %}
+  {% assign has_carousel = true %}
+{% endif %}
+{% assign has_video = false %}
+{% if media_mode == 'video' and section.settings.video != blank %}
+  {% assign has_video = true %}
+{% endif %}
+{% assign enable_parallax = section.settings.enable_parallax %}
 
 <section
-  class="hero-banner hero-banner--{{ section.id }} chapter-section chapter-section--spacing-{{ section.settings.section_density | default: section.settings.section_spacing | default: 'standard' }} chapter-section--container-{{ section.settings.container_width | default: 'full' }}{% if section.settings.show_divider_top %} chapter-section--divider-top{% endif %}{% if section.settings.enable_reveal %} chapter-section--reveal{% endif %}"
+  class="hero-banner hero-banner--{{ section.id }} section chapter-section chapter-section--spacing-{{ section.settings.section_density | default: section.settings.section_spacing | default: 'standard' }} chapter-section--container-{{ section.settings.container_width | default: 'full' }}{% if section.settings.show_divider_top %} chapter-section--divider-top{% endif %}{% if section.settings.enable_reveal %} chapter-section--reveal{% endif %}"
   data-section-id="{{ section.id }}"
   data-enable-reveal="{{ section.settings.enable_reveal }}"
+  style="padding:0"
 >
-  <div class="hero-banner__shell{% if media_position == 'background' %} hero-banner__shell--background-media{% endif %}">
-    {% if media_position == 'background' %}
-      <div class="hero-banner__bg-media" aria-hidden="true">
-        {% if media_type == 'video' and section.settings.video != blank %}
-          {{ section.settings.video | video_tag: autoplay: true, loop: true, muted: true, controls: false, image_size: '2400x' }}
-        {% elsif section.settings.image != blank %}
-          {{ section.settings.image | image_url: width: 2400 | image_tag: class: 'hero-banner__bg-image', loading: 'eager', widths: '900,1200,1600,2000,2400', sizes: '100vw', alt: section.settings.heading }}
-        {% endif %}
-      </div>
-      <div class="hero-banner__bg-overlay" aria-hidden="true"></div>
-    {% endif %}
-
-    <div class="container hero-banner__container">
-      <div class="hero-banner__grid">
-        <div class="hero-banner__brand" data-hero-copy>
-          <p class="hero-banner__wordmark ff-wordmark">{{ shop.name }}</p>
-
-          {% if section.settings.heading != blank %}
-            <h1 class="hero-banner__heading">{{ section.settings.heading }}</h1>
-          {% endif %}
-
-          {% if section.settings.subheading != blank %}
-            <p class="hero-banner__subheading">{{ section.settings.subheading }}</p>
-          {% endif %}
-
-          <div class="hero-banner__cta-row">
-            {% if section.settings.primary_cta != blank and section.settings.primary_link != blank %}
-              <a href="{{ section.settings.primary_link }}" class="btn btn--primary">{{ section.settings.primary_cta }}</a>
-            {% endif %}
-            {% if section.settings.secondary_cta != blank and section.settings.secondary_link != blank %}
-              <a href="{{ section.settings.secondary_link }}" class="btn btn--ghost">{{ section.settings.secondary_cta }}</a>
-            {% endif %}
+  <div class="hero-banner__inner" style="min-height: {{ section.settings.height }}vh;">
+    <div class="hero-banner__media-stack{% if enable_parallax %} hero-banner__media-stack--parallax{% endif %}" {% if enable_parallax %}data-hero-parallax{% endif %}>
+      {% if has_carousel %}
+        <div
+          class="hero-banner__carousel"
+          data-hero-carousel
+          data-carousel-autoplay="{{ section.settings.carousel_autoplay }}"
+          data-carousel-interval="{{ section.settings.carousel_interval | times: 1000 }}"
+        >
+          {% for block in section.blocks %}
+            <div class="hero-banner__slide{% if forloop.first %} is-active{% endif %}" data-hero-slide {{ block.shopify_attributes }}>
+              <div
+                class="hero-banner__media hero-banner__media--image{% if enable_parallax %} hero-banner__parallax-target{% endif %}"
+                {% if enable_parallax %}data-hero-parallax-target{% endif %}
+                {% if block.settings.image %}
+                  style="background-image: url('{{ block.settings.image | image_url: width: 2400 }}'); background-position: {{ block.settings.image_position }};"
+                {% else %}
+                  style="background: linear-gradient(145deg, #1a1a1a, #0f0f0f);"
+                {% endif %}
+              ></div>
+            </div>
+          {% endfor %}
+          <button class="hero-banner__carousel-btn hero-banner__carousel-btn--prev" type="button" data-hero-carousel-prev aria-label="Previous slide">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </button>
+          <button class="hero-banner__carousel-btn hero-banner__carousel-btn--next" type="button" data-hero-carousel-next aria-label="Next slide">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </button>
+          <div class="hero-banner__dots">
+            {% for block in section.blocks %}
+              <button
+                class="hero-banner__dot{% if forloop.first %} is-active{% endif %}"
+                type="button"
+                data-hero-carousel-dot="{{ forloop.index0 }}"
+                aria-label="Go to slide {{ forloop.index }}"
+              ></button>
+            {% endfor %}
           </div>
         </div>
-
-        <div class="hero-banner__rail-panel" data-hero-rail-root>
-          {% if media_position == 'right-panel' %}
-            <div class="hero-banner__panel-media" aria-hidden="true">
-              {% if media_type == 'video' and section.settings.video != blank %}
-                {{ section.settings.video | video_tag: autoplay: true, loop: true, muted: true, controls: false, image_size: '1400x' }}
-              {% elsif section.settings.image != blank %}
-                {{ section.settings.image | image_url: width: 1600 | image_tag: class: 'hero-banner__panel-image', loading: 'lazy', widths: '640,960,1280,1600', sizes: '(min-width: 990px) 44vw, 100vw', alt: section.settings.heading }}
-              {% endif %}
-            </div>
-          {% endif %}
-
-          <div class="hero-banner__rail-header">
-            {% if section.settings.show_drop_label %}
-              <span class="hero-banner__drop-label">{{ section.settings.drop_label | default: 'DROP' }}</span>
-            {% endif %}
-
-            {% if show_controls %}
-              <div class="hero-banner__rail-controls">
-                <button type="button" class="hero-banner__rail-btn" data-hero-rail-prev aria-label="Previous rail items">
-                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
-                <button type="button" class="hero-banner__rail-btn" data-hero-rail-next aria-label="Next rail items">
-                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
-              </div>
-            {% endif %}
-          </div>
-
-          <div class="hero-banner__rail-viewport{% if peek_next %} is-peek{% endif %}" data-hero-rail tabindex="0" aria-label="FlyFlow featured rail">
-            <div class="hero-banner__rail-track" data-hero-rail-track>
-              {% assign rendered_items = 0 %}
-
-              {% if rail_source == 'products' or rail_source == 'mixed' %}
-                {% for product in section.settings.rail_products limit: rail_limit %}
-                  {% if rendered_items >= rail_limit %}{% break %}{% endif %}
-                  <article class="hero-banner__rail-card" data-hero-rail-card>
-                    <a href="{{ product.url }}" class="hero-banner__rail-link">
-                      <div class="hero-banner__rail-media">
-                        {% if product.featured_image %}
-                          {{ product.featured_image | image_url: width: 900 | image_tag: class: 'hero-banner__rail-image', loading: 'lazy', widths: '280,420,560,720,900', sizes: '(min-width: 990px) 26vw, 72vw', alt: product.title }}
-                        {% endif %}
-                      </div>
-                      <div class="hero-banner__rail-meta">
-                        <p class="hero-banner__rail-kicker">Product</p>
-                        <h3 class="hero-banner__rail-title">{{ product.title }}</h3>
-                        <p class="hero-banner__rail-price">{{ product.price | money }}</p>
-                      </div>
-                    </a>
-                  </article>
-                  {% assign rendered_items = rendered_items | plus: 1 %}
-                {% endfor %}
-              {% endif %}
-
-              {% if rail_source == 'collections' or rail_source == 'mixed' %}
-                {% for collection in section.settings.rail_collections limit: rail_limit %}
-                  {% if rendered_items >= rail_limit %}{% break %}{% endif %}
-                  <article class="hero-banner__rail-card" data-hero-rail-card>
-                    <a href="{{ collection.url }}" class="hero-banner__rail-link">
-                      <div class="hero-banner__rail-media">
-                        {% if collection.image %}
-                          {{ collection.image | image_url: width: 900 | image_tag: class: 'hero-banner__rail-image', loading: 'lazy', widths: '280,420,560,720,900', sizes: '(min-width: 990px) 26vw, 72vw', alt: collection.title }}
-                        {% elsif collection.products.first.featured_image %}
-                          {{ collection.products.first.featured_image | image_url: width: 900 | image_tag: class: 'hero-banner__rail-image', loading: 'lazy', widths: '280,420,560,720,900', sizes: '(min-width: 990px) 26vw, 72vw', alt: collection.title }}
-                        {% endif %}
-                      </div>
-                      <div class="hero-banner__rail-meta">
-                        <p class="hero-banner__rail-kicker">Collection</p>
-                        <h3 class="hero-banner__rail-title">{{ collection.title }}</h3>
-                        <p class="hero-banner__rail-price">{{ collection.products_count }} items</p>
-                      </div>
-                    </a>
-                  </article>
-                  {% assign rendered_items = rendered_items | plus: 1 %}
-                {% endfor %}
-              {% endif %}
-            </div>
-          </div>
-
-          {% if show_progress == 'bar' %}
-            <div class="hero-banner__rail-progress" aria-hidden="true">
-              <span class="hero-banner__rail-progress-fill" data-hero-rail-progress></span>
-            </div>
-          {% endif %}
+      {% elsif has_video %}
+        <div class="hero-banner__media hero-banner__media--video{% if enable_parallax %} hero-banner__parallax-target{% endif %}" {% if enable_parallax %}data-hero-parallax-target{% endif %}>
+          {{
+            section.settings.video
+            | video_tag: autoplay: true, loop: true, muted: true, controls: false, image_size: '2400x'
+          }}
         </div>
-      </div>
+      {% else %}
+        <div
+          class="hero-banner__media hero-banner__media--image{% if enable_parallax %} hero-banner__parallax-target{% endif %}"
+          {% if enable_parallax %}data-hero-parallax-target{% endif %}
+          {% if section.settings.image %}
+            style="background-image: url('{{ section.settings.image | image_url: width: 2400 }}'); background-position: {{ section.settings.image_position }};"
+          {% else %}
+            style="background: linear-gradient(145deg, #1a1a1a, #0f0f0f);"
+          {% endif %}
+        ></div>
+      {% endif %}
     </div>
 
-    {% if section.settings.show_hairline_divider %}
-      <div class="hero-banner__divider" aria-hidden="true"></div>
-    {% endif %}
+    <div
+      class="hero-banner__overlay"
+      style="background: linear-gradient(to bottom, rgba(0,0,0,{{ section.settings.overlay_opacity | divided_by: 100.0 | times: 0.6 }}), rgba(0,0,0,{{ section.settings.overlay_opacity | divided_by: 100.0 }}));"
+    ></div>
+
+    <div class="hero-banner__content">
+      {% if section.settings.overline != blank %}
+        <p class="hero-banner__overline">{{ section.settings.overline }}</p>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h1 class="hero-banner__heading">{{ section.settings.heading }}</h1>
+      {% endif %}
+
+      {% if section.settings.subheading != blank %}
+        <p class="hero-banner__subheading">{{ section.settings.subheading }}</p>
+      {% endif %}
+
+      {% if section.settings.button_text != blank %}
+        <a href="{{ section.settings.button_link }}" class="btn btn--ghost btn--lg">
+          {{ section.settings.button_text }}
+        </a>
+      {% endif %}
+    </div>
   </div>
 </section>
 
 <style>
-  .hero-banner--{{ section.id }} .hero-banner__shell {
+  .hero-banner--{{ section.id }} .hero-banner__inner {
     position: relative;
-    isolation: isolate;
-    padding-block: clamp(28px, 5vw, 56px);
+    overflow: hidden;
   }
 
-  .hero-banner--{{ section.id }} .hero-banner__shell--background-media {
-    color: #ffffff;
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__bg-media,
-  .hero-banner--{{ section.id }} .hero-banner__bg-overlay {
+  .hero-banner--{{ section.id }} .hero-banner__inner::after {
+    content: '';
     position: absolute;
     inset: 0;
+    background:
+      radial-gradient(circle at 82% 18%, rgba(200, 169, 126, 0.28), transparent 36%),
+      radial-gradient(circle at 12% 78%, rgba(255, 255, 255, 0.09), transparent 28%);
     pointer-events: none;
+    z-index: 1;
   }
 
-  .hero-banner--{{ section.id }} .hero-banner__bg-media {
-    z-index: -2;
+  .hero-banner--{{ section.id }} .hero-banner__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
   }
 
-  .hero-banner--{{ section.id }} .hero-banner__bg-media video,
-  .hero-banner--{{ section.id }} .hero-banner__bg-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .hero-banner--{{ section.id }} .hero-banner__content {
+    position: relative;
+    z-index: 2;
+    max-width: 42rem;
+    margin: clamp(3rem, 8vh, 6rem) auto;
+    padding: clamp(1.25rem, 2.8vw, 2.5rem);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: linear-gradient(145deg, rgba(16, 16, 16, 0.46), rgba(16, 16, 16, 0.2));
+    backdrop-filter: blur(3px);
   }
 
-  .hero-banner--{{ section.id }} .hero-banner__bg-overlay {
-    z-index: -1;
-    background: linear-gradient(140deg, rgba(10, 10, 12, 0.72), rgba(10, 10, 12, 0.4));
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__grid {
-    display: grid;
-    gap: clamp(20px, 3vw, 36px);
-    align-items: stretch;
-  }
-
-  @media (min-width: 990px) {
-    .hero-banner--{{ section.id }} .hero-banner__grid {
-      grid-template-columns: minmax(280px, 0.92fr) minmax(0, 1.18fr);
-    }
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__brand {
-    display: grid;
-    align-content: center;
-    gap: clamp(10px, 1.6vw, 18px);
-    padding: clamp(16px, 2vw, 24px);
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__wordmark {
-    margin: 0;
-    font-size: 0.78rem;
-    letter-spacing: 0.12em;
-    opacity: 0.8;
+  .hero-banner--{{ section.id }} .hero-banner__overline {
+    animation: hero-rise-{{ section.id }} 460ms ease both;
   }
 
   .hero-banner--{{ section.id }} .hero-banner__heading {
-    margin: 0;
-    font-size: clamp(1.8rem, 3.8vw, 3.35rem);
-    line-height: 1.06;
+    animation: hero-rise-{{ section.id }} 560ms ease 90ms both;
   }
 
   .hero-banner--{{ section.id }} .hero-banner__subheading {
-    margin: 0;
-    max-width: 34ch;
-    font-size: clamp(0.95rem, 1.2vw, 1.08rem);
-    line-height: 1.45;
-    opacity: 0.86;
+    animation: hero-rise-{{ section.id }} 620ms ease 150ms both;
   }
 
-  .hero-banner--{{ section.id }} .hero-banner__cta-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 6px;
+  .hero-banner--{{ section.id }} .hero-banner__content .btn {
+    animation: hero-rise-{{ section.id }} 680ms ease 220ms both;
   }
 
-  .hero-banner--{{ section.id }} .hero-banner__rail-panel {
-    display: grid;
-    gap: 12px;
-    align-content: start;
-    min-width: 0;
-    padding: clamp(10px, 1.6vw, 16px);
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__panel-media {
-    overflow: hidden;
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.14);
-    aspect-ratio: 16 / 7;
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__panel-media video,
-  .hero-banner--{{ section.id }} .hero-banner__panel-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__drop-label {
-    display: inline-flex;
-    align-items: center;
-    min-height: 30px;
-    padding: 0 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.28);
-    background: rgba(255, 255, 255, 0.14);
-    backdrop-filter: blur(4px);
-    font-size: 0.625rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-controls {
-    display: inline-flex;
-    gap: 8px;
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-btn {
-    width: 38px;
-    height: 38px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.28);
-    background: rgba(12, 12, 12, 0.46);
-    color: #ffffff;
-    transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-btn svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-btn:hover {
-    transform: translateY(-1px);
-    background: rgba(12, 12, 12, 0.66);
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-viewport {
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    min-width: 0;
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-viewport::-webkit-scrollbar {
-    display: none;
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-track {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(220px, 78%);
-    gap: 14px;
-    padding-right: 14px;
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-viewport:not(.is-peek) .hero-banner__rail-track {
-    grid-auto-columns: minmax(220px, 100%);
-    padding-right: 0;
-  }
-
-  @media (max-width: 989px) {
-    .hero-banner--{{ section.id }} .hero-banner__rail-track {
-      grid-auto-columns: minmax(220px, 82%);
+  @keyframes hero-rise-{{ section.id }} {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 
   @media (max-width: 767px) {
-    .hero-banner--{{ section.id }} .hero-banner__rail-track {
-      grid-auto-columns: minmax(210px, 88%);
-      gap: 12px;
-    }
-
-    .hero-banner--{{ section.id }} .hero-banner__rail-btn {
-      width: 34px;
-      height: 34px;
-    }
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-card {
-    scroll-snap-align: start;
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-link {
-    display: block;
-    overflow: hidden;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    background: rgba(10, 10, 12, 0.36);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-media {
-    aspect-ratio: 4 / 5;
-    background: rgba(0, 0, 0, 0.2);
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform var(--transition-base);
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-link:hover .hero-banner__rail-image {
-    transform: scale(1.04);
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-meta {
-    padding: 12px 12px 14px;
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-kicker {
-    margin: 0 0 4px;
-    font-size: 0.6rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    opacity: 0.78;
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-title {
-    margin: 0;
-    font-size: 0.96rem;
-    line-height: 1.3;
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-price {
-    margin: 5px 0 0;
-    font-size: 0.8rem;
-    opacity: 0.86;
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-progress {
-    height: 2px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.22);
-    overflow: hidden;
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-progress-fill {
-    display: block;
-    width: 0;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.88);
-    transition: width var(--transition-fast);
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__divider {
-    width: min(var(--page-width, 1440px), calc(100% - (var(--space-lg) * 2)));
-    height: 1px;
-    background: rgba(255, 255, 255, 0.32);
-    margin: clamp(18px, 2.2vw, 30px) auto 0;
-  }
-
-  .hero-banner--{{ section.id }} .hero-banner__rail-btn:focus-visible,
-  .hero-banner--{{ section.id }} .hero-banner__rail-viewport:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
-
-  .hero-banner--{{ section.id }} [data-hero-copy],
-  .hero-banner--{{ section.id }} [data-hero-rail-card] {
-    opacity: 1;
-    transform: none;
-  }
-
-  .hero-banner--{{ section.id }}.is-pending-reveal [data-hero-copy],
-  .hero-banner--{{ section.id }}.is-pending-reveal [data-hero-rail-card] {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-
-  .hero-banner--{{ section.id }}.is-revealed [data-hero-copy],
-  .hero-banner--{{ section.id }}.is-revealed [data-hero-rail-card] {
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity var(--transition-base), transform var(--transition-base);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .hero-banner--{{ section.id }} .hero-banner__rail-btn,
-    .hero-banner--{{ section.id }} .hero-banner__rail-image,
-    .hero-banner--{{ section.id }} .hero-banner__rail-progress-fill,
-    .hero-banner--{{ section.id }} [data-hero-copy],
-    .hero-banner--{{ section.id }} [data-hero-rail-card] {
-      transition: none !important;
-      transform: none !important;
-      opacity: 1 !important;
+    .hero-banner--{{ section.id }} .hero-banner__content {
+      margin: clamp(2rem, 7vh, 4rem) var(--space-md);
+      max-width: none;
     }
   }
 </style>
-
-<script>
-  (function() {
-    var section = document.querySelector('.hero-banner--{{ section.id }}');
-    if (!section) return;
-
-    var viewport = section.querySelector('[data-hero-rail]');
-    var prev = section.querySelector('[data-hero-rail-prev]');
-    var next = section.querySelector('[data-hero-rail-next]');
-    var progress = section.querySelector('[data-hero-rail-progress]');
-    var cards = section.querySelectorAll('[data-hero-rail-card]');
-    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    function clamp(n, min, max) {
-      return Math.min(Math.max(n, min), max);
-    }
-
-    function updateProgress() {
-      if (!viewport || !progress) return;
-      var maxScroll = viewport.scrollWidth - viewport.clientWidth;
-      var ratio = maxScroll > 0 ? viewport.scrollLeft / maxScroll : 0;
-      progress.style.width = (clamp(ratio, 0, 1) * 100) + '%';
-    }
-
-    function scrollByPage(direction) {
-      if (!viewport) return;
-      var amount = viewport.clientWidth * ({% if peek_next %}0.86{% else %}1{% endif %});
-      viewport.scrollBy({ left: amount * direction, behavior: reduceMotion ? 'auto' : 'smooth' });
-    }
-
-    if (prev) {
-      prev.addEventListener('click', function() { scrollByPage(-1); });
-    }
-
-    if (next) {
-      next.addEventListener('click', function() { scrollByPage(1); });
-    }
-
-    if (viewport) {
-      viewport.addEventListener('scroll', updateProgress, { passive: true });
-      viewport.addEventListener('keydown', function(event) {
-        if (event.key === 'ArrowRight') {
-          event.preventDefault();
-          scrollByPage(1);
-        }
-        if (event.key === 'ArrowLeft') {
-          event.preventDefault();
-          scrollByPage(-1);
-        }
-      });
-      updateProgress();
-    }
-
-    if (section.dataset.enableReveal === 'true' && !reduceMotion) {
-      section.classList.add('is-pending-reveal');
-      cards.forEach(function(card, index) {
-        card.style.transitionDelay = (140 + (index * 70)) + 'ms';
-      });
-
-      var observer = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-          if (entry.isIntersecting) {
-            section.classList.add('is-revealed');
-            observer.disconnect();
-          }
-        });
-      }, { threshold: 0.22 });
-
-      observer.observe(section);
-    }
-  })();
-</script>
 
 {% schema %}
 {
@@ -527,143 +180,108 @@
   "settings": [
     {
       "type": "select",
-      "id": "media_type",
-      "label": "Media type",
-      "default": "image",
+      "id": "media_mode",
+      "label": "Hero media mode",
       "options": [
-        { "value": "image", "label": "Image" },
-        { "value": "video", "label": "Video" }
-      ]
-    },
-    {
-      "type": "select",
-      "id": "media_position",
-      "label": "Media position",
-      "default": "background",
-      "options": [
-        { "value": "background", "label": "Background" },
-        { "value": "right-panel", "label": "Right panel" }
-      ]
+        { "value": "image", "label": "Single image" },
+        { "value": "video", "label": "Background video" },
+        { "value": "carousel", "label": "Image carousel" }
+      ],
+      "default": "image"
     },
     {
       "type": "image_picker",
       "id": "image",
-      "label": "Hero image"
+      "label": "Background image",
+      "info": "Recommended: 1920x1080px or larger. High-fashion editorial imagery works best."
     },
     {
       "type": "video",
       "id": "video",
-      "label": "Hero video"
+      "label": "Background video",
+      "info": "Used when Hero media mode is set to Background video."
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image focal point",
+      "options": [
+        { "value": "center top", "label": "Top" },
+        { "value": "center center", "label": "Center" },
+        { "value": "center bottom", "label": "Bottom" }
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "range",
+      "id": "height",
+      "label": "Banner height",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "default": 90,
+      "unit": "vh"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_parallax",
+      "label": "Enable subtle parallax motion",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_autoplay",
+      "label": "Autoplay carousel",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "carousel_interval",
+      "label": "Carousel speed",
+      "min": 3,
+      "max": 8,
+      "step": 1,
+      "default": 5,
+      "unit": "s"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay intensity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "default": 35,
+      "unit": "%"
+    },
+    {
+      "type": "text",
+      "id": "overline",
+      "label": "Overline text",
+      "default": "New Collection"
     },
     {
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "FlyFlow Chapter One"
+      "default": "Elevate Your Style"
     },
     {
       "type": "textarea",
       "id": "subheading",
       "label": "Subheading",
-      "default": "High-end streetwear, precision-made essentials, and statement pieces engineered for movement."
+      "default": "Discover curated fashion, designer footwear, and statement accessories crafted for those who move with intention."
     },
     {
       "type": "text",
-      "id": "primary_cta",
-      "label": "Primary CTA",
-      "default": "Shop New Drop"
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Explore the Collection"
     },
     {
       "type": "url",
-      "id": "primary_link",
-      "label": "Primary CTA link"
-    },
-    {
-      "type": "text",
-      "id": "secondary_cta",
-      "label": "Secondary CTA",
-      "default": "Explore Collections"
-    },
-    {
-      "type": "url",
-      "id": "secondary_link",
-      "label": "Secondary CTA link"
-    },
-    {
-      "type": "select",
-      "id": "rail_source",
-      "label": "Rail source",
-      "default": "products",
-      "options": [
-        { "value": "products", "label": "Products" },
-        { "value": "collections", "label": "Collections" },
-        { "value": "mixed", "label": "Mixed" }
-      ]
-    },
-    {
-      "type": "product_list",
-      "id": "rail_products",
-      "label": "Rail products"
-    },
-    {
-      "type": "collection_list",
-      "id": "rail_collections",
-      "label": "Rail collections"
-    },
-    {
-      "type": "range",
-      "id": "rail_item_limit",
-      "label": "Rail item limit",
-      "min": 3,
-      "max": 16,
-      "step": 1,
-      "default": 8
-    },
-    {
-      "type": "select",
-      "id": "show_progress",
-      "label": "Progress indicator",
-      "default": "bar",
-      "options": [
-        { "value": "bar", "label": "Bar" },
-        { "value": "none", "label": "None" }
-      ]
-    },
-    {
-      "type": "checkbox",
-      "id": "show_controls",
-      "label": "Show controls",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "peek_next",
-      "label": "Peek next card",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_drop_label",
-      "label": "Show DROP label",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "drop_label",
-      "label": "DROP label text",
-      "default": "DROP"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_reveal",
-      "label": "Enable reveal motion",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_hairline_divider",
-      "label": "Show hairline divider",
-      "default": true
+      "id": "button_link",
+      "label": "Button link"
     },
     {
       "type": "select",
@@ -702,11 +320,46 @@
         { "value": "full", "label": "Full" },
         { "value": "contained", "label": "Contained" }
       ]
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_reveal",
+      "label": "Enable reveal",
+      "default": false
     }
   ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Carousel slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Slide image"
+        },
+        {
+          "type": "select",
+          "id": "image_position",
+          "label": "Slide focal point",
+          "options": [
+            { "value": "center top", "label": "Top" },
+            { "value": "center center", "label": "Center" },
+            { "value": "center bottom", "label": "Bottom" }
+          ],
+          "default": "center center"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
   "presets": [
     {
-      "name": "Gallery-First Hero"
+      "name": "Hero Banner",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
     }
   ]
 }
