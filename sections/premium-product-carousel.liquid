@@ -843,6 +843,8 @@
     var drawerImage = section.querySelector('[data-ppc-drawer-image]');
     var drawerThumbs = section.querySelector('[data-ppc-drawer-thumbs]');
     var drawerQtyInput = section.querySelector('[data-ppc-qty-input]');
+    var drawerQtyDec = section.querySelector('[data-ppc-qty-dec]');
+    var drawerQtyInc = section.querySelector('[data-ppc-qty-inc]');
 
     var isLoop = section.dataset.loop === 'true';
     var step = Math.max(1, parseInt(section.dataset.step || '1', 10));
@@ -1083,13 +1085,13 @@
       }) || null;
     }
 
-    function findFirstAvailableVariantMatching(partialSelections) {
+    function findFirstVariantMatching(partialSelections, requireAvailable) {
       if (!activeProduct || !Array.isArray(activeProduct.variants)) {
         return null;
       }
 
       return activeProduct.variants.find(function(variant) {
-        if (!variant.available) {
+        if (requireAvailable && !variant.available) {
           return false;
         }
 
@@ -1106,7 +1108,7 @@
       }
 
       return activeProduct.variants.some(function(variant) {
-        return variant.available && variant.options[optionIndex] === optionValue;
+        return variant.options[optionIndex] === optionValue;
       });
     }
 
@@ -1139,8 +1141,8 @@
       selectedOptions[optionIndex] = optionValue;
       var nextVariant = findVariantExact();
 
-      if (!nextVariant || !nextVariant.available) {
-        var fallbackVariant = findFirstAvailableVariantMatching(selectedOptions);
+      if (!nextVariant) {
+        var fallbackVariant = findFirstVariantMatching(selectedOptions, false);
         if (fallbackVariant) {
           selectedOptions = fallbackVariant.options.slice();
         }
@@ -1264,7 +1266,7 @@
         }
       }
 
-      var defaultVariant = findFirstAvailableVariantMatching([]) || (productData.variants ? productData.variants[0] : null);
+      var defaultVariant = findFirstVariantMatching([], true) || (productData.variants ? productData.variants[0] : null);
       if (defaultVariant && Array.isArray(defaultVariant.options)) {
         selectedOptions = defaultVariant.options.slice();
       }
@@ -1381,18 +1383,6 @@
         }
       }
 
-      var qtyDec = event.target.closest('[data-ppc-qty-dec]');
-      if (qtyDec && drawerQtyInput) {
-        var decVal = Math.max(1, (parseInt(drawerQtyInput.value || '1', 10) || 1) - 1);
-        drawerQtyInput.value = String(decVal);
-      }
-
-      var qtyInc = event.target.closest('[data-ppc-qty-inc]');
-      if (qtyInc && drawerQtyInput) {
-        var incVal = Math.min(99, (parseInt(drawerQtyInput.value || '1', 10) || 1) + 1);
-        drawerQtyInput.value = String(incVal);
-      }
-
       var open = event.target.closest('[data-ppc-open-drawer]');
       if (open) {
         var card = open.closest('.premium-product-carousel__card');
@@ -1425,6 +1415,20 @@
       drawerQtyInput.addEventListener('change', function() {
         var value = parseInt(drawerQtyInput.value || '1', 10) || 1;
         drawerQtyInput.value = String(Math.max(1, Math.min(99, value)));
+      });
+    }
+
+    if (drawerQtyDec && drawerQtyInput) {
+      drawerQtyDec.addEventListener('click', function() {
+        var value = parseInt(drawerQtyInput.value || '1', 10) || 1;
+        drawerQtyInput.value = String(Math.max(1, value - 1));
+      });
+    }
+
+    if (drawerQtyInc && drawerQtyInput) {
+      drawerQtyInc.addEventListener('click', function() {
+        var value = parseInt(drawerQtyInput.value || '1', 10) || 1;
+        drawerQtyInput.value = String(Math.min(99, value + 1));
       });
     }
 
