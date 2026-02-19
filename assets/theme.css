@@ -1072,6 +1072,163 @@ small {
   transform: scale(1.2);
 }
 
+/* Related products — premium full-width layout */
+.related-products {
+  width: 100%;
+  padding-top: var(--rp-padding-top, 72px);
+  padding-bottom: var(--rp-padding-bottom, 84px);
+}
+
+.related-products__inner {
+  width: min(100%, var(--rp-max-width, 1360px));
+  margin-inline: auto;
+  padding-inline: clamp(16px, 4vw, 64px);
+}
+
+.related-products__header {
+  margin-bottom: clamp(1.25rem, 2.8vw, 2rem);
+}
+
+.related-products--center .related-products__header {
+  text-align: center;
+}
+
+.related-products__heading {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.related-products__subheading {
+  margin: 0.65rem 0 0;
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+}
+
+.related-products__grid {
+  display: grid;
+  gap: var(--rp-gap, 24px);
+  grid-template-columns: repeat(var(--rp-grid-mobile, 2), minmax(0, 1fr));
+}
+
+.related-products__grid .product-card {
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: var(--rp-card-radius, 16px);
+  overflow: hidden;
+  background: #fff;
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.related-products__grid .product-card__media {
+  border-radius: 0;
+  aspect-ratio: 1 / 1;
+}
+
+.related-products__grid .product-card__info {
+  padding: 0.95rem 1rem 1rem;
+}
+
+.related-products__grid .product-card__vendor {
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  margin-bottom: 0.3rem;
+}
+
+.related-products__grid .product-card__title {
+  font-size: 0.95rem;
+  line-height: 1.35;
+  margin-bottom: 0.45rem;
+}
+
+.related-products__grid .product-card__price {
+  font-size: 0.875rem;
+  gap: 0.5rem;
+}
+
+.related-products__grid .product-card__price--sale {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.related-products__grid .product-card__price--compare {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.related-products__grid .product-card__swatches {
+  margin-top: 0.6rem;
+}
+
+.related-products__grid .product-card__swatch {
+  width: 13px;
+  height: 13px;
+}
+
+.related-products__grid .product-card__badges {
+  top: 10px;
+  left: 10px;
+  gap: 6px;
+}
+
+.related-products__grid .badge {
+  padding: 0.22rem 0.5rem;
+  font-size: 0.58rem;
+  letter-spacing: 0.11em;
+}
+
+.related-products__grid .product-card:focus-within,
+.related-products__grid .product-card:hover {
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 10px 26px rgba(10, 10, 12, 0.08);
+}
+
+.related-products__grid:not(.related-products__grid--no-lift) .product-card:hover {
+  transform: translateY(-4px);
+}
+
+.related-products__grid.related-products__grid--no-zoom .product-card:hover .product-card__image {
+  transform: none;
+}
+
+.related-products__grid.related-products__grid--hide-vendor .product-card__vendor {
+  display: none;
+}
+
+.related-products__grid.related-products__grid--hide-swatches .product-card__swatches {
+  display: none;
+}
+
+.related-products__grid .product-card:focus-within {
+  outline: 2px solid rgba(0, 0, 0, 0.25);
+  outline-offset: 2px;
+}
+
+@media (min-width: 768px) {
+  .related-products__grid {
+    grid-template-columns: repeat(var(--rp-grid-tablet, 3), minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .related-products__grid {
+    grid-template-columns: repeat(var(--rp-grid-desktop, 4), minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .related-products__grid .product-card,
+  .related-products__grid .product-card__image {
+    transition: none;
+  }
+
+  .related-products__grid .product-card:hover {
+    transform: none;
+  }
+}
+
 /* ==========================================================================
    9. Product Page — Editorial layout
    ========================================================================== */

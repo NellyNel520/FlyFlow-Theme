@@ -8,6 +8,15 @@
 {% endcomment %}
 
 <article class="product-card" data-product-card data-ab-component="product-card" data-product-id="{{ product.id }}">
+  {%- assign card_show_vendor = true -%}
+  {%- if show_vendor == false -%}
+    {%- assign card_show_vendor = false -%}
+  {%- endif -%}
+  {%- assign card_show_color_swatches = true -%}
+  {%- if show_color_swatches == false -%}
+    {%- assign card_show_color_swatches = false -%}
+  {%- endif -%}
+
   {%- assign product_context = product.title | append: ' ' | append: product.type | append: ' ' | append: product.vendor | downcase -%}
   {%- assign off_vibe_product = false -%}
   {%- if product_context contains 'snowboard' or product_context contains 'ski' or product_context contains 'winter sport' or product_context contains 'snow gear' -%}
@@ -135,7 +144,7 @@
 
   {%- comment -%} Product info {%- endcomment -%}
   <div class="product-card__info">
-    {% if product.vendor != blank and off_vibe_product == false %}
+    {% if card_show_vendor and product.vendor != blank and off_vibe_product == false %}
       <p class="product-card__vendor">{{ product.vendor }}</p>
     {% endif %}
 
@@ -158,7 +167,7 @@
 
     {%- comment -%} Color swatches {%- endcomment -%}
     {% assign color_option = product.options_by_name['Color'] %}
-    {% if color_option and off_vibe_product == false %}
+    {% if card_show_color_swatches and color_option and off_vibe_product == false %}
       <div class="product-card__swatches" aria-label="Available colors">
         {% for value in color_option.values %}
           {% if forloop.index <= 5 %}

@@ -6,28 +6,54 @@
 {% endcomment %}
 
 <section class="section" data-section-id="{{ section.id }}">
-  <div class="container">
-    {% if section.settings.heading != blank %}
-      <h2 class="text-center mb-xl">{{ section.settings.heading }}</h2>
-    {% endif %}
+  {% assign columns_desktop = section.settings.products_per_row_desktop | default: 4 %}
+  {% assign columns_mobile = section.settings.products_per_row_mobile | default: 2 %}
+  {% assign columns_tablet = columns_desktop | at_most: 3 | at_least: 2 %}
+  <div
+    class="related-products related-products--{{ section.settings.heading_alignment }}"
+    style="
+      --rp-max-width: {{ section.settings.section_max_width }}px;
+      --rp-padding-top: {{ section.settings.section_padding_top }}px;
+      --rp-padding-bottom: {{ section.settings.section_padding_bottom }}px;
+      --rp-grid-desktop: {{ columns_desktop }};
+      --rp-grid-tablet: {{ columns_tablet }};
+      --rp-grid-mobile: {{ columns_mobile }};
+      --rp-card-radius: {{ section.settings.card_radius }}px;
+      --rp-gap: clamp(1.25rem, 2vw, 2rem);
+    "
+  >
+    <div class="related-products__inner">
+      {% if section.settings.heading != blank or section.settings.subheading != blank %}
+        <header class="related-products__header">
+          {% if section.settings.heading != blank %}
+            <h2 class="related-products__heading">{{ section.settings.heading }}</h2>
+          {% endif %}
+          {% if section.settings.subheading != blank %}
+            <p class="related-products__subheading">{{ section.settings.subheading }}</p>
+          {% endif %}
+        </header>
+      {% endif %}
 
-    <div class="product-grid">
-      {% assign related = product.collections.first.products %}
-      {% assign count = 0 %}
-      {% for item in related limit: section.settings.products_to_show %}
-        {% if item.id != product.id and count < section.settings.products_to_show %}
-          {% render 'product-card', product: item %}
-          {% assign count = count | plus: 1 %}
-        {% endif %}
-      {% endfor %}
-
-      {% if count == 0 %}
-        {% for item in collections.all.products limit: section.settings.products_to_show %}
-          {% if item.id != product.id %}
-            {% render 'product-card', product: item %}
+      <div
+        class="related-products__grid{% unless section.settings.card_hover_lift %} related-products__grid--no-lift{% endunless %}{% unless section.settings.image_hover_zoom %} related-products__grid--no-zoom{% endunless %}{% unless section.settings.show_vendor %} related-products__grid--hide-vendor{% endunless %}{% unless section.settings.show_color_swatches %} related-products__grid--hide-swatches{% endunless %}"
+      >
+        {% assign related = product.collections.first.products %}
+        {% assign count = 0 %}
+        {% for item in related limit: section.settings.products_to_show %}
+          {% if item.id != product.id and count < section.settings.products_to_show %}
+            {% render 'product-card', product: item, show_vendor: section.settings.show_vendor, show_color_swatches: section.settings.show_color_swatches %}
+            {% assign count = count | plus: 1 %}
           {% endif %}
         {% endfor %}
-      {% endif %}
+
+        {% if count == 0 %}
+          {% for item in collections.all.products limit: section.settings.products_to_show %}
+            {% if item.id != product.id %}
+              {% render 'product-card', product: item, show_vendor: section.settings.show_vendor, show_color_swatches: section.settings.show_color_swatches %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      </div>
     </div>
   </div>
 </section>
@@ -43,6 +69,51 @@
       "default": "Complete the Look"
     },
     {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "section_max_width",
+      "label": "Section max width",
+      "min": 1100,
+      "max": 1600,
+      "step": 20,
+      "default": 1360,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section padding top",
+      "min": 24,
+      "max": 140,
+      "step": 4,
+      "default": 72,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section padding bottom",
+      "min": 24,
+      "max": 140,
+      "step": 4,
+      "default": 84,
+      "unit": "px"
+    },
+    {
       "type": "range",
       "id": "products_to_show",
       "label": "Products to show",
@@ -50,6 +121,57 @@
       "max": 8,
       "step": 1,
       "default": 4
+    },
+    {
+      "type": "range",
+      "id": "products_per_row_desktop",
+      "label": "Products per row (desktop)",
+      "min": 3,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "products_per_row_mobile",
+      "label": "Products per row (mobile)",
+      "min": 1,
+      "max": 2,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card corner radius",
+      "min": 8,
+      "max": 24,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "image_hover_zoom",
+      "label": "Enable image hover zoom",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "card_hover_lift",
+      "label": "Enable card hover lift",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_color_swatches",
+      "label": "Show color swatches",
+      "default": true
     }
   ],
   "presets": [
