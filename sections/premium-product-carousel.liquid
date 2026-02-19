@@ -397,10 +397,18 @@
   }
 
   .premium-product-carousel--{{ section.id }} .premium-product-carousel__dots {
-    margin-top: 12px;
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    transform: translateX(-50%);
+    z-index: 4;
     display: flex;
     justify-content: center;
     gap: 8px;
+    margin-top: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
   }
 
   .premium-product-carousel--{{ section.id }} .premium-product-carousel__dot {
@@ -547,6 +555,10 @@
       pointer-events: auto;
       background: linear-gradient(180deg, transparent 52%, rgba(15, 18, 24, 0.22) 100%);
       backdrop-filter: none;
+    }
+
+    .premium-product-carousel--{{ section.id }} .premium-product-carousel__dots {
+      bottom: 8px;
     }
   }
 
