@@ -837,6 +837,7 @@ FlyFlow.ProductGallery = (function () {
   let touchStartX = 0;
   let touchEndX = 0;
   let fullscreenView;
+  let fullscreenMediaHost;
   let removeFullscreenTrap;
 
   /**
@@ -884,8 +885,9 @@ FlyFlow.ProductGallery = (function () {
       fullscreenBtn.addEventListener('click', openFullscreen);
     }
     fullscreenView = gallery.querySelector('[data-gallery-fullscreen-view]');
+    fullscreenMediaHost = gallery.querySelector('[data-gallery-fullscreen-media]');
     if (fullscreenView) {
-      const closeBtn = fullscreenView.querySelector('[data-modal-close]');
+      const closeBtn = fullscreenView.querySelector('[data-gallery-fullscreen-close]');
       if (closeBtn) {
         closeBtn.addEventListener('click', function (e) {
           e.preventDefault();
@@ -1175,6 +1177,7 @@ FlyFlow.ProductGallery = (function () {
   /** Open fullscreen gallery */
   function openFullscreen() {
     if (fullscreenView) {
+      renderFullscreenMedia();
       fullscreenView.classList.add('product-gallery__fullscreen--open');
       fullscreenView.setAttribute('aria-hidden', 'false');
       document.body.classList.add('drawer-open');
@@ -1193,6 +1196,9 @@ FlyFlow.ProductGallery = (function () {
     fullscreenView.classList.remove('product-gallery__fullscreen--open');
     fullscreenView.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('drawer-open');
+    if (fullscreenMediaHost) {
+      fullscreenMediaHost.innerHTML = '';
+    }
 
     if (typeof removeFullscreenTrap === 'function') {
       removeFullscreenTrap();
@@ -1209,6 +1215,40 @@ FlyFlow.ProductGallery = (function () {
     } catch {
       return null;
     }
+  }
+
+  function renderFullscreenMedia() {
+    if (!fullscreenMediaHost || !gallery) {
+      return;
+    }
+
+    fullscreenMediaHost.innerHTML = '';
+    const activeMedia = gallery.querySelector('[data-gallery-media-item].is-active');
+    if (!activeMedia) {
+      return;
+    }
+
+    const mediaType = activeMedia.dataset.mediaType;
+    const activeImage = activeMedia.querySelector('img');
+    if (mediaType === 'image' && activeImage) {
+      const fullImg = document.createElement('img');
+      fullImg.className = 'product-gallery__fullscreen-image';
+      fullImg.src = activeImage.currentSrc || activeImage.src;
+      fullImg.alt = activeImage.alt || '';
+      fullImg.loading = 'eager';
+      fullscreenMediaHost.appendChild(fullImg);
+      return;
+    }
+
+    const clone = activeMedia.cloneNode(true);
+    clone.removeAttribute('hidden');
+    clone.classList.add('is-active');
+    clone.querySelectorAll('video').forEach(function (videoEl) {
+      videoEl.controls = true;
+      videoEl.autoplay = false;
+      videoEl.preload = 'metadata';
+    });
+    fullscreenMediaHost.appendChild(clone);
   }
 
   function refreshVisibleMediaIds() {

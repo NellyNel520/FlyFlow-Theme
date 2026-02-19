@@ -158,9 +158,11 @@
   {% endif %}
 
   <div class="product-gallery__fullscreen" data-gallery-fullscreen-view aria-hidden="true">
+    <div class="product-gallery__fullscreen-media" data-gallery-fullscreen-media></div>
     <button
       class="header__icon-btn"
-      data-modal-close
+      type="button"
+      data-gallery-fullscreen-close
       aria-label="{{ 'products.gallery.close_fullscreen' | t }}"
       style="position:absolute;top:var(--space-md);right:var(--space-md);z-index:10"
     >
