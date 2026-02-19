@@ -40,7 +40,7 @@
 {% endif %}
 
 <section
-  class="rp-premium section chapter-section chapter-section--spacing-{{ section.settings.section_spacing | default: 'standard' }} chapter-section--container-{{ section.settings.container_width | default: 'contained' }}{% if section.settings.show_divider_top %} chapter-section--divider-top{% endif %}{% if section.settings.enable_reveal %} chapter-section--reveal{% endif %}"
+  class="rp-premium section chapter-section chapter-section--spacing-{{ section.settings.section_density | default: section.settings.section_spacing | default: 'standard' }} chapter-section--container-{{ section.settings.container_width | default: 'contained' }}{% if section.settings.show_divider_top %} chapter-section--divider-top{% endif %}{% if section.settings.enable_reveal %} chapter-section--reveal{% endif %}"
   data-section-id="{{ section.id }}"
   data-recently-viewed
   data-enable-reveal="{{ section.settings.enable_reveal }}"
@@ -449,6 +449,17 @@
       "id": "battery_life_key",
       "label": "Battery life metafield key",
       "default": "custom.battery_life"
+    },
+    {
+      "type": "select",
+      "id": "section_density",
+      "label": "Section density",
+      "default": "standard",
+      "options": [
+        { "value": "compact", "label": "Compact" },
+        { "value": "standard", "label": "Standard" },
+        { "value": "spacious", "label": "Spacious" }
+      ]
     },
     {
       "type": "select",

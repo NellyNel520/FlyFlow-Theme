@@ -172,8 +172,8 @@
     "featured-collection": {
       "type": "featured-collection",
       "settings": {
-        "heading": "New Arrivals",
-        "collection": "new-arrivals",
+        "heading": "Best Sellers",
+        "collection": "best-sellers",
         "products_to_show": 8
       }
     },
@@ -231,6 +231,40 @@
         "columns_desktop": 4
       }
     },
+    "brand-pillars": {
+      "type": "quick-links",
+      "blocks": {
+        "pillar-1": {
+          "type": "link_item",
+          "settings": {
+            "eyebrow": "Construction",
+            "title": "Premium Materials",
+            "link": "/pages/brand-story"
+          }
+        },
+        "pillar-2": {
+          "type": "link_item",
+          "settings": {
+            "eyebrow": "Design",
+            "title": "Movement-Focused Fit",
+            "link": "/pages/about"
+          }
+        },
+        "pillar-3": {
+          "type": "link_item",
+          "settings": {
+            "eyebrow": "Service",
+            "title": "Concierge Support",
+            "link": "/pages/contact"
+          }
+        }
+      },
+      "block_order": ["pillar-1", "pillar-2", "pillar-3"],
+      "settings": {
+        "overline": "FlyFlow Standard",
+        "heading": "Built to Perform. Designed to Stand Out."
+      }
+    },
     "recently-viewed": {
       "type": "recently-viewed",
       "settings": {
@@ -247,13 +281,12 @@
   },
   "order": [
     "hero",
-    "editorial-landing",
     "brand-carousel",
-    "collection-list",
+    "editorial-landing",
     "featured-collection",
-    "image-with-text",
-    "shop-the-look",
     "instagram-feed",
+    "collection-list",
+    "brand-pillars",
     "recently-viewed",
     "newsletter"
   ]
