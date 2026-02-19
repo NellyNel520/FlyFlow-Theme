@@ -899,7 +899,11 @@ small {
 }
 
 .utility-bar__social-link--instagram {
-  color: #f56040;
+  color: #ffffff;
+}
+
+.utility-bar__social-link--instagram svg {
+  fill: none;
 }
 
 .utility-bar__social-link--youtube {
@@ -1115,7 +1119,11 @@ small {
 }
 
 .mobile-menu__social-link--instagram {
-  color: #f56040;
+  color: #111111;
+}
+
+.mobile-menu__social-link--instagram svg {
+  fill: none;
 }
 
 .mobile-menu__social-link--youtube {

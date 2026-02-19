@@ -22,7 +22,20 @@
           {% endif %}
           {% if settings.social_instagram_url != blank %}
             <a href="{{ settings.social_instagram_url }}" class="utility-bar__social-link utility-bar__social-link--instagram" aria-label="Visit Instagram" target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.2"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.8" cy="6.2" r="1.1"/></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <defs>
+                  <linearGradient id="ffInstaGradientUtility" x1="3" y1="21" x2="21" y2="3" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#feda75"/>
+                    <stop offset="0.35" stop-color="#fa7e1e"/>
+                    <stop offset="0.6" stop-color="#d62976"/>
+                    <stop offset="0.8" stop-color="#962fbf"/>
+                    <stop offset="1" stop-color="#4f5bd5"/>
+                  </linearGradient>
+                </defs>
+                <rect x="2.8" y="2.8" width="18.4" height="18.4" rx="5.6" fill="url(#ffInstaGradientUtility)"/>
+                <circle cx="12" cy="12" r="4.4" fill="none" stroke="#ffffff" stroke-width="1.9"/>
+                <circle cx="17.4" cy="6.8" r="1.25" fill="#ffffff"/>
+              </svg>
             </a>
           {% endif %}
           {% if settings.social_youtube_url != blank %}
