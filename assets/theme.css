@@ -1046,7 +1046,7 @@ small {
   width: min(var(--page-width, 1440px), calc(100% - (var(--space-lg) * 2)));
   margin-inline: auto;
   background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 0;
   border-radius: 0;
   box-shadow: none;
   transition:
