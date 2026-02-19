@@ -22,7 +22,21 @@
         {% if section.settings.footer_menu_collections != blank %}
           <ul class="footer-luxe__menu-list" role="list">
             {% for link in section.settings.footer_menu_collections.links %}
-              <li><a href="{{ link.url }}" class="footer-luxe__link">{{ link.title }}</a></li>
+              <li class="footer-luxe__menu-item{% if link.links != blank %} has-children{% endif %}">
+                <a href="{{ link.url }}" class="footer-luxe__link footer-luxe__menu-link-main">
+                  {{ link.title }}
+                  {% if link.links != blank %}
+                    <span class="footer-luxe__menu-caret" aria-hidden="true">+</span>
+                  {% endif %}
+                </a>
+                {% if link.links != blank %}
+                  <ul class="footer-luxe__submenu" role="list">
+                    {% for child_link in link.links %}
+                      <li><a href="{{ child_link.url }}" class="footer-luxe__submenu-link">{{ child_link.title }}</a></li>
+                    {% endfor %}
+                  </ul>
+                {% endif %}
+              </li>
             {% endfor %}
           </ul>
         {% endif %}
@@ -33,7 +47,21 @@
         {% if section.settings.footer_menu_information != blank %}
           <ul class="footer-luxe__menu-list" role="list">
             {% for link in section.settings.footer_menu_information.links %}
-              <li><a href="{{ link.url }}" class="footer-luxe__link">{{ link.title }}</a></li>
+              <li class="footer-luxe__menu-item{% if link.links != blank %} has-children{% endif %}">
+                <a href="{{ link.url }}" class="footer-luxe__link footer-luxe__menu-link-main">
+                  {{ link.title }}
+                  {% if link.links != blank %}
+                    <span class="footer-luxe__menu-caret" aria-hidden="true">+</span>
+                  {% endif %}
+                </a>
+                {% if link.links != blank %}
+                  <ul class="footer-luxe__submenu" role="list">
+                    {% for child_link in link.links %}
+                      <li><a href="{{ child_link.url }}" class="footer-luxe__submenu-link">{{ child_link.title }}</a></li>
+                    {% endfor %}
+                  </ul>
+                {% endif %}
+              </li>
             {% endfor %}
           </ul>
         {% endif %}
@@ -59,7 +87,21 @@
         {% if section.settings.footer_menu_collections != blank %}
           <ul class="footer-luxe__menu-list" role="list">
             {% for link in section.settings.footer_menu_collections.links %}
-              <li><a href="{{ link.url }}" class="footer-luxe__link">{{ link.title }}</a></li>
+              <li class="footer-luxe__menu-item{% if link.links != blank %} has-children{% endif %}">
+                <a href="{{ link.url }}" class="footer-luxe__link footer-luxe__menu-link-main">
+                  {{ link.title }}
+                  {% if link.links != blank %}
+                    <span class="footer-luxe__menu-caret" aria-hidden="true">+</span>
+                  {% endif %}
+                </a>
+                {% if link.links != blank %}
+                  <ul class="footer-luxe__submenu" role="list">
+                    {% for child_link in link.links %}
+                      <li><a href="{{ child_link.url }}" class="footer-luxe__submenu-link">{{ child_link.title }}</a></li>
+                    {% endfor %}
+                  </ul>
+                {% endif %}
+              </li>
             {% endfor %}
           </ul>
         {% endif %}
@@ -70,7 +112,21 @@
         {% if section.settings.footer_menu_information != blank %}
           <ul class="footer-luxe__menu-list" role="list">
             {% for link in section.settings.footer_menu_information.links %}
-              <li><a href="{{ link.url }}" class="footer-luxe__link">{{ link.title }}</a></li>
+              <li class="footer-luxe__menu-item{% if link.links != blank %} has-children{% endif %}">
+                <a href="{{ link.url }}" class="footer-luxe__link footer-luxe__menu-link-main">
+                  {{ link.title }}
+                  {% if link.links != blank %}
+                    <span class="footer-luxe__menu-caret" aria-hidden="true">+</span>
+                  {% endif %}
+                </a>
+                {% if link.links != blank %}
+                  <ul class="footer-luxe__submenu" role="list">
+                    {% for child_link in link.links %}
+                      <li><a href="{{ child_link.url }}" class="footer-luxe__submenu-link">{{ child_link.title }}</a></li>
+                    {% endfor %}
+                  </ul>
+                {% endif %}
+              </li>
             {% endfor %}
           </ul>
         {% endif %}
