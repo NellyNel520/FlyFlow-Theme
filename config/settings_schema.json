@@ -151,6 +151,52 @@
         "info": "Clean sans-serif for body text, buttons, and UI"
       },
       {
+        "type": "font_picker",
+        "id": "flyflow_wordmark_font",
+        "label": "FlyFlow wordmark font",
+        "default": "montserrat_n4",
+        "info": "Used for the FlyFlow text logo across header and brand mark placements."
+      },
+      {
+        "type": "select",
+        "id": "flyflow_wordmark_style",
+        "label": "FlyFlow wordmark style",
+        "default": "caps",
+        "options": [
+          { "value": "caps", "label": "All caps" },
+          { "value": "titlecase", "label": "Title case" },
+          { "value": "smallcaps", "label": "Small caps" }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "flyflow_wordmark_tracking",
+        "label": "FlyFlow wordmark letter spacing",
+        "min": -12,
+        "max": 8,
+        "step": 1,
+        "default": -3,
+        "info": "Tracking in hundredths of an em."
+      },
+      {
+        "type": "select",
+        "id": "flyflow_wordmark_weight",
+        "label": "FlyFlow wordmark weight",
+        "default": "700",
+        "options": [
+          { "value": "500", "label": "Medium (500)" },
+          { "value": "600", "label": "Semi-bold (600)" },
+          { "value": "700", "label": "Bold (700)" },
+          { "value": "800", "label": "Extra-bold (800)" }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "flyflow_wordmark_hover",
+        "label": "Enable FlyFlow wordmark hover accent",
+        "default": true
+      },
+      {
         "type": "range",
         "id": "font_size_base",
         "label": "Base font size (px)",

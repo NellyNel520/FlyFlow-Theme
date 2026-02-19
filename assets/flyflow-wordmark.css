@@ -1,0 +1,64 @@
+.ff-wordmark {
+  display: inline-block;
+  position: relative;
+  font-family: var(--ff-wordmark-font, var(--font-body));
+  font-weight: var(--ff-wordmark-weight, 700);
+  font-style: normal;
+  font-variant-caps: var(--ff-wordmark-variant, normal);
+  text-transform: var(--ff-wordmark-transform, uppercase);
+  letter-spacing: var(--ff-wordmark-tracking, -0.03em);
+  line-height: 1;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ff-wordmark::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.14em;
+  height: 1px;
+  background: currentColor;
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast);
+}
+
+.ff-wordmark-hover-enabled a:hover .ff-wordmark,
+.ff-wordmark-hover-enabled a:focus-visible .ff-wordmark {
+  transform: translateY(-1px);
+}
+
+.ff-wordmark-hover-enabled a:hover .ff-wordmark::after,
+.ff-wordmark-hover-enabled a:focus-visible .ff-wordmark::after {
+  opacity: 0.7;
+  transform: scaleX(1);
+}
+
+.header__logo .ff-wordmark {
+  font-size: clamp(1.22rem, 2.5vw, 1.68rem);
+}
+
+.mobile-menu__header .ff-wordmark {
+  font-size: clamp(1.18rem, 5.4vw, 1.42rem);
+}
+
+.footer-luxe__brand-name .ff-wordmark {
+  font-size: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ff-wordmark,
+  .ff-wordmark::after {
+    transition: none !important;
+  }
+
+  .ff-wordmark-hover-enabled a:hover .ff-wordmark,
+  .ff-wordmark-hover-enabled a:focus-visible .ff-wordmark {
+    transform: none;
+  }
+}

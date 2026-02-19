@@ -80,6 +80,11 @@
       --font-body: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
       --font-body-weight: {{ settings.font_body.weight }};
       --font-body-style: {{ settings.font_body.style }};
+      --ff-wordmark-font: {{ settings.flyflow_wordmark_font.family }}, {{ settings.flyflow_wordmark_font.fallback_families }};
+      --ff-wordmark-tracking: {{ settings.flyflow_wordmark_tracking | default: -3 | divided_by: 100.0 }}em;
+      --ff-wordmark-weight: {{ settings.flyflow_wordmark_weight | default: '700' }};
+      --ff-wordmark-transform: {% if settings.flyflow_wordmark_style == 'caps' %}uppercase{% else %}none{% endif %};
+      --ff-wordmark-variant: {% if settings.flyflow_wordmark_style == 'smallcaps' %}all-small-caps{% else %}normal{% endif %};
       --font-size-base: {{ settings.font_size_base }}px;
       --font-scale: {{ settings.font_scale }};
 
@@ -129,6 +134,7 @@
   {% style %}
     {{ settings.font_heading | font_face: font_display: 'swap' }}
     {{ settings.font_body | font_face: font_display: 'swap' }}
+    {{ settings.flyflow_wordmark_font | font_face: font_display: 'swap' }}
   {% endstyle %}
 
   {%- comment -%} Critical CSS — inlined for performance {%- endcomment -%}
@@ -146,8 +152,10 @@
 
   {%- comment -%} Main stylesheet — loaded non-blocking {%- endcomment -%}
   <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="{{ 'flyflow-wordmark.css' | asset_url }}" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="{{ 'floating-social-rail.css' | asset_url }}" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="{{ 'theme.css' | asset_url }}"></noscript>
+  <noscript><link rel="stylesheet" href="{{ 'flyflow-wordmark.css' | asset_url }}"></noscript>
   <noscript><link rel="stylesheet" href="{{ 'floating-social-rail.css' | asset_url }}"></noscript>
 
   {%- comment -%} Dark mode init — runs before paint to prevent flash {%- endcomment -%}
@@ -167,7 +175,7 @@
   {{ content_for_header }}
 </head>
 
-<body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}-{{ template.suffix }}{% endif %}">
+<body class="template-{{ template.name }}{% if template.suffix %} template-{{ template.name }}-{{ template.suffix }}{% endif %}{% if settings.flyflow_wordmark_hover %} ff-wordmark-hover-enabled{% endif %}">
   <a href="#main-content" class="skip-to-content sr-only">
     {{ 'accessibility.skip_to_content' | t }}
   </a>
