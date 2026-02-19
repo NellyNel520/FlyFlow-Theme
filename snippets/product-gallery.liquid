@@ -1,38 +1,96 @@
 {% comment %}
   FlyFlow Theme - Product Gallery Snippet
-  Purpose: Product image gallery with thumbnails, swipe navigation,
-           zoom, pagination dots, and fullscreen mode.
+  Purpose: Product media gallery with variant media grouping support.
   Dependencies: theme.js (ProductGallery module)
-  Usage: {% render 'product-gallery', product: product, parent_section_id: section.id %}
+  Usage: {% render 'product-gallery', product: product, parent_section_id: section.id, section_settings: section.settings %}
 {% endcomment %}
 
-<div class="product-gallery" data-product-gallery data-section-id="{{ parent_section_id | default: section.id | default: product.id }}">
-  {%- comment -%} Main image {%- endcomment -%}
-  <div class="product-gallery__main" data-gallery-main>
-    {% if product.featured_image %}
-      <img
-        class="product-gallery__main-image"
-        data-gallery-main-image
-        src="{{ product.featured_image | image_url: width: 1200 }}"
-        srcset="
-          {{ product.featured_image | image_url: width: 375 }} 375w,
-          {{ product.featured_image | image_url: width: 750 }} 750w,
-          {{ product.featured_image | image_url: width: 1100 }} 1100w,
-          {{ product.featured_image | image_url: width: 1500 }} 1500w
-        "
-        sizes="(min-width: 1024px) 55vw, (min-width: 768px) 50vw, 100vw"
-        alt="{{ product.featured_image.alt | escape | default: product.title }}"
-        width="{{ product.featured_image.width }}"
-        height="{{ product.featured_image.height }}"
-        loading="eager"
-      >
-    {% else %}
-      <div class="product-gallery__placeholder">
-        {{ 'product-1' | placeholder_svg_tag }}
-      </div>
-    {% endif %}
+{% assign gallery_settings = section_settings %}
+{% assign group_option_name = gallery_settings.variant_media_group_option_name | default: 'Color' %}
+{% assign group_option_name_downcase = group_option_name | downcase %}
+{% assign group_method = gallery_settings.variant_media_group_method | default: 'auto' %}
+{% assign group_behavior = gallery_settings.variant_media_behavior | default: 'filter_thumbnails' %}
+{% assign transition_style = gallery_settings.transition_style | default: 'fade' %}
+{% assign show_global_media = false %}
+{% if gallery_settings.show_global_media_with_variant %}
+  {% assign show_global_media = true %}
+{% endif %}
 
-    {%- comment -%} Fullscreen button {%- endcomment -%}
+{% assign selected_variant = product.selected_or_first_available_variant %}
+{% assign active_media_id = selected_variant.featured_media.id | default: product.featured_media.id | default: product.media.first.id %}
+
+<div
+  class="product-gallery"
+  data-product-gallery
+  data-section-id="{{ parent_section_id | default: section.id | default: product.id }}"
+  data-enable-variant-media-groups="{{ gallery_settings.enable_variant_media_groups }}"
+  data-group-option-name="{{ group_option_name | escape }}"
+  data-group-method="{{ group_method }}"
+  data-group-behavior="{{ group_behavior }}"
+  data-show-global-media="{{ show_global_media }}"
+  data-transition-style="{{ transition_style }}"
+>
+  <div class="product-gallery__main" data-gallery-main>
+    <div class="product-gallery__media-stage" data-gallery-media-stage>
+      {% for media in product.media %}
+        {% assign media_alt = media.alt | default: '' %}
+        {% assign media_alt_downcase = media_alt | downcase %}
+        {% assign group_key = group_option_name_downcase | append: ':' %}
+        {% assign group_value = '' %}
+        {% if media_alt_downcase contains group_key %}
+          {% assign group_after = media_alt | split: ':' | last %}
+          {% assign group_value = group_after | split: '|' | first | strip %}
+        {% endif %}
+        {% assign is_global_media = false %}
+        {% if group_value == blank %}
+          {% assign is_global_media = true %}
+        {% endif %}
+
+        <div
+          class="product-gallery__media-item{% if media.id == active_media_id %} is-active{% endif %}"
+          data-gallery-media-item
+          data-media-id="{{ media.id }}"
+          data-media-type="{{ media.media_type }}"
+          data-alt="{{ media_alt | escape }}"
+          data-group-value="{{ group_value | downcase | escape }}"
+          data-has-group="{% if group_value != blank %}true{% else %}false{% endif %}"
+          data-global="{% if is_global_media %}true{% else %}false{% endif %}"
+          {% unless media.id == active_media_id %}hidden{% endunless %}
+        >
+          {% case media.media_type %}
+            {% when 'image' %}
+              {{ media | image_url: width: 1500 | image_tag:
+                class: 'product-gallery__main-image',
+                loading: 'eager',
+                widths: '375, 750, 1100, 1500',
+                sizes: '(min-width: 1024px) 55vw, (min-width: 768px) 50vw, 100vw',
+                alt: media.alt | default: product.title
+              }}
+            {% when 'video' %}
+              <div class="product-gallery__rich-media">
+                {{ media | media_tag: controls: true, preload: 'metadata', image_size: '1100x' }}
+              </div>
+            {% when 'external_video' %}
+              <div class="product-gallery__rich-media">
+                {{ media | media_tag: image_size: '1100x' }}
+              </div>
+            {% when 'model' %}
+              <div class="product-gallery__rich-media">
+                {{ media | model_viewer_tag: image_size: '1100x', reveal: 'interaction', toggleable: true }}
+              </div>
+            {% else %}
+              {{ media | image_url: width: 1500 | image_tag:
+                class: 'product-gallery__main-image',
+                loading: 'eager',
+                widths: '375, 750, 1100, 1500',
+                sizes: '(min-width: 1024px) 55vw, (min-width: 768px) 50vw, 100vw',
+                alt: media.alt | default: product.title
+              }}
+          {% endcase %}
+        </div>
+      {% endfor %}
+    </div>
+
     <button
       class="header__icon-btn"
       data-gallery-fullscreen
@@ -48,48 +106,57 @@
     </button>
   </div>
 
-  {%- comment -%} Pagination dots (mobile) {%- endcomment -%}
-  {% if product.images.size > 1 %}
-    <div class="product-gallery__dots" aria-hidden="true">
-      {% for image in product.images %}
+  {% if product.media.size > 1 %}
+    <div class="product-gallery__dots" aria-hidden="true" data-gallery-dots>
+      {% for media in product.media %}
         <button
-          class="product-gallery__dot{% if forloop.first %} product-gallery__dot--active{% endif %}"
+          class="product-gallery__dot{% if media.id == active_media_id %} product-gallery__dot--active{% endif %}"
           data-gallery-dot
-          aria-label="{{ 'accessibility.slide_number' | t: number: forloop.index, total: product.images.size }}"
+          data-media-id="{{ media.id }}"
+          aria-label="{{ 'accessibility.slide_number' | t: number: forloop.index, total: product.media.size }}"
         ></button>
       {% endfor %}
     </div>
   {% endif %}
 
-  {%- comment -%} Thumbnail navigation {%- endcomment -%}
-  {% if product.images.size > 1 %}
-    <div class="product-gallery__thumbnails" role="list">
-      {% for image in product.images %}
+  {% if product.media.size > 1 %}
+    <div class="product-gallery__thumbnails" role="list" data-gallery-thumbnails>
+      {% for media in product.media %}
+        {% assign media_alt = media.alt | default: '' %}
+        {% assign media_alt_downcase = media_alt | downcase %}
+        {% assign group_key = group_option_name_downcase | append: ':' %}
+        {% assign group_value = '' %}
+        {% if media_alt_downcase contains group_key %}
+          {% assign group_after = media_alt | split: ':' | last %}
+          {% assign group_value = group_after | split: '|' | first | strip %}
+        {% endif %}
+        {% assign is_global_media = false %}
+        {% if group_value == blank %}
+          {% assign is_global_media = true %}
+        {% endif %}
         <button
-          class="product-gallery__thumbnail{% if forloop.first %} product-gallery__thumbnail--active{% endif %}"
+          class="product-gallery__thumbnail{% if media.id == active_media_id %} product-gallery__thumbnail--active{% endif %}"
           data-gallery-thumbnail
-          data-full-src="{{ image | image_url: width: 1200 }}"
-          data-srcset="
-            {{ image | image_url: width: 375 }} 375w,
-            {{ image | image_url: width: 750 }} 750w,
-            {{ image | image_url: width: 1100 }} 1100w
-          "
-          {% if image.attached_to_variant? %}data-media-id="{{ image.id }}"{% endif %}
+          data-media-id="{{ media.id }}"
+          data-media-type="{{ media.media_type }}"
+          data-alt="{{ media_alt | escape }}"
+          data-group-value="{{ group_value | downcase | escape }}"
+          data-has-group="{% if group_value != blank %}true{% else %}false{% endif %}"
+          data-global="{% if is_global_media %}true{% else %}false{% endif %}"
           aria-label="{{ 'products.gallery.thumbnail' | t: number: forloop.index }}"
           role="listitem"
         >
-          {{ image | image_url: width: 128 | image_tag:
-            alt: image.alt | default: product.title,
+          {{ media.preview_image | image_url: width: 160 | image_tag:
+            alt: media.alt | default: product.title,
             loading: 'lazy',
-            width: 64,
-            height: 80
+            width: 76,
+            height: 96
           }}
         </button>
       {% endfor %}
     </div>
   {% endif %}
 
-  {%- comment -%} Fullscreen gallery overlay {%- endcomment -%}
   <div class="product-gallery__fullscreen" data-gallery-fullscreen-view aria-hidden="true">
     <button
       class="header__icon-btn"
@@ -103,4 +170,33 @@
       </svg>
     </button>
   </div>
+
+  <script type="application/json" data-variant-media-map>
+    {
+      {% assign has_variant_media_map = false %}
+      {% for variant in product.variants %}
+        {% assign media_refs = variant.metafields.custom.media_group.value %}
+        {% assign ids_csv = '' %}
+        {% if media_refs != blank %}
+          {% for ref in media_refs %}
+            {% if ref.id != blank %}
+              {% if ids_csv != blank %}
+                {% assign ids_csv = ids_csv | append: ',' %}
+              {% endif %}
+              {% assign ids_csv = ids_csv | append: ref.id %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+        {% if ids_csv != blank %}
+          {% if has_variant_media_map %},{% endif %}
+          "{{ variant.id }}":[{{ ids_csv }}]
+          {% assign has_variant_media_map = true %}
+        {% endif %}
+      {% endfor %}
+    }
+  </script>
+
+  {% if product.metafields.custom.variant_media_map.value != blank %}
+    <script type="application/json" data-option-media-map>{{ product.metafields.custom.variant_media_map.value | json }}</script>
+  {% endif %}
 </div>

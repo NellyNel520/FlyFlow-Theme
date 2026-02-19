@@ -21,7 +21,7 @@
     {% endif %}
 
     <div class="product">
-      {% render 'product-gallery', product: product, parent_section_id: section.id %}
+      {% render 'product-gallery', product: product, parent_section_id: section.id, section_settings: section.settings %}
 
       <div class="product-info">
         {% assign has_product_app_block = false %}
@@ -483,6 +483,56 @@
       "id": "show_when_in_stock",
       "label": "Show notice when stock is above threshold",
       "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_variant_media_groups",
+      "label": "Enable variant media groups",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "variant_media_group_option_name",
+      "label": "Variant media group option name",
+      "default": "Color"
+    },
+    {
+      "type": "select",
+      "id": "variant_media_group_method",
+      "label": "Variant media group method",
+      "default": "auto",
+      "options": [
+        { "value": "auto", "label": "Auto (metafield, then alt text)" },
+        { "value": "alt", "label": "Alt text tags" },
+        { "value": "metafield", "label": "Variant metafield map" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "variant_media_behavior",
+      "label": "Variant media behavior",
+      "default": "filter_thumbnails",
+      "options": [
+        { "value": "filter_thumbnails", "label": "Filter to variant media" },
+        { "value": "reorder_prioritize", "label": "Prioritize variant media first" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_global_media_with_variant",
+      "label": "Show global media with variant media",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "transition_style",
+      "label": "Gallery transition style",
+      "default": "fade",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "fade", "label": "Fade" },
+        { "value": "slide", "label": "Slide" }
+      ]
     },
     {
       "type": "checkbox",
