@@ -299,7 +299,10 @@
 
   .premium-product-carousel--{{ section.id }} .premium-product-carousel__overlay {
     position: absolute;
-    inset: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: clamp(52px, 16%, 82px);
     display: flex;
     align-items: center;
     justify-content: center;
