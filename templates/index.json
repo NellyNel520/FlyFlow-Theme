@@ -44,19 +44,23 @@
       "blocks": {},
       "block_order": []
     },
-    "editorial-campaign-collage": {
-      "type": "editorial-campaign-collage",
+    "editorial-asymmetric": {
+      "type": "editorial-asymmetric",
       "settings": {
         "media_type": "image",
-        "overlay_color": "#0B0D11",
+        "overlay_gradient": "subtle",
         "overlay_opacity": 20,
-        "label_text": "FLYFLOW / DROP 02",
-        "heading": "Campaign energy engineered for city momentum.",
-        "subheading": "Streetwear silhouettes with elevated construction and modern edge.",
-        "text_position": "bottom_left",
-        "shadow_strength": 18,
-        "container_width": "contained",
+        "show_overlay_label": true,
+        "overlay_label_text": "LOOKBOOK",
+        "eyebrow_text": "URBAN ESSENTIALS",
+        "heading": "Refined silhouettes built for everyday city movement.",
+        "body_text": "<p>From elevated staples to statement outerwear, each piece is designed to transition seamlessly through your daily rhythm.</p>",
+        "primary_cta_label": "Shop the Collection",
+        "primary_cta_link": "/collections/all",
+        "secondary_cta_label": "View Lookbook",
+        "secondary_cta_link": "/pages/brand-story",
         "section_density": "standard",
+        "container_width": "contained",
         "show_divider_top": false,
         "enable_reveal": true
       }
@@ -189,7 +193,7 @@
   "order": [
     "hero",
     "premium-product-carousel",
-    "editorial-campaign-collage",
+    "editorial-asymmetric",
     "featured-collection",
     "instagram-feed",
     "collection-list",
