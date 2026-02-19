@@ -42,6 +42,7 @@
       data-spend-message="{{ spend_msg }}"
       data-qualified-message="{{ 'cart.shipping_bar.qualified' | t }}"
     >
+      <p class="shipping-bar__label">Free shipping progress</p>
       <p data-shipping-message>
         {% if cart_total >= threshold %}
           {{ 'cart.shipping_bar.qualified' | t }}
