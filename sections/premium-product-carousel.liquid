@@ -76,6 +76,7 @@
                       {
                         "id": {{ product.id }},
                         "title": {{ product.title | json }},
+                        "image": {{ product.featured_image | image_url: width: 480 | json }},
                         "price": {{ product.price | json }},
                         "options": [{% for option_name in product.options %}{{ option_name | json }}{% unless forloop.last %},{% endunless %}{% endfor %}],
                         "variants": [
@@ -141,6 +142,7 @@
                         {
                           "id": {{ product.id }},
                           "title": {{ product.title | json }},
+                          "image": {{ product.featured_image | image_url: width: 480 | json }},
                           "price": {{ product.price | json }},
                           "options": [{% for option_name in product.options %}{{ option_name | json }}{% unless forloop.last %},{% endunless %}{% endfor %}],
                           "variants": [
@@ -194,6 +196,9 @@
       <button class="premium-product-carousel__drawer-close" type="button" data-ppc-drawer-close aria-label="Close quick add">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </button>
+      <div class="premium-product-carousel__drawer-media" data-ppc-drawer-media hidden>
+        <img class="premium-product-carousel__drawer-image" data-ppc-drawer-image alt="" loading="lazy" width="480" height="600">
+      </div>
       <p class="premium-product-carousel__drawer-kicker">Quick add</p>
       <h3 class="premium-product-carousel__drawer-title" id="ppc-drawer-title-{{ section.id }}"></h3>
       <p class="premium-product-carousel__drawer-price" data-ppc-drawer-price></p>
@@ -481,10 +486,10 @@
     width: min(430px, 100%);
     height: 100%;
     background: #ffffff;
-    padding: 16px;
+    padding: 16px 16px 18px;
     display: grid;
-    grid-template-rows: auto auto auto 1fr auto;
-    gap: 12px;
+    grid-template-rows: auto auto auto auto 1fr auto;
+    gap: 11px;
     overflow-y: auto;
   }
 
@@ -506,7 +511,10 @@
 
   .premium-product-carousel__drawer-title {
     margin: 2px 0 0;
-    font-size: 1.04rem;
+    font-size: 1.08rem;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
   }
 
   .premium-product-carousel__drawer-price {
@@ -517,27 +525,81 @@
 
   .premium-product-carousel__drawer-options {
     display: grid;
-    gap: 10px;
+    gap: 14px;
     align-content: start;
+    padding-top: 4px;
   }
 
   .premium-product-carousel__drawer-option {
     display: grid;
-    gap: 6px;
+    gap: 8px;
   }
 
-  .premium-product-carousel__drawer-option label {
+  .premium-product-carousel__drawer-option-label {
+    margin: 0;
     font-size: 0.68rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--color-text-secondary);
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
   }
 
-  .premium-product-carousel__drawer-option select {
-    width: 100%;
-    min-height: 40px;
+  .premium-product-carousel__drawer-option-current {
+    color: var(--color-text);
+    letter-spacing: 0.02em;
+  }
+
+  .premium-product-carousel__drawer-option-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .premium-product-carousel__drawer-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background: var(--swatch-color, #d4d1cc);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+    transition: border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .premium-product-carousel__drawer-size {
+    min-width: 44px;
+    min-height: 34px;
+    padding: 0 12px;
     border: 1px solid rgba(0, 0, 0, 0.14);
-    padding: 0 10px;
+    border-radius: 999px;
+    background: #ffffff;
+    font-size: 0.74rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: border-color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
+  }
+
+  .premium-product-carousel__drawer-value.is-active {
+    border-color: #101218;
+    background: #101218;
+    color: #ffffff;
+  }
+
+  .premium-product-carousel__drawer-swatch.is-active {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.52), 0 0 0 2px #0f1116;
+    transform: scale(1.04);
+  }
+
+  .premium-product-carousel__drawer-value[disabled] {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  .premium-product-carousel__drawer-swatch:not([disabled]):hover,
+  .premium-product-carousel__drawer-size:not([disabled]):hover {
+    transform: translateY(-1px);
   }
 
   .premium-product-carousel__drawer-submit {
@@ -552,6 +614,22 @@
 
   .premium-product-carousel__drawer-submit[disabled] {
     opacity: 0.45;
+  }
+
+  .premium-product-carousel__drawer-media {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f7f7f8;
+    max-height: 180px;
+  }
+
+  .premium-product-carousel__drawer-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-height: 180px;
+    object-fit: cover;
   }
 
   @media (max-width: 990px) {
@@ -618,6 +696,8 @@
     var drawerPrice = section.querySelector('[data-ppc-drawer-price]');
     var drawerOptions = section.querySelector('[data-ppc-drawer-options]');
     var drawerSubmit = section.querySelector('[data-ppc-drawer-submit]');
+    var drawerMedia = section.querySelector('[data-ppc-drawer-media]');
+    var drawerImage = section.querySelector('[data-ppc-drawer-image]');
 
     var isLoop = section.dataset.loop === 'true';
     var step = Math.max(1, parseInt(section.dataset.step || '1', 10));
@@ -627,6 +707,7 @@
     var pageCount = 1;
     var maxIndex = 0;
     var activeProduct = null;
+    var selectedOptions = [];
     var lastTrigger = null;
     var removeTrap = null;
 
@@ -819,20 +900,117 @@
         lastTrigger.focus();
       }
       activeProduct = null;
+      selectedOptions = [];
     }
 
-    function selectedVariant() {
-      if (!activeProduct || !activeProduct.variants) return null;
-      var selected = [];
-      drawerOptions.querySelectorAll('[data-ppc-option-index]').forEach(function(select) {
-        selected[parseInt(select.dataset.ppcOptionIndex, 10)] = select.value;
+    function optionIsColor(name) {
+      var key = String(name || '').toLowerCase();
+      return key.indexOf('color') > -1 || key.indexOf('colour') > -1;
+    }
+
+    function getUniqueValues(optionIndex) {
+      var values = [];
+      if (!activeProduct || !Array.isArray(activeProduct.variants)) {
+        return values;
+      }
+
+      activeProduct.variants.forEach(function(variant) {
+        var value = variant.options[optionIndex];
+        if (values.indexOf(value) === -1) {
+          values.push(value);
+        }
       });
+
+      return values;
+    }
+
+    function findVariantExact() {
+      if (!activeProduct || !Array.isArray(activeProduct.variants)) {
+        return null;
+      }
 
       return activeProduct.variants.find(function(variant) {
         return variant.options.every(function(value, index) {
-          return selected[index] === value;
+          return selectedOptions[index] === value;
         });
       }) || null;
+    }
+
+    function findFirstAvailableVariantMatching(partialSelections) {
+      if (!activeProduct || !Array.isArray(activeProduct.variants)) {
+        return null;
+      }
+
+      return activeProduct.variants.find(function(variant) {
+        if (!variant.available) {
+          return false;
+        }
+
+        return variant.options.every(function(value, index) {
+          var selected = partialSelections[index];
+          return selected == null || selected === value;
+        });
+      }) || null;
+    }
+
+    function isValueAvailable(optionIndex, optionValue) {
+      if (!activeProduct || !Array.isArray(activeProduct.variants)) {
+        return false;
+      }
+
+      return activeProduct.variants.some(function(variant) {
+        if (!variant.available || variant.options[optionIndex] !== optionValue) {
+          return false;
+        }
+
+        return variant.options.every(function(value, index) {
+          if (index === optionIndex) {
+            return true;
+          }
+          var selected = selectedOptions[index];
+          return selected == null || selected === value;
+        });
+      });
+    }
+
+    function updateOptionStates() {
+      drawerOptions.querySelectorAll('[data-ppc-option-current-index]').forEach(function(currentLabel) {
+        var index = parseInt(currentLabel.dataset.ppcOptionCurrentIndex || '', 10);
+        if (!Number.isFinite(index)) {
+          return;
+        }
+        currentLabel.textContent = selectedOptions[index] || '';
+      });
+
+      drawerOptions.querySelectorAll('[data-ppc-option-value]').forEach(function(button) {
+        var optionIndex = parseInt(button.dataset.ppcOptionIndex || '', 10);
+        var optionValue = button.dataset.ppcOptionValue;
+        var isActive = selectedOptions[optionIndex] === optionValue;
+        var isAvailable = isValueAvailable(optionIndex, optionValue);
+
+        button.classList.toggle('is-active', isActive);
+        button.disabled = !isAvailable;
+        button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+    }
+
+    function selectedVariant() {
+      return findVariantExact();
+    }
+
+    function setOption(optionIndex, optionValue) {
+      selectedOptions[optionIndex] = optionValue;
+      var nextVariant = findVariantExact();
+
+      if (!nextVariant || !nextVariant.available) {
+        var fallbackVariant = findFirstAvailableVariantMatching(selectedOptions);
+        if (fallbackVariant) {
+          selectedOptions = fallbackVariant.options.slice();
+        }
+      }
+
+      updateOptionStates();
+      syncDrawer();
     }
 
     function syncDrawer() {
@@ -855,37 +1033,66 @@
       drawerPrice.textContent = formatMoney(productData.price || 0);
       drawerOptions.innerHTML = '';
       activeProduct = productData;
+      selectedOptions = [];
+
+      if (drawerMedia && drawerImage) {
+        if (productData.image) {
+          drawerImage.src = productData.image;
+          drawerImage.alt = productData.title || 'Product image';
+          drawerMedia.hidden = false;
+        } else {
+          drawerImage.removeAttribute('src');
+          drawerImage.alt = '';
+          drawerMedia.hidden = true;
+        }
+      }
+
+      var defaultVariant = findFirstAvailableVariantMatching([]) || (productData.variants ? productData.variants[0] : null);
+      if (defaultVariant && Array.isArray(defaultVariant.options)) {
+        selectedOptions = defaultVariant.options.slice();
+      }
 
       productData.options.forEach(function(optionName, index) {
         var wrap = document.createElement('div');
         wrap.className = 'premium-product-carousel__drawer-option';
 
-        var label = document.createElement('label');
-        label.textContent = optionName;
+        var label = document.createElement('p');
+        label.className = 'premium-product-carousel__drawer-option-label';
+        label.innerHTML = optionName + ': <span class="premium-product-carousel__drawer-option-current" data-ppc-option-current-index="' + index + '"></span>';
 
-        var select = document.createElement('select');
-        select.setAttribute('data-ppc-option-index', String(index));
+        var valuesWrap = document.createElement('div');
+        valuesWrap.className = 'premium-product-carousel__drawer-option-values';
 
-        var values = [];
-        productData.variants.forEach(function(variant) {
-          var value = variant.options[index];
-          if (values.indexOf(value) === -1) values.push(value);
+        getUniqueValues(index).forEach(function(value) {
+          var button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'premium-product-carousel__drawer-value ' + (optionIsColor(optionName) ? 'premium-product-carousel__drawer-swatch' : 'premium-product-carousel__drawer-size');
+          button.dataset.ppcOptionIndex = String(index);
+          button.dataset.ppcOptionValue = value;
+          button.setAttribute('data-ppc-option-value', '');
+
+          if (optionIsColor(optionName)) {
+            button.setAttribute('data-swatch-name', value);
+            button.setAttribute('title', value);
+            button.setAttribute('aria-label', value);
+          } else {
+            button.textContent = value;
+            button.setAttribute('aria-label', optionName + ' ' + value);
+          }
+
+          valuesWrap.appendChild(button);
         });
-
-        values.forEach(function(value) {
-          var option = document.createElement('option');
-          option.value = value;
-          option.textContent = value;
-          select.appendChild(option);
-        });
-
-        select.addEventListener('change', syncDrawer);
 
         wrap.appendChild(label);
-        wrap.appendChild(select);
+        wrap.appendChild(valuesWrap);
         drawerOptions.appendChild(wrap);
       });
 
+      if (window.FlyFlow && window.FlyFlow.SwatchColors && typeof window.FlyFlow.SwatchColors.apply === 'function') {
+        window.FlyFlow.SwatchColors.apply(drawerOptions);
+      }
+
+      updateOptionStates();
       syncDrawer();
     }
 
@@ -897,7 +1104,7 @@
       drawer.setAttribute('aria-hidden', 'false');
       document.body.classList.add('drawer-open');
       removeTrap = trapFocus(drawer);
-      var first = drawer.querySelector('button, select');
+      var first = drawer.querySelector('[data-ppc-option-value]:not([disabled]), .premium-product-carousel__drawer-submit, .premium-product-carousel__drawer-close');
       if (first) first.focus();
     }
 
@@ -937,6 +1144,15 @@
     });
 
     section.addEventListener('click', function(event) {
+      var optionButton = event.target.closest('[data-ppc-option-value]');
+      if (optionButton && !optionButton.disabled) {
+        var optionIndex = parseInt(optionButton.dataset.ppcOptionIndex || '', 10);
+        var optionValue = optionButton.dataset.ppcOptionValue;
+        if (Number.isFinite(optionIndex) && optionValue) {
+          setOption(optionIndex, optionValue);
+        }
+      }
+
       var open = event.target.closest('[data-ppc-open-drawer]');
       if (open) {
         var card = open.closest('.premium-product-carousel__card');
