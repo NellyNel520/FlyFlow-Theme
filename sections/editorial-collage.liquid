@@ -1,0 +1,516 @@
+{% liquid
+  assign overlay_alpha = section.settings.overlay_opacity | divided_by: 100.0
+%}
+
+<section
+  class="section editorial-collage editorial-collage--{{ section.id }} chapter-section chapter-section--spacing-{{ section.settings.section_density | default: 'standard' }} chapter-section--container-{{ section.settings.container_width | default: 'contained' }}{% if section.settings.show_divider_top %} chapter-section--divider-top{% endif %}{% if section.settings.enable_reveal %} chapter-section--reveal{% endif %}"
+  data-section-id="{{ section.id }}"
+  data-enable-reveal="{{ section.settings.enable_reveal }}"
+>
+  <div class="container">
+    <div class="editorial-collage__grid">
+      <article class="editorial-collage__campaign" data-collage-reveal data-reveal-order="0">
+        {% if section.settings.media_type == 'video' and section.settings.primary_video != blank %}
+          {{
+            section.settings.primary_video
+            | video_tag: autoplay: true, loop: true, muted: true, controls: false, image_size: '2200x'
+          }}
+        {% elsif section.settings.primary_media != blank %}
+          {{
+            section.settings.primary_media
+            | image_url: width: 2400
+            | image_tag:
+              class: 'editorial-collage__campaign-image',
+              loading: 'lazy',
+              widths: '720,1080,1440,1800,2200',
+              sizes: '(min-width: 990px) 60vw, 100vw',
+              alt: section.settings.heading
+          }}
+        {% else %}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'editorial-collage__campaign-image editorial-collage__placeholder' }}
+        {% endif %}
+
+        {% if section.settings.overlay_opacity > 0 %}
+          <div
+            class="editorial-collage__overlay"
+            style="--editorial-collage-overlay-color: {{ section.settings.overlay_color }}; --editorial-collage-overlay-alpha: {{ overlay_alpha }}"
+          ></div>
+        {% endif %}
+
+        {% if section.settings.enable_grain %}
+          <div class="editorial-collage__grain"></div>
+        {% endif %}
+
+        <div class="editorial-collage__copy editorial-collage__copy--{{ section.settings.text_position }}">
+          {% if section.settings.label_text != blank %}
+            <p class="editorial-collage__label" data-collage-reveal data-reveal-order="1">{{ section.settings.label_text }}</p>
+          {% endif %}
+          {% if section.settings.heading != blank %}
+            <h2 class="editorial-collage__heading" data-collage-reveal data-reveal-order="2">{{ section.settings.heading }}</h2>
+          {% endif %}
+          {% if section.settings.subheading != blank %}
+            <p class="editorial-collage__subheading" data-collage-reveal data-reveal-order="3">{{ section.settings.subheading }}</p>
+          {% endif %}
+        </div>
+      </article>
+
+      <article
+        class="editorial-collage__support editorial-collage__support--{{ section.settings.collage_layout }}"
+        {% if section.settings.enable_image_hover %}data-hover-enabled="true"{% endif %}
+      >
+        {% if section.settings.image_1 != blank %}
+          <figure class="editorial-collage__item editorial-collage__item--1" data-collage-reveal data-reveal-order="4">
+            {{
+              section.settings.image_1
+              | image_url: width: 1600
+              | image_tag:
+                class: 'editorial-collage__item-image',
+                loading: 'lazy',
+                widths: '320,480,680,900,1200',
+                sizes: '(min-width: 990px) 30vw, 100vw',
+                alt: section.settings.heading
+            }}
+          </figure>
+        {% endif %}
+        {% if section.settings.image_2 != blank %}
+          <figure class="editorial-collage__item editorial-collage__item--2" data-collage-reveal data-reveal-order="5">
+            {{
+              section.settings.image_2
+              | image_url: width: 1600
+              | image_tag:
+                class: 'editorial-collage__item-image',
+                loading: 'lazy',
+                widths: '320,480,680,900,1200',
+                sizes: '(min-width: 990px) 30vw, 100vw',
+                alt: section.settings.heading
+            }}
+          </figure>
+        {% endif %}
+        {% if section.settings.image_3 != blank %}
+          <figure class="editorial-collage__item editorial-collage__item--3" data-collage-reveal data-reveal-order="6">
+            {{
+              section.settings.image_3
+              | image_url: width: 1600
+              | image_tag:
+                class: 'editorial-collage__item-image',
+                loading: 'lazy',
+                widths: '320,480,680,900,1200',
+                sizes: '(min-width: 990px) 30vw, 100vw',
+                alt: section.settings.heading
+            }}
+          </figure>
+        {% endif %}
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .editorial-collage--{{ section.id }} .editorial-collage__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: clamp(var(--space-md), 2.2vw, var(--space-xl));
+    align-items: stretch;
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__campaign {
+    position: relative;
+    min-height: clamp(420px, 58vw, 760px);
+    overflow: hidden;
+    border-radius: 14px;
+    isolation: isolate;
+    background: #111;
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__campaign video,
+  .editorial-collage--{{ section.id }} .editorial-collage__campaign-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(10, 12, 15, 0.1) 0%,
+      color-mix(in srgb, var(--editorial-collage-overlay-color) 100%, transparent) 100%
+    );
+    opacity: var(--editorial-collage-overlay-alpha);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__grain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.12;
+    background-image:
+      radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.22) 0.4px, transparent 0.8px),
+      radial-gradient(circle at 65% 35%, rgba(255, 255, 255, 0.18) 0.4px, transparent 0.8px),
+      radial-gradient(circle at 30% 78%, rgba(255, 255, 255, 0.2) 0.4px, transparent 0.8px);
+    background-size: 4px 4px, 5px 5px, 6px 6px;
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__copy {
+    position: absolute;
+    left: clamp(var(--space-md), 2.2vw, var(--space-2xl));
+    right: clamp(var(--space-md), 2.2vw, var(--space-2xl));
+    z-index: 3;
+    max-width: min(90%, 640px);
+    color: #fff;
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__copy--bottom_left {
+    bottom: clamp(var(--space-md), 2.4vw, var(--space-2xl));
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__copy--center_left {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__label {
+    margin: 0;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.9;
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__heading {
+    margin: 0;
+    font-size: clamp(2.1rem, 4.1vw, 4.3rem);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__subheading {
+    margin: 0;
+    font-size: clamp(0.92rem, 1.15vw, 1.05rem);
+    line-height: 1.42;
+    max-width: 36ch;
+    opacity: 0.92;
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__support {
+    display: grid;
+    gap: clamp(var(--space-sm), 1.3vw, var(--space-md));
+    min-height: clamp(420px, 58vw, 760px);
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__support--stacked {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr auto;
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__support--mosaic {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__item {
+    margin: 0;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #0f1115;
+    box-shadow: 0 14px 28px rgba(12, 14, 18, 0.16);
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__support--stacked .editorial-collage__item--1 {
+    transform: translateX(-2%);
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__support--stacked .editorial-collage__item--2 {
+    transform: translateX(2%);
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__support--stacked .editorial-collage__item--3 {
+    transform: translateX(-1%);
+    min-height: 0;
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__support--mosaic .editorial-collage__item--1 {
+    grid-row: 1 / span 2;
+    grid-column: 1;
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__support--mosaic .editorial-collage__item--2 {
+    grid-row: 1;
+    grid-column: 2;
+    transform: translateY(6%);
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__support--mosaic .editorial-collage__item--3 {
+    grid-row: 2;
+    grid-column: 2;
+    transform: translateY(-4%);
+  }
+
+  .editorial-collage--{{ section.id }} .editorial-collage__item-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  .editorial-collage--{{ section.id }} [data-hover-enabled="true"] .editorial-collage__item-image {
+    transition: transform var(--transition-base);
+  }
+
+  .editorial-collage--{{ section.id }} [data-hover-enabled="true"] .editorial-collage__item:hover .editorial-collage__item-image {
+    transform: scale(1.04);
+  }
+
+  .editorial-collage--{{ section.id }} [data-collage-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .editorial-collage--{{ section.id }}.is-pending-reveal [data-collage-reveal] {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .editorial-collage--{{ section.id }}.is-revealed [data-collage-reveal] {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity var(--transition-base), transform var(--transition-base);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  @media (max-width: 989px) {
+    .editorial-collage--{{ section.id }} .editorial-collage__grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-lg);
+    }
+
+    .editorial-collage--{{ section.id }} .editorial-collage__campaign {
+      min-height: clamp(340px, 74vw, 540px);
+    }
+
+    .editorial-collage--{{ section.id }} .editorial-collage__copy {
+      left: var(--space-md);
+      right: var(--space-md);
+      max-width: min(92%, 560px);
+    }
+
+    .editorial-collage--{{ section.id }} .editorial-collage__support {
+      min-height: 0;
+      grid-template-columns: 1fr;
+      grid-template-rows: none;
+      gap: var(--space-sm);
+    }
+
+    .editorial-collage--{{ section.id }} .editorial-collage__support .editorial-collage__item {
+      transform: none !important;
+      min-height: 0;
+      aspect-ratio: 4 / 5;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .editorial-collage--{{ section.id }} [data-collage-reveal] {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+
+    .editorial-collage--{{ section.id }} [data-hover-enabled="true"] .editorial-collage__item-image {
+      transition: none !important;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    var section = document.querySelector('.editorial-collage--{{ section.id }}');
+    if (!section) return;
+
+    if (section.dataset.enableReveal !== 'true' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    var revealEls = section.querySelectorAll('[data-collage-reveal]');
+    if (!revealEls.length) return;
+
+    section.classList.add('is-pending-reveal');
+    revealEls.forEach(function(el) {
+      var order = parseInt(el.getAttribute('data-reveal-order') || '0', 10);
+      el.style.setProperty('--reveal-delay', (Math.max(0, order) * 90) + 'ms');
+    });
+
+    if (!('IntersectionObserver' in window)) {
+      section.classList.add('is-revealed');
+      return;
+    }
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          section.classList.add('is-revealed');
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.2 });
+
+    observer.observe(section);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Editorial Collage",
+  "settings": [
+    {
+      "type": "select",
+      "id": "media_type",
+      "label": "Media type",
+      "default": "image",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" }
+      ]
+    },
+    {
+      "type": "image_picker",
+      "id": "primary_media",
+      "label": "Primary media"
+    },
+    {
+      "type": "video",
+      "id": "primary_video",
+      "label": "Primary video"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#0B0D11"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "default": 25
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_grain",
+      "label": "Enable grain texture",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "label_text",
+      "label": "Label",
+      "default": "FLYFLOW / DROP 02"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "STREETWEAR"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Built for movement. Styled for impact."
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text position",
+      "default": "bottom_left",
+      "options": [
+        { "value": "bottom_left", "label": "Bottom left" },
+        { "value": "center_left", "label": "Center left" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "collage_layout",
+      "label": "Collage layout",
+      "default": "stacked",
+      "options": [
+        { "value": "stacked", "label": "Stacked" },
+        { "value": "mosaic", "label": "Mosaic" }
+      ]
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Collage image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Collage image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Collage image 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_image_hover",
+      "label": "Enable image hover zoom",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "container_width",
+      "label": "Container width",
+      "default": "contained",
+      "options": [
+        { "value": "full", "label": "Full" },
+        { "value": "contained", "label": "Contained" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "section_density",
+      "label": "Section density",
+      "default": "standard",
+      "options": [
+        { "value": "compact", "label": "Compact" },
+        { "value": "standard", "label": "Standard" },
+        { "value": "spacious", "label": "Spacious" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider_top",
+      "label": "Show top divider",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_reveal",
+      "label": "Enable reveal",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editorial Collage"
+    }
+  ]
+}
+{% endschema %}
