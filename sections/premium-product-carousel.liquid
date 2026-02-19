@@ -1198,23 +1198,31 @@
 
     function setOption(optionIndex, optionValue) {
       selectedOptions[optionIndex] = optionValue;
-      var nextVariant = activeProduct.variants.find(function(variant) {
+      var candidates = activeProduct.variants.filter(function(variant) {
+        return variant.options[optionIndex] === optionValue;
+      });
+
+      var nextVariant = candidates.find(function(variant) {
         if (!variant.available) {
           return false;
         }
         return variant.options.every(function(value, index) {
+          if (index === optionIndex) {
+            return true;
+          }
           var selected = selectedOptions[index];
           return selected == null || selected === value;
         });
       });
 
       if (!nextVariant) {
-        nextVariant = activeProduct.variants.find(function(variant) {
-          return variant.options.every(function(value, index) {
-            var selected = selectedOptions[index];
-            return selected == null || selected === value;
-          });
+        nextVariant = candidates.find(function(variant) {
+          return variant.available;
         });
+      }
+
+      if (!nextVariant) {
+        nextVariant = candidates[0] || null;
       }
 
       if (!nextVariant) {
