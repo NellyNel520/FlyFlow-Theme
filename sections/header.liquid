@@ -177,22 +177,22 @@
     {% if section.settings.show_mobile_social_icons %}
       <div class="mobile-menu__item mobile-menu__social">
         {% if settings.social_facebook_url != blank %}
-          <a href="{{ settings.social_facebook_url }}" aria-label="Visit Facebook" target="_blank" rel="noopener">
+          <a href="{{ settings.social_facebook_url }}" class="mobile-menu__social-link mobile-menu__social-link--facebook" aria-label="Visit Facebook" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.2 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.6 1.7-1.6h1.5V3.8c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1V10H7v3h3V21h3.2z"/></svg>
           </a>
         {% endif %}
         {% if settings.social_x_url != blank %}
-          <a href="{{ settings.social_x_url }}" aria-label="Visit X" target="_blank" rel="noopener">
+          <a href="{{ settings.social_x_url }}" class="mobile-menu__social-link mobile-menu__social-link--x" aria-label="Visit X" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 3H22l-6.8 7.7L23 21h-6.1l-4.8-6.2L6.7 21H3.6l7.3-8.2L3 3h6.2l4.3 5.7L18.9 3zm-1.1 16.1h1.7L8.3 4.8H6.4l11.4 14.3z"/></svg>
           </a>
         {% endif %}
         {% if settings.social_instagram_url != blank %}
-          <a href="{{ settings.social_instagram_url }}" aria-label="Visit Instagram" target="_blank" rel="noopener">
+          <a href="{{ settings.social_instagram_url }}" class="mobile-menu__social-link mobile-menu__social-link--instagram" aria-label="Visit Instagram" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.2"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.8" cy="6.2" r="1.1"/></svg>
           </a>
         {% endif %}
         {% if settings.social_youtube_url != blank %}
-          <a href="{{ settings.social_youtube_url }}" aria-label="Visit YouTube" target="_blank" rel="noopener">
+          <a href="{{ settings.social_youtube_url }}" class="mobile-menu__social-link mobile-menu__social-link--youtube" aria-label="Visit YouTube" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 7.2a2.7 2.7 0 0 0-1.9-1.9C18 4.8 12 4.8 12 4.8s-6 0-7.7.5a2.7 2.7 0 0 0-1.9 1.9c-.5 1.7-.5 5.3-.5 5.3s0 3.6.5 5.3a2.7 2.7 0 0 0 1.9 1.9c1.7.5 7.7.5 7.7.5s6 0 7.7-.5a2.7 2.7 0 0 0 1.9-1.9c.5-1.7.5-5.3.5-5.3s0-3.6-.5-5.3zM9.9 15.3V9.7l4.9 2.8-4.9 2.8z"/></svg>
           </a>
         {% endif %}

@@ -869,7 +869,7 @@ small {
   justify-content: center;
   width: 18px;
   height: 18px;
-  color: rgba(255, 255, 255, 0.9);
+  color: #ffffff;
   transition:
     transform var(--transition-fast),
     color var(--transition-fast),
@@ -888,6 +888,22 @@ small {
   color: #ffffff;
   opacity: 1;
   transform: translateY(-1px);
+}
+
+.utility-bar__social-link--facebook {
+  color: #1877f2;
+}
+
+.utility-bar__social-link--x {
+  color: #ffffff;
+}
+
+.utility-bar__social-link--instagram {
+  color: #f56040;
+}
+
+.utility-bar__social-link--youtube {
+  color: #ff0000;
 }
 
 .utility-bar__announcements {
@@ -1088,6 +1104,22 @@ small {
   height: 100%;
   fill: currentColor;
   stroke: none;
+}
+
+.mobile-menu__social-link--facebook {
+  color: #1877f2;
+}
+
+.mobile-menu__social-link--x {
+  color: #111111;
+}
+
+.mobile-menu__social-link--instagram {
+  color: #f56040;
+}
+
+.mobile-menu__social-link--youtube {
+  color: #ff0000;
 }
 
 .mobile-menu__localization {
