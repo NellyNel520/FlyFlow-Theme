@@ -1,60 +1,203 @@
 {% comment %}
-  FlyFlow Theme - Footer Section
-  Purpose: Site footer with multiple link columns, newsletter signup,
-           social links, and copyright.
-  Dependencies: None
-  Last modified: 2026-02-17
+  FlyFlow Theme - Premium Footer Section
+  Purpose: Luxury multi-row footer with menus, contact, newsletter,
+           social links, localization controls, and payment icons.
+  Last modified: 2026-02-19
 {% endcomment %}
 
-<footer class="footer" data-section-id="{{ section.id }}">
-  <div class="container">
-    <div class="footer__grid">
-      {%- comment -%} Brand / Newsletter column {%- endcomment -%}
-      <div class="footer__column">
-        <h3 class="footer__heading">{{ shop.name }}</h3>
-        <p class="text-secondary text-sm">{{ section.settings.footer_description }}</p>
+{{ 'section-footer-luxe.css' | asset_url | stylesheet_tag }}
 
-        {% if section.settings.show_newsletter %}
-          <div class="newsletter" aria-label="{{ 'newsletter.title' | t }}">
-            <p class="text-sm mt-md">{{ 'newsletter.title' | t }}</p>
-            {% form 'customer', class: 'newsletter__form' %}
-              <input
-                type="email"
-                name="contact[email]"
-                class="newsletter__input"
-                placeholder="{{ 'newsletter.placeholder' | t }}"
-                required
-                autocomplete="email"
-                aria-label="{{ 'newsletter.placeholder' | t }}"
-              >
-              <input type="hidden" name="contact[tags]" value="newsletter">
-              <button type="submit" class="btn btn--primary btn--sm">
-                {{ 'newsletter.submit' | t }}
-              </button>
-            {% endform %}
-          </div>
+<footer class="footer-luxe" data-section-id="{{ section.id }}" data-style="{{ section.settings.footer_style }}" role="contentinfo">
+  <div class="footer-luxe__container">
+    <div class="footer-luxe__top">
+      <div class="footer-luxe__brand">
+        <h2 class="footer-luxe__brand-name">{{ shop.name }}</h2>
+        {% if section.settings.brand_description != blank %}
+          <p class="footer-luxe__brand-copy">{{ section.settings.brand_description }}</p>
         {% endif %}
       </div>
 
-      {%- comment -%} Link columns from blocks {%- endcomment -%}
-      {% for block in section.blocks %}
-        {% if block.type == 'link_column' %}
-          <div class="footer__column" {{ block.shopify_attributes }}>
-            <h3 class="footer__heading">{{ block.settings.heading }}</h3>
-            {% if block.settings.menu != blank %}
-              <nav aria-label="{{ block.settings.heading }}">
-                {% for link in block.settings.menu.links %}
-                  <a href="{{ link.url }}" class="footer__link">{{ link.title }}</a>
-                {% endfor %}
-              </nav>
+      <nav class="footer-luxe__menu desktop-only" aria-label="Collections links">
+        <h3 class="footer-luxe__heading">Collections</h3>
+        {% if section.settings.footer_menu_collections != blank %}
+          <ul class="footer-luxe__menu-list" role="list">
+            {% for link in section.settings.footer_menu_collections.links %}
+              <li><a href="{{ link.url }}" class="footer-luxe__link">{{ link.title }}</a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </nav>
+
+      <nav class="footer-luxe__menu desktop-only" aria-label="Information links">
+        <h3 class="footer-luxe__heading">Information</h3>
+        {% if section.settings.footer_menu_information != blank %}
+          <ul class="footer-luxe__menu-list" role="list">
+            {% for link in section.settings.footer_menu_information.links %}
+              <li><a href="{{ link.url }}" class="footer-luxe__link">{{ link.title }}</a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </nav>
+
+      <div class="footer-luxe__contact">
+        <h3 class="footer-luxe__heading">Contact</h3>
+        {% if section.settings.contact_phone != blank %}
+          <a class="footer-luxe__link" href="tel:{{ section.settings.contact_phone | replace: ' ', '' }}">{{ section.settings.contact_phone }}</a>
+        {% endif %}
+        {% if section.settings.contact_email != blank %}
+          <a class="footer-luxe__link" href="mailto:{{ section.settings.contact_email }}">{{ section.settings.contact_email }}</a>
+        {% endif %}
+        {% if section.settings.contact_link_label != blank and section.settings.contact_link_url != blank %}
+          <a class="footer-luxe__contact-help" href="{{ section.settings.contact_link_url }}">{{ section.settings.contact_link_label }}</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="footer-luxe__mobile-menus mobile-only">
+      <details class="footer-luxe__accordion">
+        <summary class="footer-luxe__accordion-summary">Collections</summary>
+        {% if section.settings.footer_menu_collections != blank %}
+          <ul class="footer-luxe__menu-list" role="list">
+            {% for link in section.settings.footer_menu_collections.links %}
+              <li><a href="{{ link.url }}" class="footer-luxe__link">{{ link.title }}</a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </details>
+
+      <details class="footer-luxe__accordion">
+        <summary class="footer-luxe__accordion-summary">Information</summary>
+        {% if section.settings.footer_menu_information != blank %}
+          <ul class="footer-luxe__menu-list" role="list">
+            {% for link in section.settings.footer_menu_information.links %}
+              <li><a href="{{ link.url }}" class="footer-luxe__link">{{ link.title }}</a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </details>
+    </div>
+
+    {% if section.settings.show_newsletter or section.settings.show_social_icons %}
+      <div class="footer-luxe__newsletter-row">
+        {% if section.settings.show_newsletter %}
+          <div class="footer-luxe__newsletter">
+            {% if section.settings.newsletter_heading != blank %}
+              <h3 class="footer-luxe__newsletter-heading">{{ section.settings.newsletter_heading }}</h3>
+            {% endif %}
+            {% if section.settings.newsletter_subtext != blank %}
+              <div class="footer-luxe__newsletter-subtext rte">{{ section.settings.newsletter_subtext }}</div>
+            {% endif %}
+
+            {% form 'customer', class: 'footer-luxe__newsletter-form' %}
+              <input type="hidden" name="contact[tags]" value="newsletter">
+              <label class="sr-only" for="FooterNewsletter-{{ section.id }}">Email</label>
+              <input
+                id="FooterNewsletter-{{ section.id }}"
+                type="email"
+                name="contact[email]"
+                class="footer-luxe__newsletter-input"
+                value="{{ form.email }}"
+                placeholder="Email address"
+                autocomplete="email"
+                required
+              >
+              <button type="submit" class="footer-luxe__newsletter-button">Subscribe</button>
+              {% if form.posted_successfully? %}
+                <p class="footer-luxe__form-message" tabindex="-1" autofocus>Thanks for subscribing.</p>
+              {% endif %}
+              {% if form.errors %}
+                <small class="footer-luxe__form-message">{{ form.errors | default_errors }}</small>
+              {% endif %}
+            {% endform %}
+          </div>
+        {% endif %}
+
+        {% if section.settings.show_social_icons %}
+          <div class="footer-luxe__social" aria-label="Social links">
+            {% if settings.social_instagram_url != blank %}
+              <a href="{{ settings.social_instagram_url }}" class="footer-luxe__social-link" target="_blank" rel="noopener" aria-label="Visit Instagram">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm11 1.75a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg>
+              </a>
+            {% endif %}
+            {% if settings.social_x_url != blank %}
+              <a href="{{ settings.social_x_url }}" class="footer-luxe__social-link" target="_blank" rel="noopener" aria-label="Visit X">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 2H22l-6.8 7.8L23 22h-6.1l-4.8-6.3L6.6 22H3.5l7.2-8.2L1 2h6.3l4.4 5.9L18.9 2Zm-1.1 18h1.7L6.3 3.9H4.6L17.8 20Z"/></svg>
+              </a>
+            {% endif %}
+            {% if settings.social_facebook_url != blank %}
+              <a href="{{ settings.social_facebook_url }}" class="footer-luxe__social-link" target="_blank" rel="noopener" aria-label="Visit Facebook">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.9.3-1.5 1.6-1.5h1.7V5a22 22 0 0 0-2.5-.1c-2.5 0-4.2 1.5-4.2 4.3V11H7.5v3h2.6v8h3.4Z"/></svg>
+              </a>
+            {% endif %}
+            {% if settings.social_youtube_url != blank %}
+              <a href="{{ settings.social_youtube_url }}" class="footer-luxe__social-link" target="_blank" rel="noopener" aria-label="Visit YouTube">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23 12s0-3.3-.4-4.9a3 3 0 0 0-2.1-2.1C18.8 4.5 12 4.5 12 4.5s-6.8 0-8.5.5A3 3 0 0 0 1.4 7.1C1 8.7 1 12 1 12s0 3.3.4 4.9a3 3 0 0 0 2.1 2.1c1.7.5 8.5.5 8.5.5s6.8 0 8.5-.5a3 3 0 0 0 2.1-2.1C23 15.3 23 12 23 12ZM9.8 15.8V8.2l6.4 3.8-6.4 3.8Z"/></svg>
+              </a>
+            {% endif %}
+            {% if settings.social_tiktok_url != blank %}
+              <a href="{{ settings.social_tiktok_url }}" class="footer-luxe__social-link" target="_blank" rel="noopener" aria-label="Visit TikTok">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.7 2h2.6c.2 1.8 1.2 3.4 2.7 4.3v2.7a7.2 7.2 0 0 1-3.3-1v6.4a6.4 6.4 0 1 1-6.4-6.4c.3 0 .5 0 .8.1v2.8a3.8 3.8 0 1 0 2.8 3.6V2Z"/></svg>
+              </a>
             {% endif %}
           </div>
         {% endif %}
-      {% endfor %}
-    </div>
+      </div>
+    {% endif %}
 
-    <div class="footer__bottom">
-      <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
+    <div class="footer-luxe__utility">
+      <div class="footer-luxe__copyright">
+        <small>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ section.settings.copyright_text }}</small>
+        {% if section.settings.show_powered_by %}
+          <small class="footer-luxe__powered">{{ powered_by_link }}</small>
+        {% endif %}
+      </div>
+
+      {% assign has_multiple_locales = false %}
+      {% if localization.available_languages.size > 1 or localization.available_countries.size > 1 %}
+        {% assign has_multiple_locales = true %}
+      {% endif %}
+
+      {% if section.settings.show_localization and has_multiple_locales %}
+        <div class="footer-luxe__localization">
+          {% form 'localization', id: 'FooterLocalizationForm', class: 'footer-luxe__localization-form' %}
+            {% if localization.available_languages.size > 1 %}
+              <div class="footer-luxe__select-wrap">
+                <label class="sr-only" for="FooterLanguage-{{ section.id }}">Language</label>
+                <select id="FooterLanguage-{{ section.id }}" class="footer-luxe__select" name="locale_code" onchange="this.form.submit()">
+                  {% for language in localization.available_languages %}
+                    <option value="{{ language.iso_code }}" {% if language.iso_code == localization.language.iso_code %}selected{% endif %}>
+                      {{ language.endonym_name | capitalize }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            {% endif %}
+
+            {% if localization.available_countries.size > 1 %}
+              <div class="footer-luxe__select-wrap">
+                <label class="sr-only" for="FooterCountry-{{ section.id }}">Country</label>
+                <select id="FooterCountry-{{ section.id }}" class="footer-luxe__select" name="country_code" onchange="this.form.submit()">
+                  {% for country in localization.available_countries %}
+                    <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
+                      {{ country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            {% endif %}
+          {% endform %}
+        </div>
+      {% endif %}
+
+      {% if section.settings.show_payment_icons and shop.enabled_payment_types != empty %}
+        <div class="footer-luxe__payments" aria-label="Accepted payment methods">
+          <ul class="footer-luxe__payment-list" role="list">
+            {% for type in shop.enabled_payment_types %}
+              <li class="footer-luxe__payment-item">{{ type | payment_type_svg_tag }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
     </div>
   </div>
 </footer>
@@ -65,60 +208,102 @@
   "class": "footer-section",
   "settings": [
     {
+      "type": "select",
+      "id": "footer_style",
+      "label": "Footer style",
+      "default": "dark",
+      "options": [
+        { "value": "dark", "label": "Dark" },
+        { "value": "lighter-dark", "label": "Lighter dark" }
+      ]
+    },
+    {
       "type": "textarea",
-      "id": "footer_description",
+      "id": "brand_description",
       "label": "Brand description",
-      "default": "Contemporary fashion, designer footwear, and statement accessories for those who move with purpose."
+      "default": "FlyFlow blends modern luxury streetwear with precise silhouettes, elevated essentials, and statement accessories."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social_icons",
+      "label": "Show social icons",
+      "default": true
     },
     {
       "type": "checkbox",
       "id": "show_newsletter",
-      "label": "Show newsletter signup",
+      "label": "Show newsletter",
       "default": true
-    }
-  ],
-  "blocks": [
+    },
     {
-      "type": "link_column",
-      "name": "Link Column",
-      "limit": 3,
-      "settings": [
-        {
-          "type": "text",
-          "id": "heading",
-          "label": "Heading",
-          "default": "Quick Links"
-        },
-        {
-          "type": "link_list",
-          "id": "menu",
-          "label": "Menu"
-        }
-      ]
+      "type": "text",
+      "id": "newsletter_heading",
+      "label": "Newsletter heading",
+      "default": "Stay in the loop"
+    },
+    {
+      "type": "richtext",
+      "id": "newsletter_subtext",
+      "label": "Newsletter helper text",
+      "default": "<p>Get first access to limited drops, styling edits, and member-only offers.</p>"
+    },
+    {
+      "type": "link_list",
+      "id": "footer_menu_collections",
+      "label": "Collections menu"
+    },
+    {
+      "type": "link_list",
+      "id": "footer_menu_information",
+      "label": "Information menu"
+    },
+    {
+      "type": "text",
+      "id": "contact_phone",
+      "label": "Contact phone",
+      "default": "+1 (555) 014-9001"
+    },
+    {
+      "type": "text",
+      "id": "contact_email",
+      "label": "Contact email",
+      "default": "support@flyflow.com"
+    },
+    {
+      "type": "text",
+      "id": "contact_link_label",
+      "label": "Contact helper link label",
+      "default": "Need help? Contact support"
+    },
+    {
+      "type": "url",
+      "id": "contact_link_url",
+      "label": "Contact helper link URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_localization",
+      "label": "Show language and country selectors",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show payment icons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_powered_by",
+      "label": "Show Powered by Shopify",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "copyright_text",
+      "label": "Copyright text",
+      "default": "All rights reserved."
     }
-  ],
-  "max_blocks": 3,
-  "default": {
-    "blocks": [
-      {
-        "type": "link_column",
-        "settings": {
-          "heading": "Shop"
-        }
-      },
-      {
-        "type": "link_column",
-        "settings": {
-          "heading": "Help"
-        }
-      },
-      {
-        "type": "link_column",
-        "settings": {
-          "heading": "About"
-        }
-      }
-    ]
-  }
+  ]
 }
 {% endschema %}
