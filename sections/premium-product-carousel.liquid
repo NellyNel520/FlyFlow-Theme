@@ -613,9 +613,9 @@
     height: 28px;
     position: relative;
     border-radius: 50%;
-    border: 1px solid rgba(0, 0, 0, 0.22);
+    border: 1px solid rgba(0, 0, 0, 0.2);
     background: var(--swatch-color, #d4d1cc);
-    box-shadow: none;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
     transition: border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
   }
 
@@ -628,23 +628,20 @@
     border-radius: 999px;
     background: #ffffff;
     font-size: 0.74rem;
-    font-weight: 500;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     transition: border-color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
   }
 
   .premium-product-carousel__drawer-size.is-active {
-    border-color: #0f1116;
-    border-width: 2px;
-    background: #ffffff;
-    color: #0f1116;
-    font-weight: 700;
+    border-color: #101218;
+    background: #101218;
+    color: #ffffff;
   }
 
   .premium-product-carousel__drawer-swatch.is-active {
     border-color: #0f1116;
-    box-shadow: 0 0 0 2px #0f1116;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.52), 0 0 0 2px #0f1116;
     transform: scale(1.04);
   }
 
@@ -680,11 +677,6 @@
   .premium-product-carousel__drawer-swatch:not([disabled]):hover,
   .premium-product-carousel__drawer-size:not([disabled]):hover {
     transform: translateY(-1px);
-  }
-
-  .premium-product-carousel__drawer-size.is-single {
-    min-width: 92px;
-    letter-spacing: 0.07em;
   }
 
   .premium-product-carousel__drawer-submit {
@@ -1347,8 +1339,6 @@
       productData.options.forEach(function(optionName, index) {
         var wrap = document.createElement('div');
         wrap.className = 'premium-product-carousel__drawer-option';
-        var optionValues = getUniqueValues(index);
-        var isSingleValue = optionValues.length === 1;
 
         var label = document.createElement('p');
         label.className = 'premium-product-carousel__drawer-option-label';
@@ -1357,13 +1347,10 @@
         var valuesWrap = document.createElement('div');
         valuesWrap.className = 'premium-product-carousel__drawer-option-values';
 
-        optionValues.forEach(function(value) {
+        getUniqueValues(index).forEach(function(value) {
           var button = document.createElement('button');
           button.type = 'button';
           button.className = 'premium-product-carousel__drawer-value ' + (optionIsColor(optionName) ? 'premium-product-carousel__drawer-swatch' : 'premium-product-carousel__drawer-size');
-          if (!optionIsColor(optionName) && isSingleValue) {
-            button.classList.add('is-single');
-          }
           button.dataset.ppcOptionIndex = String(index);
           button.dataset.ppcOptionValue = value;
           button.setAttribute('data-ppc-option-value', '');
