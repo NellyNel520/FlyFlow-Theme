@@ -621,6 +621,8 @@
 
     var isLoop = section.dataset.loop === 'true';
     var step = Math.max(1, parseInt(section.dataset.step || '1', 10));
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var scrollDuration = 680;
     var currentIndex = 0;
     var pageCount = 1;
     var maxIndex = 0;
@@ -665,6 +667,46 @@
       goTo(currentIndex, false);
     }
 
+    function easeInOutCubic(t) {
+      return t < 0.5
+        ? 4 * t * t * t
+        : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function animateScrollTo(targetLeft) {
+      if (reduceMotion) {
+        viewport.scrollLeft = targetLeft;
+        return;
+      }
+
+      var startLeft = viewport.scrollLeft;
+      var distance = targetLeft - startLeft;
+      if (Math.abs(distance) < 1) {
+        viewport.scrollLeft = targetLeft;
+        return;
+      }
+
+      var startTime = null;
+
+      function frame(timestamp) {
+        if (!startTime) {
+          startTime = timestamp;
+        }
+        var elapsed = timestamp - startTime;
+        var progress = Math.min(elapsed / scrollDuration, 1);
+        var eased = easeInOutCubic(progress);
+        viewport.scrollLeft = startLeft + (distance * eased);
+
+        if (progress < 1) {
+          requestAnimationFrame(frame);
+        } else {
+          viewport.scrollLeft = targetLeft;
+        }
+      }
+
+      requestAnimationFrame(frame);
+    }
+
     function syncControls() {
       if (prevBtn) prevBtn.disabled = !isLoop && currentIndex <= 0;
       if (nextBtn) nextBtn.disabled = !isLoop && currentIndex >= maxIndex;
@@ -681,7 +723,12 @@
       if (index < 0) index = isLoop ? maxIndex : 0;
       if (index > maxIndex) index = isLoop ? 0 : maxIndex;
       currentIndex = index;
-      viewport.scrollTo({ left: getCardOffset(currentIndex), behavior: smooth ? 'smooth' : 'auto' });
+      var nextLeft = getCardOffset(currentIndex);
+      if (smooth) {
+        animateScrollTo(nextLeft);
+      } else {
+        viewport.scrollLeft = nextLeft;
+      }
       syncControls();
     }
 
