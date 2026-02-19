@@ -80,6 +80,27 @@
       "blocks": {},
       "block_order": []
     },
+    "editorial-asymmetric": {
+      "type": "editorial-asymmetric",
+      "settings": {
+        "media_type": "image",
+        "overlay_gradient": "subtle",
+        "overlay_opacity": 20,
+        "show_overlay_label": true,
+        "overlay_label_text": "LOOKBOOK",
+        "eyebrow_text": "URBAN ESSENTIALS",
+        "heading": "Refined silhouettes built for everyday city movement.",
+        "body_text": "<p>From elevated staples to statement outerwear, each piece is designed to transition seamlessly through your daily rhythm.</p>",
+        "primary_cta_label": "Shop the Collection",
+        "primary_cta_link": "/collections/all",
+        "secondary_cta_label": "View Lookbook",
+        "secondary_cta_link": "/pages/brand-story",
+        "section_density": "standard",
+        "container_width": "contained",
+        "show_divider_top": false,
+        "enable_reveal": true
+      }
+    },
     "collection-list": {
       "type": "collection-list",
       "settings": {
@@ -208,7 +229,7 @@
   "order": [
     "hero",
     "premium-product-carousel",
-    "editorial-landing",
+    "editorial-asymmetric",
     "featured-collection",
     "instagram-feed",
     "collection-list",

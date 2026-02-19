@@ -1,0 +1,402 @@
+{% comment %}
+  FlyFlow Theme - Editorial Asymmetric Feature Grid
+  Purpose: Campaign-style asymmetric chapter with dominant media and narrative column.
+{% endcomment %}
+
+{% liquid
+  assign overlay_alpha = section.settings.overlay_opacity | divided_by: 100.0
+%}
+
+<section
+  class="section editorial-asymmetric editorial-asymmetric--{{ section.id }} chapter-section chapter-section--spacing-{{ section.settings.section_density | default: section.settings.section_spacing | default: 'standard' }} chapter-section--container-{{ section.settings.container_width | default: 'contained' }}{% if section.settings.show_divider_top %} chapter-section--divider-top{% endif %}{% if section.settings.enable_reveal %} chapter-section--reveal{% endif %}"
+  data-section-id="{{ section.id }}"
+  data-enable-reveal="{{ section.settings.enable_reveal }}"
+>
+  <div class="container">
+    <div class="editorial-asymmetric__grid">
+      <article class="editorial-asymmetric__media-wrap" data-editorial-reveal data-reveal-order="0">
+        {% if section.settings.media_type == 'video' and section.settings.media_video != blank %}
+          {{
+            section.settings.media_video
+            | video_tag: autoplay: true, loop: true, muted: true, controls: false, image_size: '2200x'
+          }}
+        {% elsif section.settings.media_picker != blank %}
+          {{
+            section.settings.media_picker
+            | image_url: width: 2200
+            | image_tag:
+              class: 'editorial-asymmetric__image',
+              loading: 'lazy',
+              widths: '700,1000,1400,1800,2200',
+              sizes: '(min-width: 990px) 65vw, 100vw',
+              alt: section.settings.heading
+          }}
+        {% else %}
+          {{ 'lifestyle-2' | placeholder_svg_tag: 'editorial-asymmetric__image editorial-asymmetric__placeholder' }}
+        {% endif %}
+
+        {% if section.settings.overlay_gradient == 'subtle' and section.settings.overlay_opacity > 0 %}
+          <div class="editorial-asymmetric__overlay" style="--editorial-overlay-alpha: {{ overlay_alpha }}"></div>
+        {% endif %}
+
+        {% if section.settings.show_overlay_label and section.settings.overlay_label_text != blank %}
+          <span class="editorial-asymmetric__overlay-label">{{ section.settings.overlay_label_text }}</span>
+        {% endif %}
+      </article>
+
+      <article class="editorial-asymmetric__narrative">
+        {% if section.settings.eyebrow_text != blank %}
+          <p class="editorial-asymmetric__eyebrow" data-editorial-reveal data-reveal-order="1">{{ section.settings.eyebrow_text }}</p>
+        {% endif %}
+
+        {% if section.settings.heading != blank %}
+          <h2 class="editorial-asymmetric__heading" data-editorial-reveal data-reveal-order="2">{{ section.settings.heading }}</h2>
+        {% endif %}
+
+        {% if section.settings.body_text != blank %}
+          <div class="editorial-asymmetric__body" data-editorial-reveal data-reveal-order="3">
+            {{ section.settings.body_text }}
+          </div>
+        {% endif %}
+
+        <div class="editorial-asymmetric__actions" data-editorial-reveal data-reveal-order="4">
+          {% if section.settings.primary_cta_label != blank and section.settings.primary_cta_link != blank %}
+            <a href="{{ section.settings.primary_cta_link }}" class="btn btn--primary">{{ section.settings.primary_cta_label }}</a>
+          {% endif %}
+
+          {% if section.settings.secondary_cta_label != blank and section.settings.secondary_cta_link != blank %}
+            <a href="{{ section.settings.secondary_cta_link }}" class="editorial-asymmetric__secondary-link">{{ section.settings.secondary_cta_label }}</a>
+          {% endif %}
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .editorial-asymmetric--{{ section.id }} .editorial-asymmetric__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr);
+    gap: clamp(1.1rem, 2.8vw, 2.4rem);
+    align-items: stretch;
+  }
+
+  .editorial-asymmetric--{{ section.id }} .editorial-asymmetric__media-wrap {
+    position: relative;
+    min-height: clamp(360px, 54vw, 690px);
+    overflow: hidden;
+    border-radius: clamp(10px, 1.2vw, 14px);
+    box-shadow: 0 18px 38px rgba(14, 16, 20, 0.12);
+    isolation: isolate;
+    background: var(--color-surface);
+  }
+
+  .editorial-asymmetric--{{ section.id }} .editorial-asymmetric__media-wrap video,
+  .editorial-asymmetric--{{ section.id }} .editorial-asymmetric__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .editorial-asymmetric--{{ section.id }} .editorial-asymmetric__overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(8, 10, 14, 0) 22%, rgba(8, 10, 14, var(--editorial-overlay-alpha)) 100%);
+    z-index: 1;
+  }
+
+  .editorial-asymmetric--{{ section.id }} .editorial-asymmetric__overlay-label {
+    position: absolute;
+    left: 14px;
+    top: 14px;
+    z-index: 2;
+    min-height: 28px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.38);
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(4px);
+    color: #fff;
+    font-size: 0.63rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .editorial-asymmetric--{{ section.id }} .editorial-asymmetric__narrative {
+    display: grid;
+    align-content: center;
+    gap: clamp(10px, 1.4vw, 16px);
+    padding: clamp(4px, 1vw, 10px) 0;
+  }
+
+  .editorial-asymmetric--{{ section.id }} .editorial-asymmetric__eyebrow {
+    margin: 0;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  .editorial-asymmetric--{{ section.id }} .editorial-asymmetric__heading {
+    margin: 0;
+    font-size: clamp(1.6rem, 3.1vw, 2.8rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .editorial-asymmetric--{{ section.id }} .editorial-asymmetric__body {
+    margin: 0;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    max-width: 34ch;
+  }
+
+  .editorial-asymmetric--{{ section.id }} .editorial-asymmetric__body p {
+    margin: 0;
+  }
+
+  .editorial-asymmetric--{{ section.id }} .editorial-asymmetric__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .editorial-asymmetric--{{ section.id }} .editorial-asymmetric__secondary-link {
+    color: var(--color-text);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: underline;
+    text-decoration-color: rgba(16, 18, 24, 0.35);
+    text-underline-offset: 4px;
+  }
+
+  .editorial-asymmetric--{{ section.id }} [data-editorial-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .editorial-asymmetric--{{ section.id }}.is-pending-reveal [data-editorial-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  .editorial-asymmetric--{{ section.id }}.is-revealed [data-editorial-reveal] {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity var(--transition-base), transform var(--transition-base);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  @media (max-width: 989px) {
+    .editorial-asymmetric--{{ section.id }} .editorial-asymmetric__grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .editorial-asymmetric--{{ section.id }} .editorial-asymmetric__media-wrap {
+      min-height: clamp(250px, 65vw, 420px);
+      border-radius: 12px;
+      box-shadow: 0 10px 26px rgba(14, 16, 20, 0.1);
+    }
+
+    .editorial-asymmetric--{{ section.id }} .editorial-asymmetric__narrative {
+      gap: 10px;
+      padding: 2px 0 0;
+      align-content: start;
+    }
+
+    .editorial-asymmetric--{{ section.id }} .editorial-asymmetric__body {
+      max-width: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .editorial-asymmetric--{{ section.id }} [data-editorial-reveal] {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    var section = document.querySelector('.editorial-asymmetric--{{ section.id }}');
+    if (!section) return;
+
+    var revealEnabled = section.dataset.enableReveal === 'true';
+    if (!revealEnabled || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    var revealEls = section.querySelectorAll('[data-editorial-reveal]');
+    if (!revealEls.length) return;
+
+    section.classList.add('is-pending-reveal');
+    revealEls.forEach(function(el) {
+      var order = parseInt(el.getAttribute('data-reveal-order') || '0', 10);
+      el.style.setProperty('--reveal-delay', (Math.max(0, order) * 90) + 'ms');
+    });
+
+    if (!('IntersectionObserver' in window)) {
+      section.classList.add('is-revealed');
+      return;
+    }
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          section.classList.add('is-revealed');
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.25 });
+
+    observer.observe(section);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Editorial Asymmetric",
+  "settings": [
+    {
+      "type": "select",
+      "id": "media_type",
+      "label": "Media type",
+      "default": "image",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" }
+      ]
+    },
+    {
+      "type": "image_picker",
+      "id": "media_picker",
+      "label": "Media image"
+    },
+    {
+      "type": "video",
+      "id": "media_video",
+      "label": "Media video"
+    },
+    {
+      "type": "select",
+      "id": "overlay_gradient",
+      "label": "Overlay gradient",
+      "default": "none",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "subtle", "label": "Subtle" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "default": 25
+    },
+    {
+      "type": "checkbox",
+      "id": "show_overlay_label",
+      "label": "Show overlay label",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "overlay_label_text",
+      "label": "Overlay label",
+      "default": "DROP 02"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow_text",
+      "label": "Eyebrow text",
+      "default": "THE STORY"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Utility-driven silhouettes for the city after dark."
+    },
+    {
+      "type": "richtext",
+      "id": "body_text",
+      "label": "Body text",
+      "default": "<p>Engineered materials, precise tailoring, and elevated essentials built for movement from first light to late night.</p>"
+    },
+    {
+      "type": "text",
+      "id": "primary_cta_label",
+      "label": "Primary CTA label",
+      "default": "Shop the Collection"
+    },
+    {
+      "type": "url",
+      "id": "primary_cta_link",
+      "label": "Primary CTA link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_cta_label",
+      "label": "Secondary CTA label",
+      "default": "View Lookbook"
+    },
+    {
+      "type": "url",
+      "id": "secondary_cta_link",
+      "label": "Secondary CTA link"
+    },
+    {
+      "type": "select",
+      "id": "section_density",
+      "label": "Section density",
+      "default": "standard",
+      "options": [
+        { "value": "compact", "label": "Compact" },
+        { "value": "standard", "label": "Standard" },
+        { "value": "spacious", "label": "Spacious" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "container_width",
+      "label": "Container width",
+      "default": "contained",
+      "options": [
+        { "value": "full", "label": "Full" },
+        { "value": "contained", "label": "Contained" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider_top",
+      "label": "Show top divider",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_reveal",
+      "label": "Enable reveal",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editorial Asymmetric"
+    }
+  ]
+}
+{% endschema %}
