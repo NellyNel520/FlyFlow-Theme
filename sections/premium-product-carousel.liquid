@@ -77,6 +77,20 @@
                         "id": {{ product.id }},
                         "title": {{ product.title | json }},
                         "image": {{ product.featured_image | image_url: width: 480 | json }},
+                        "media": [
+                          {% assign media_output_count = 0 %}
+                          {% for media in product.media %}
+                            {% if media.media_type == 'image' %}
+                              {% if media_output_count > 0 %},{% endif %}
+                              {
+                                "id": {{ media.id }},
+                                "src": {{ media | image_url: width: 960 | json }},
+                                "alt": {{ media.alt | default: product.title | json }}
+                              }
+                              {% assign media_output_count = media_output_count | plus: 1 %}
+                            {% endif %}
+                          {% endfor %}
+                        ],
                         "price": {{ product.price | json }},
                         "options": [{% for option_name in product.options %}{{ option_name | json }}{% unless forloop.last %},{% endunless %}{% endfor %}],
                         "variants": [
@@ -85,6 +99,7 @@
                               "id": {{ variant.id }},
                               "available": {{ variant.available | json }},
                               "price": {{ variant.price | json }},
+                              "featured_media_id": {{ variant.featured_media.id | default: 0 | json }},
                               "options": [{% for option_value in variant.options %}{{ option_value | json }}{% unless forloop.last %},{% endunless %}{% endfor %}]
                             }{% unless forloop.last %},{% endunless %}
                           {% endfor %}
@@ -143,6 +158,20 @@
                           "id": {{ product.id }},
                           "title": {{ product.title | json }},
                           "image": {{ product.featured_image | image_url: width: 480 | json }},
+                          "media": [
+                            {% assign media_output_count = 0 %}
+                            {% for media in product.media %}
+                              {% if media.media_type == 'image' %}
+                                {% if media_output_count > 0 %},{% endif %}
+                                {
+                                  "id": {{ media.id }},
+                                  "src": {{ media | image_url: width: 960 | json }},
+                                  "alt": {{ media.alt | default: product.title | json }}
+                                }
+                                {% assign media_output_count = media_output_count | plus: 1 %}
+                              {% endif %}
+                            {% endfor %}
+                          ],
                           "price": {{ product.price | json }},
                           "options": [{% for option_name in product.options %}{{ option_name | json }}{% unless forloop.last %},{% endunless %}{% endfor %}],
                           "variants": [
@@ -151,6 +180,7 @@
                                 "id": {{ variant.id }},
                                 "available": {{ variant.available | json }},
                                 "price": {{ variant.price | json }},
+                                "featured_media_id": {{ variant.featured_media.id | default: 0 | json }},
                                 "options": [{% for option_value in variant.options %}{{ option_value | json }}{% unless forloop.last %},{% endunless %}{% endfor %}]
                               }{% unless forloop.last %},{% endunless %}
                             {% endfor %}
@@ -197,7 +227,10 @@
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </button>
       <div class="premium-product-carousel__drawer-media" data-ppc-drawer-media hidden>
-        <img class="premium-product-carousel__drawer-image" data-ppc-drawer-image alt="" loading="lazy" width="480" height="600">
+        <div class="premium-product-carousel__drawer-main-media">
+          <img class="premium-product-carousel__drawer-image" data-ppc-drawer-image alt="" loading="lazy" width="720" height="900">
+        </div>
+        <div class="premium-product-carousel__drawer-thumbs" data-ppc-drawer-thumbs aria-label="Product image thumbnails"></div>
       </div>
       <p class="premium-product-carousel__drawer-kicker">Quick add</p>
       <h3 class="premium-product-carousel__drawer-title" id="ppc-drawer-title-{{ section.id }}"></h3>
@@ -488,7 +521,7 @@
     background: #ffffff;
     padding: 16px 16px 18px;
     display: grid;
-    grid-template-rows: auto auto auto auto 1fr auto;
+    grid-template-rows: auto minmax(280px, 60%) auto auto 1fr auto;
     gap: 11px;
     overflow-y: auto;
   }
@@ -618,18 +651,63 @@
 
   .premium-product-carousel__drawer-media {
     width: 100%;
-    border-radius: 12px;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 10px;
+    min-height: 0;
+    border-radius: 14px;
     overflow: hidden;
-    background: #f7f7f8;
-    max-height: 180px;
+    background: #f8f8f9;
+  }
+
+  .premium-product-carousel__drawer-main-media {
+    min-height: 0;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #f3f3f4;
   }
 
   .premium-product-carousel__drawer-image {
     display: block;
     width: 100%;
     height: 100%;
-    max-height: 180px;
     object-fit: cover;
+  }
+
+  .premium-product-carousel__drawer-thumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 2px 2px 2px 0;
+    scrollbar-width: thin;
+  }
+
+  .premium-product-carousel__drawer-thumb {
+    width: 58px;
+    height: 72px;
+    border: 1px solid rgba(0, 0, 0, 0.14);
+    border-radius: 8px;
+    background: #ffffff;
+    padding: 0;
+    flex: 0 0 auto;
+    overflow: hidden;
+    transition: border-color var(--transition-fast), transform var(--transition-fast);
+  }
+
+  .premium-product-carousel__drawer-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .premium-product-carousel__drawer-thumb.is-active {
+    border-color: #0f1116;
+  }
+
+  .premium-product-carousel__drawer-thumb:not(.is-active):hover {
+    transform: translateY(-1px);
   }
 
   @media (max-width: 990px) {
@@ -698,6 +776,7 @@
     var drawerSubmit = section.querySelector('[data-ppc-drawer-submit]');
     var drawerMedia = section.querySelector('[data-ppc-drawer-media]');
     var drawerImage = section.querySelector('[data-ppc-drawer-image]');
+    var drawerThumbs = section.querySelector('[data-ppc-drawer-thumbs]');
 
     var isLoop = section.dataset.loop === 'true';
     var step = Math.max(1, parseInt(section.dataset.step || '1', 10));
@@ -708,6 +787,7 @@
     var maxIndex = 0;
     var activeProduct = null;
     var selectedOptions = [];
+    var activeMediaIndex = 0;
     var lastTrigger = null;
     var removeTrap = null;
 
@@ -1026,6 +1106,79 @@
       drawerSubmit.disabled = !variant.available;
       drawerSubmit.textContent = variant.available ? 'Add to bag' : 'Sold out';
       drawerPrice.textContent = formatMoney(variant.price);
+      syncVariantMedia(variant);
+    }
+
+    function getDrawerMediaItems(productData) {
+      if (!productData) return [];
+      if (Array.isArray(productData.media) && productData.media.length) {
+        return productData.media.filter(function(item) { return item && item.src; });
+      }
+      if (productData.image) {
+        return [{ id: 0, src: productData.image, alt: productData.title || 'Product image' }];
+      }
+      return [];
+    }
+
+    function setActiveMedia(index) {
+      if (!activeProduct || !drawerImage) return;
+      var mediaItems = getDrawerMediaItems(activeProduct);
+      if (!mediaItems.length) return;
+      var nextIndex = Math.max(0, Math.min(index, mediaItems.length - 1));
+      var mediaItem = mediaItems[nextIndex];
+      activeMediaIndex = nextIndex;
+      drawerImage.src = mediaItem.src;
+      drawerImage.alt = mediaItem.alt || activeProduct.title || 'Product image';
+
+      if (drawerThumbs) {
+        drawerThumbs.querySelectorAll('[data-ppc-thumb-index]').forEach(function(button) {
+          var isActive = parseInt(button.dataset.ppcThumbIndex || '', 10) === activeMediaIndex;
+          button.classList.toggle('is-active', isActive);
+          button.setAttribute('aria-current', isActive ? 'true' : 'false');
+        });
+      }
+    }
+
+    function renderThumbs() {
+      if (!drawerThumbs || !activeProduct) return;
+      var mediaItems = getDrawerMediaItems(activeProduct);
+      drawerThumbs.innerHTML = '';
+      if (!mediaItems.length) return;
+
+      mediaItems.forEach(function(mediaItem, index) {
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'premium-product-carousel__drawer-thumb';
+        button.dataset.ppcThumbIndex = String(index);
+        button.setAttribute('aria-label', 'View image ' + (index + 1));
+
+        var image = document.createElement('img');
+        image.src = mediaItem.src;
+        image.alt = mediaItem.alt || activeProduct.title || 'Product thumbnail';
+        image.loading = 'lazy';
+        image.width = 116;
+        image.height = 144;
+
+        button.appendChild(image);
+        drawerThumbs.appendChild(button);
+      });
+    }
+
+    function syncVariantMedia(variant) {
+      if (!activeProduct || !variant) return;
+      var mediaItems = getDrawerMediaItems(activeProduct);
+      if (!mediaItems.length) return;
+
+      var targetIndex = activeMediaIndex;
+      if (variant.featured_media_id) {
+        var mediaIdMatch = mediaItems.findIndex(function(item) {
+          return Number(item.id) === Number(variant.featured_media_id);
+        });
+        if (mediaIdMatch > -1) {
+          targetIndex = mediaIdMatch;
+        }
+      }
+      setActiveMedia(targetIndex);
     }
 
     function buildDrawer(productData) {
@@ -1036,14 +1189,17 @@
       selectedOptions = [];
 
       if (drawerMedia && drawerImage) {
-        if (productData.image) {
-          drawerImage.src = productData.image;
-          drawerImage.alt = productData.title || 'Product image';
+        var mediaItems = getDrawerMediaItems(productData);
+        if (mediaItems.length) {
           drawerMedia.hidden = false;
+          renderThumbs();
+          activeMediaIndex = 0;
+          setActiveMedia(0);
         } else {
           drawerImage.removeAttribute('src');
           drawerImage.alt = '';
           drawerMedia.hidden = true;
+          if (drawerThumbs) drawerThumbs.innerHTML = '';
         }
       }
 
@@ -1150,6 +1306,14 @@
         var optionValue = optionButton.dataset.ppcOptionValue;
         if (Number.isFinite(optionIndex) && optionValue) {
           setOption(optionIndex, optionValue);
+        }
+      }
+
+      var thumbButton = event.target.closest('[data-ppc-thumb-index]');
+      if (thumbButton) {
+        var thumbIndex = parseInt(thumbButton.dataset.ppcThumbIndex || '', 10);
+        if (Number.isFinite(thumbIndex)) {
+          setActiveMedia(thumbIndex);
         }
       }
 
@@ -1311,3 +1475,11 @@
   ]
 }
 {% endschema %}
+    .premium-product-carousel__drawer-panel {
+      grid-template-rows: auto minmax(220px, 52%) auto auto 1fr auto;
+    }
+
+    .premium-product-carousel__drawer-thumb {
+      width: 52px;
+      height: 64px;
+    }
