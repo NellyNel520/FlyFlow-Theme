@@ -1036,7 +1036,7 @@ small {
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
-  background: transparent;
+  background: #ffffff;
   border-bottom: 0;
   padding-top: var(--space-sm);
   transition: padding-top var(--transition-base);
@@ -1045,10 +1045,10 @@ small {
 .header__shell {
   width: min(var(--page-width, 1440px), calc(100% - (var(--space-lg) * 2)));
   margin-inline: auto;
-  background: rgba(255, 255, 255, 0.98);
+  background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 0;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  box-shadow: none;
   transition:
     border-color var(--transition-base),
     box-shadow var(--transition-base);
@@ -1075,7 +1075,7 @@ small {
 }
 
 .header--scrolled .header__shell {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  box-shadow: none;
 }
 
 .nav {
