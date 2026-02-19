@@ -1167,9 +1167,13 @@ FlyFlow.VariantSelector = (function () {
 
     if (qty > 0 && qty <= threshold) {
       shouldShow = true;
+      const hasCountToken = /\{\{\s*count\s*\}\}|\{count\}/i.test(messageTemplate);
       text = messageTemplate
-        .replace(/\{\{\s*count\s*\}\}/g, String(qty))
-        .replace('{count}', String(qty));
+        .replace(/\{\{\s*count\s*\}\}/gi, String(qty))
+        .replace(/\{count\}/gi, String(qty));
+      if (!hasCountToken || !text.includes(String(qty))) {
+        text = `Hurry, only ${qty} items left in stock!`;
+      }
       lowStock.classList.remove('low-stock--in-stock');
     } else if (showWhenInStock && qty > threshold) {
       shouldShow = true;
