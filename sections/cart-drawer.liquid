@@ -8,7 +8,16 @@
 <div class="cart-drawer" data-cart-drawer aria-label="{{ 'cart.title' | t }}" role="dialog" aria-modal="true">
   {%- comment -%} Header {%- endcomment -%}
   <div class="cart-drawer__header">
-    <h2 class="cart-drawer__title">{{ 'cart.title' | t }} ({{ cart.item_count }})</h2>
+    <h2 class="cart-drawer__title">
+      <span class="cart-drawer__title-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M6 7h12l-1.1 11.2a1 1 0 0 1-1 .8H8.1a1 1 0 0 1-1-.8L6 7Z"/>
+          <path d="M9 8V6.8a3 3 0 1 1 6 0V8"/>
+        </svg>
+      </span>
+      <span class="cart-drawer__title-text">{{ 'cart.title' | t }}</span>
+      <span class="cart-drawer__count" data-cart-count>{{ cart.item_count }}</span>
+    </h2>
     <button class="cart-drawer__close" data-cart-toggle aria-label="{{ 'accessibility.close_modal' | t }}">
       <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="1.5" fill="none" aria-hidden="true">
         <line x1="18" y1="6" x2="6" y2="18"/>
