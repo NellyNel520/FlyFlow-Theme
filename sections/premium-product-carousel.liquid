@@ -322,7 +322,8 @@
   }
 
   .premium-product-carousel--{{ section.id }} .premium-product-carousel__media {
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 4 / 4.75;
+    max-height: clamp(250px, 32vw, 430px);
     background: #ffffff;
     overflow: hidden;
   }
@@ -907,6 +908,11 @@
     .premium-product-carousel--{{ section.id }} .premium-product-carousel__rail-shell {
       padding-inline: 0;
     }
+
+    .premium-product-carousel--{{ section.id }} .premium-product-carousel__media {
+      aspect-ratio: 4 / 4.9;
+      max-height: clamp(220px, 45vw, 380px);
+    }
   }
 
   @media (max-width: 749px) {
@@ -932,6 +938,11 @@
 
     .premium-product-carousel--{{ section.id }} .premium-product-carousel__dots {
       bottom: 8px;
+    }
+
+    .premium-product-carousel--{{ section.id }} .premium-product-carousel__media {
+      aspect-ratio: 4 / 5.15;
+      max-height: clamp(200px, 72vw, 320px);
     }
 
     .premium-product-carousel__drawer-panel {
@@ -999,7 +1010,7 @@
     var isLoop = section.dataset.loop === 'true';
     var step = Math.max(1, parseInt(section.dataset.step || '1', 10));
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var scrollDuration = 1100;
+    var baseScrollDuration = 980;
     var currentIndex = 0;
     var pageCount = 1;
     var maxIndex = 0;
@@ -1046,10 +1057,10 @@
       goTo(currentIndex, false);
     }
 
-    function easeInOutCubic(t) {
+    function easeInOutQuint(t) {
       return t < 0.5
-        ? 4 * t * t * t
-        : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        ? 16 * t * t * t * t * t
+        : 1 - Math.pow(-2 * t + 2, 5) / 2;
     }
 
     function animateScrollTo(targetLeft) {
@@ -1064,6 +1075,9 @@
         viewport.scrollLeft = targetLeft;
         return;
       }
+      var cardWidth = cards[0] ? cards[0].offsetWidth : 1;
+      var cardsMoved = Math.max(1, Math.abs(distance) / Math.max(cardWidth, 1));
+      var scrollDuration = Math.min(2200, baseScrollDuration + (cardsMoved * 260));
 
       var startTime = null;
 
@@ -1073,7 +1087,7 @@
         }
         var elapsed = timestamp - startTime;
         var progress = Math.min(elapsed / scrollDuration, 1);
-        var eased = easeInOutCubic(progress);
+        var eased = easeInOutQuint(progress);
         viewport.scrollLeft = startLeft + (distance * eased);
 
         if (progress < 1) {
