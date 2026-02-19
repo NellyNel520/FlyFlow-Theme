@@ -1150,7 +1150,16 @@
       }
 
       return activeProduct.variants.some(function(variant) {
-        return variant.available && variant.options[optionIndex] === optionValue;
+        if (!variant.available || variant.options[optionIndex] !== optionValue) {
+          return false;
+        }
+        return variant.options.every(function(value, index) {
+          if (index === optionIndex) {
+            return true;
+          }
+          var selected = selectedOptions[index];
+          return selected == null || selected === value;
+        });
       });
     }
 
@@ -1187,34 +1196,6 @@
 
     function setOption(optionIndex, optionValue) {
       selectedOptions[optionIndex] = optionValue;
-      var nextVariant = activeProduct.variants.find(function(variant) {
-        if (!variant.available) return false;
-        return variant.options.every(function(value, index) {
-          var selected = selectedOptions[index];
-          return selected == null || selected === value;
-        });
-      });
-
-      if (!nextVariant) {
-        nextVariant = activeProduct.variants.find(function(variant) {
-          return variant.available && variant.options[optionIndex] === optionValue;
-        });
-      }
-
-      if (!nextVariant) {
-        nextVariant = activeProduct.variants.find(function(variant) {
-          return variant.options[optionIndex] === optionValue;
-        });
-      }
-
-      if (!nextVariant) {
-        nextVariant = findFirstVariantMatching(selectedOptions, true) || findFirstVariantMatching(selectedOptions, false);
-      }
-
-      if (nextVariant) {
-        selectedOptions = nextVariant.options.slice();
-      }
-
       updateOptionStates();
       syncDrawer();
     }
