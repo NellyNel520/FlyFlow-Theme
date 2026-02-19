@@ -544,16 +544,15 @@ small {
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
-  background-color: var(--color-background);
-  border-bottom: 1px solid var(--color-border);
+  background-color: transparent;
+  border-bottom: 0;
   transition:
-    background-color var(--transition-base),
     transform var(--transition-base),
     box-shadow var(--transition-base);
 }
 
 .header--scrolled {
-  box-shadow: 0 1px 20px rgba(0, 0, 0, 0.04);
+  box-shadow: none;
 }
 
 .header--hidden {
