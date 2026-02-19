@@ -309,6 +309,7 @@
     grid-auto-columns: calc((100% - (var(--ppc-cards) - 1) * var(--ppc-gap) - var(--ppc-peek)) / var(--ppc-cards));
     gap: var(--ppc-gap);
     padding-right: var(--ppc-peek);
+    align-items: stretch;
   }
 
   .premium-product-carousel--{{ section.id }} .premium-product-carousel__card {
@@ -319,10 +320,14 @@
     border: 1px solid var(--ppc-border);
     background: #ffffff;
     box-shadow: var(--ppc-shadow);
+    box-sizing: border-box;
+    height: 100%;
   }
 
   .premium-product-carousel--{{ section.id }} .premium-product-carousel__card-link {
-    display: block;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
     color: inherit;
   }
 
@@ -344,6 +349,8 @@
     padding: 12px 12px 18px;
     display: grid;
     gap: 6px;
+    align-content: start;
+    min-height: 104px;
     background: transparent;
     transition: background-color var(--transition-fast);
   }
@@ -357,6 +364,10 @@
     letter-spacing: 0.035em;
     text-transform: uppercase;
     color: #0f1116;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .premium-product-carousel--{{ section.id }} .premium-product-carousel__price {
@@ -949,6 +960,15 @@
       aspect-ratio: 4 / 4.9;
       max-height: clamp(220px, 45vw, 380px);
     }
+
+    .premium-product-carousel--{{ section.id }} .premium-product-carousel__card {
+      border-radius: 0 0 10px 10px;
+    }
+
+    .premium-product-carousel--{{ section.id }} .premium-product-carousel__meta {
+      min-height: 98px;
+      padding: 11px 11px 16px;
+    }
   }
 
   @media (max-width: 749px) {
@@ -979,6 +999,16 @@
     .premium-product-carousel--{{ section.id }} .premium-product-carousel__media {
       aspect-ratio: 4 / 5.15;
       max-height: clamp(200px, 72vw, 320px);
+    }
+
+    .premium-product-carousel--{{ section.id }} .premium-product-carousel__card {
+      border-radius: 0 0 9px 9px;
+    }
+
+    .premium-product-carousel--{{ section.id }} .premium-product-carousel__meta {
+      min-height: 90px;
+      padding: 10px 10px 14px;
+      gap: 5px;
     }
 
     .premium-product-carousel__drawer-panel {
