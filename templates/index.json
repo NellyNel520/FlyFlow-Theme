@@ -298,7 +298,6 @@
   },
   "order": [
     "hero",
-    "brand-carousel",
     "premium-product-carousel",
     "editorial-landing",
     "featured-collection",
