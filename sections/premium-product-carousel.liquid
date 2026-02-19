@@ -238,16 +238,19 @@
       <h3 class="premium-product-carousel__drawer-title" id="ppc-drawer-title-{{ section.id }}"></h3>
       <p class="premium-product-carousel__drawer-price" data-ppc-drawer-price></p>
       <p class="premium-product-carousel__drawer-description" data-ppc-drawer-description></p>
-      <div class="premium-product-carousel__drawer-options" data-ppc-drawer-options></div>
-      <div class="premium-product-carousel__drawer-quantity" data-ppc-drawer-quantity>
-        <p class="premium-product-carousel__drawer-option-label">Quantity</p>
-        <div class="premium-product-carousel__drawer-qty-control">
-          <button type="button" class="premium-product-carousel__drawer-qty-btn" data-ppc-qty-dec aria-label="Decrease quantity">-</button>
-          <input class="premium-product-carousel__drawer-qty-input" data-ppc-qty-input type="number" min="1" value="1" inputmode="numeric" aria-label="Quantity">
-          <button type="button" class="premium-product-carousel__drawer-qty-btn" data-ppc-qty-inc aria-label="Increase quantity">+</button>
+      <form class="premium-product-carousel__drawer-form" data-product-form>
+        <input type="hidden" name="id" data-ppc-variant-id value="">
+        <div class="premium-product-carousel__drawer-options" data-ppc-drawer-options></div>
+        <div class="premium-product-carousel__drawer-quantity" data-ppc-drawer-quantity>
+          <p class="premium-product-carousel__drawer-option-label">Quantity</p>
+          <div class="premium-product-carousel__drawer-qty-control">
+            <button type="button" class="premium-product-carousel__drawer-qty-btn" data-ppc-qty-dec aria-label="Decrease quantity">-</button>
+            <input class="premium-product-carousel__drawer-qty-input" data-ppc-qty-input type="number" min="1" value="1" inputmode="numeric" aria-label="Quantity">
+            <button type="button" class="premium-product-carousel__drawer-qty-btn" data-ppc-qty-inc aria-label="Increase quantity">+</button>
+          </div>
         </div>
-      </div>
-      <button class="premium-product-carousel__drawer-submit" type="button" data-ppc-drawer-submit data-add-text="Add to bag">Add to bag</button>
+        <button class="premium-product-carousel__drawer-submit" type="button" data-ppc-drawer-submit data-add-to-cart data-add-text="Add to bag" data-sold-out-text="Sold out">Add to bag</button>
+      </form>
     </div>
   </div>
 </section>
@@ -581,12 +584,14 @@
     padding-top: 4px;
   }
 
-  .premium-product-carousel__drawer-option {
+  .premium-product-carousel__drawer-option,
+  .premium-product-carousel__drawer .variant-selector {
     display: grid;
     gap: 8px;
   }
 
-  .premium-product-carousel__drawer-option-label {
+  .premium-product-carousel__drawer-option-label,
+  .premium-product-carousel__drawer .variant-selector__label {
     margin: 0;
     font-size: 0.68rem;
     letter-spacing: 0.1em;
@@ -597,12 +602,14 @@
     gap: 6px;
   }
 
-  .premium-product-carousel__drawer-option-current {
+  .premium-product-carousel__drawer-option-current,
+  .premium-product-carousel__drawer .variant-selector__selected {
     color: var(--color-text);
     letter-spacing: 0.02em;
   }
 
-  .premium-product-carousel__drawer-option-values {
+  .premium-product-carousel__drawer-option-values,
+  .premium-product-carousel__drawer .variant-selector__options {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -652,6 +659,24 @@
     transform: none !important;
   }
 
+  .premium-product-carousel__drawer .swatch.swatch--active {
+    border-color: #0f1116;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.52), 0 0 0 2px #0f1116;
+    transform: scale(1.04);
+  }
+
+  .premium-product-carousel__drawer .size-btn.size-btn--active {
+    border-color: #101218;
+    background: #101218;
+    color: #ffffff;
+  }
+
+  .premium-product-carousel__drawer .swatch.swatch--sold-out,
+  .premium-product-carousel__drawer .size-btn.size-btn--sold-out {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
   .premium-product-carousel__drawer-swatch:not([disabled]):hover,
   .premium-product-carousel__drawer-size:not([disabled]):hover {
     transform: translateY(-1px);
@@ -669,6 +694,12 @@
 
   .premium-product-carousel__drawer-submit[disabled] {
     opacity: 0.45;
+  }
+
+  .premium-product-carousel__drawer-form {
+    display: grid;
+    gap: 12px;
+    min-height: 0;
   }
 
   .premium-product-carousel__drawer-quantity {
@@ -812,6 +843,12 @@
     .premium-product-carousel--{{ section.id }} .premium-product-carousel__dots {
       bottom: 8px;
     }
+
+    .premium-product-carousel__drawer-submit {
+      position: sticky;
+      bottom: 0;
+      z-index: 3;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -841,6 +878,7 @@
     var drawerTitle = section.querySelector('.premium-product-carousel__drawer-title');
     var drawerPrice = section.querySelector('[data-ppc-drawer-price]');
     var drawerDescription = section.querySelector('[data-ppc-drawer-description]');
+    var drawerVariantInput = section.querySelector('[data-ppc-variant-id]');
     var drawerOptions = section.querySelector('[data-ppc-drawer-options]');
     var drawerSubmit = section.querySelector('[data-ppc-drawer-submit]');
     var drawerMedia = section.querySelector('[data-ppc-drawer-media]');
@@ -1106,29 +1144,6 @@
       }) || null;
     }
 
-    function findVariantForOption(optionIndex, optionValue, requireAvailable, strictMatchOthers) {
-      if (!activeProduct || !Array.isArray(activeProduct.variants)) {
-        return null;
-      }
-
-      return activeProduct.variants.find(function(variant) {
-        if (requireAvailable && !variant.available) {
-          return false;
-        }
-        if (variant.options[optionIndex] !== optionValue) {
-          return false;
-        }
-        if (!strictMatchOthers) {
-          return true;
-        }
-        return variant.options.every(function(value, index) {
-          if (index === optionIndex) return true;
-          var selected = selectedOptions[index];
-          return selected == null || selected === value;
-        });
-      }) || null;
-    }
-
     function isValueAvailable(optionIndex, optionValue) {
       if (!activeProduct || !Array.isArray(activeProduct.variants)) {
         return false;
@@ -1154,7 +1169,7 @@
         if (!Number.isFinite(index)) {
           return;
         }
-        currentLabel.textContent = selectedOptions[index] || '';
+        currentLabel.textContent = selectedOptions[index] || 'Select';
       });
 
       drawerOptions.querySelectorAll('[data-ppc-option-value]').forEach(function(button) {
@@ -1165,6 +1180,10 @@
 
         button.classList.toggle('is-active', isActive);
         button.classList.toggle('is-unavailable', !isAvailable);
+        button.classList.toggle('swatch--active', isActive && button.classList.contains('swatch'));
+        button.classList.toggle('size-btn--active', isActive && button.classList.contains('size-btn'));
+        button.classList.toggle('swatch--sold-out', !isAvailable && button.classList.contains('swatch'));
+        button.classList.toggle('size-btn--sold-out', !isAvailable && button.classList.contains('size-btn'));
         button.disabled = !isAvailable;
         button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
         button.setAttribute('aria-disabled', isAvailable ? 'false' : 'true');
@@ -1180,12 +1199,18 @@
       var nextVariant = findVariantExact();
 
       if (!nextVariant) {
-        var fallbackVariant =
-          findVariantForOption(optionIndex, optionValue, true, true) ||
-          findVariantForOption(optionIndex, optionValue, false, true) ||
-          findVariantForOption(optionIndex, optionValue, true, false) ||
-          findVariantForOption(optionIndex, optionValue, false, false) ||
-          findFirstVariantMatching(selectedOptions, false);
+        activeProduct.options.forEach(function(_, idx) {
+          if (idx === optionIndex) return;
+          var currentValue = selectedOptions[idx];
+          if (currentValue && !isValueAvailable(idx, currentValue)) {
+            selectedOptions[idx] = null;
+          }
+        });
+        nextVariant = findVariantExact();
+      }
+
+      if (!nextVariant) {
+        var fallbackVariant = findFirstVariantMatching(selectedOptions, true) || findFirstVariantMatching(selectedOptions, false);
         if (fallbackVariant) {
           selectedOptions = fallbackVariant.options.slice();
         }
@@ -1201,6 +1226,9 @@
         drawerSubmit.disabled = true;
         drawerSubmit.textContent = 'Unavailable';
         drawerSubmit.removeAttribute('data-variant-id');
+        if (drawerVariantInput) {
+          drawerVariantInput.value = '';
+        }
         return;
       }
 
@@ -1208,6 +1236,9 @@
       drawerSubmit.disabled = !variant.available;
       drawerSubmit.textContent = variant.available ? 'Add to bag' : 'Sold out';
       drawerPrice.textContent = formatMoney(variant.price);
+      if (drawerVariantInput) {
+        drawerVariantInput.value = String(variant.id);
+      }
       syncVariantMedia(variant);
     }
 
@@ -1316,24 +1347,28 @@
 
       productData.options.forEach(function(optionName, index) {
         var wrap = document.createElement('div');
-        wrap.className = 'premium-product-carousel__drawer-option';
+        wrap.className = 'premium-product-carousel__drawer-option variant-selector';
+        wrap.setAttribute('data-option-group', '');
 
         var label = document.createElement('p');
-        label.className = 'premium-product-carousel__drawer-option-label';
+        label.className = 'premium-product-carousel__drawer-option-label variant-selector__label';
         label.innerHTML = optionName + ': <span class="premium-product-carousel__drawer-option-current" data-ppc-option-current-index="' + index + '"></span>';
 
         var valuesWrap = document.createElement('div');
-        valuesWrap.className = 'premium-product-carousel__drawer-option-values';
+        valuesWrap.className = 'premium-product-carousel__drawer-option-values variant-selector__options';
 
         getUniqueValues(index).forEach(function(value) {
           var button = document.createElement('button');
           button.type = 'button';
-          button.className = 'premium-product-carousel__drawer-value ' + (optionIsColor(optionName) ? 'premium-product-carousel__drawer-swatch' : 'premium-product-carousel__drawer-size');
+          var isColor = optionIsColor(optionName);
+          button.className = 'premium-product-carousel__drawer-value ' + (isColor ? 'premium-product-carousel__drawer-swatch swatch' : 'premium-product-carousel__drawer-size size-btn');
           button.dataset.ppcOptionIndex = String(index);
           button.dataset.ppcOptionValue = value;
+          button.dataset.optionValue = value;
+          button.dataset.optionName = optionName;
           button.setAttribute('data-ppc-option-value', '');
 
-          if (optionIsColor(optionName)) {
+          if (isColor) {
             button.setAttribute('data-swatch-name', value);
             button.setAttribute('title', value);
             button.setAttribute('aria-label', value);
@@ -1447,7 +1482,7 @@
 
     if (drawerSubmit) {
       drawerSubmit.addEventListener('click', function() {
-        var variantId = parseInt(drawerSubmit.dataset.variantId || '', 10);
+        var variantId = parseInt((drawerVariantInput && drawerVariantInput.value) || drawerSubmit.dataset.variantId || '', 10);
         if (!variantId) return;
         var qty = drawerQtyInput ? parseInt(drawerQtyInput.value || '1', 10) : 1;
         addItem(variantId, qty, drawerSubmit).then(closeDrawer);
