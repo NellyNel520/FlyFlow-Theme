@@ -240,8 +240,10 @@
       <p class="premium-product-carousel__drawer-kicker">Quick add</p>
       <h3 class="premium-product-carousel__drawer-title" id="ppc-drawer-title-{{ section.id }}"></h3>
       <p class="premium-product-carousel__drawer-price" data-ppc-drawer-price></p>
-      <p class="premium-product-carousel__drawer-description" data-ppc-drawer-description></p>
-      <button class="premium-product-carousel__drawer-description-toggle" type="button" data-ppc-description-toggle hidden>See more</button>
+      <div class="premium-product-carousel__drawer-description-wrap">
+        <p class="premium-product-carousel__drawer-description" data-ppc-drawer-description></p>
+        <button class="premium-product-carousel__drawer-description-toggle" type="button" data-ppc-description-toggle hidden>See more</button>
+      </div>
       <form class="premium-product-carousel__drawer-form" data-product-form>
         <input type="hidden" name="id" data-ppc-variant-id value="">
         <div class="premium-product-carousel__drawer-options" data-ppc-drawer-options></div>
@@ -253,7 +255,10 @@
             <button type="button" class="premium-product-carousel__drawer-qty-btn" data-ppc-qty-inc aria-label="Increase quantity">+</button>
           </div>
         </div>
-        <button class="premium-product-carousel__drawer-submit" type="button" data-ppc-drawer-submit data-add-to-cart data-add-text="Add to bag" data-sold-out-text="Sold out">Add to bag</button>
+        <div class="premium-product-carousel__drawer-actions">
+          <button class="premium-product-carousel__drawer-submit" type="button" data-ppc-drawer-submit data-add-to-cart data-add-text="Add to bag" data-sold-out-text="Sold out">Add to bag</button>
+          <button class="premium-product-carousel__drawer-buy-now" type="button" data-ppc-buy-now>Buy now</button>
+        </div>
       </form>
     </div>
   </div>
@@ -546,7 +551,7 @@
     -webkit-backdrop-filter: blur(16px);
     padding: 10px 10px 12px;
     display: grid;
-    grid-template-rows: minmax(200px, 40%) auto auto auto auto 1fr;
+    grid-template-rows: minmax(200px, 40%) auto auto auto minmax(0, 1fr);
     gap: 6px;
     overflow: hidden;
   }
@@ -606,6 +611,13 @@
     color: var(--color-text-secondary);
   }
 
+  .premium-product-carousel__drawer-description-wrap {
+    display: grid;
+    gap: 4px;
+    align-content: start;
+    min-height: calc(0.82rem * 1.4 * 2 + 4px);
+  }
+
   .premium-product-carousel__drawer-description {
     margin: 0;
     font-size: 0.82rem;
@@ -625,7 +637,7 @@
 
   .premium-product-carousel__drawer-description-toggle {
     width: fit-content;
-    margin: -2px 0 0;
+    margin: 0;
     padding: 0;
     border: 0;
     background: none;
@@ -786,9 +798,33 @@
 
   .premium-product-carousel__drawer-form {
     display: grid;
+    grid-template-rows: auto auto 1fr auto;
     gap: 8px;
     min-height: 0;
-    align-content: start;
+    align-content: stretch;
+  }
+
+  .premium-product-carousel__drawer-actions {
+    margin-top: auto;
+    display: grid;
+    gap: 8px;
+    align-content: end;
+  }
+
+  .premium-product-carousel__drawer-buy-now {
+    min-height: 42px;
+    border: 1px solid rgba(15, 17, 22, 0.2);
+    background: rgba(255, 255, 255, 0.88);
+    color: #121419;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 999px;
+  }
+
+  .premium-product-carousel__drawer-buy-now[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
   }
 
   .premium-product-carousel__drawer-quantity {
@@ -946,7 +982,7 @@
     }
 
     .premium-product-carousel__drawer-panel {
-      grid-template-rows: minmax(180px, 34%) auto auto auto auto 1fr;
+      grid-template-rows: minmax(180px, 34%) auto auto auto minmax(0, 1fr);
       top: 8px;
       height: calc(100% - 16px);
       width: calc(100% - 12px);
@@ -955,10 +991,12 @@
       gap: 6px;
     }
 
-    .premium-product-carousel__drawer-submit {
+    .premium-product-carousel__drawer-actions {
       position: sticky;
       bottom: 0;
       z-index: 3;
+      padding-top: 4px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.92) 20%, rgba(255, 255, 255, 0.92) 100%);
     }
 
     .premium-product-carousel__drawer-close {
@@ -1000,6 +1038,7 @@
     var drawerVariantInput = section.querySelector('[data-ppc-variant-id]');
     var drawerOptions = section.querySelector('[data-ppc-drawer-options]');
     var drawerSubmit = section.querySelector('[data-ppc-drawer-submit]');
+    var drawerBuyNow = section.querySelector('[data-ppc-buy-now]');
     var drawerMedia = section.querySelector('[data-ppc-drawer-media]');
     var drawerImage = section.querySelector('[data-ppc-drawer-image]');
     var drawerThumbs = section.querySelector('[data-ppc-drawer-thumbs]');
@@ -1320,6 +1359,10 @@
         drawerSubmit.disabled = true;
         drawerSubmit.textContent = 'Unavailable';
         drawerSubmit.removeAttribute('data-variant-id');
+        if (drawerBuyNow) {
+          drawerBuyNow.disabled = true;
+          drawerBuyNow.removeAttribute('data-variant-id');
+        }
         if (drawerVariantInput) {
           drawerVariantInput.value = '';
         }
@@ -1329,6 +1372,10 @@
       drawerSubmit.dataset.variantId = String(variant.id);
       drawerSubmit.disabled = !variant.available;
       drawerSubmit.textContent = variant.available ? 'Add to bag' : 'Sold out';
+      if (drawerBuyNow) {
+        drawerBuyNow.dataset.variantId = String(variant.id);
+        drawerBuyNow.disabled = !variant.available;
+      }
       drawerPrice.textContent = formatMoney(variant.price);
       if (drawerVariantInput) {
         drawerVariantInput.value = String(variant.id);
@@ -1599,6 +1646,16 @@
         if (!variantId) return;
         var qty = drawerQtyInput ? parseInt(drawerQtyInput.value || '1', 10) : 1;
         addItem(variantId, qty, drawerSubmit).then(closeDrawer);
+      });
+    }
+
+    if (drawerBuyNow) {
+      drawerBuyNow.addEventListener('click', function() {
+        var variantId = parseInt((drawerVariantInput && drawerVariantInput.value) || drawerBuyNow.dataset.variantId || '', 10);
+        if (!variantId) return;
+        var qty = drawerQtyInput ? parseInt(drawerQtyInput.value || '1', 10) : 1;
+        var safeQty = Math.max(1, Math.min(99, qty || 1));
+        window.location.href = '/cart/' + encodeURIComponent(String(variantId)) + ':' + safeQty + '?checkout';
       });
     }
 
