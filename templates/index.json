@@ -73,7 +73,7 @@
         "cards_per_view_mobile": 1,
         "slide_step": 1,
         "show_price": true,
-        "container_width": "contained",
+        "container_width": "full",
         "peek_next": true,
         "loop": false
       },

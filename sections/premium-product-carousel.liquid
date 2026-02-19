@@ -215,11 +215,13 @@
 
   .premium-product-carousel--{{ section.id }} .premium-product-carousel__container {
     position: relative;
+    width: 100%;
   }
 
   .premium-product-carousel--{{ section.id }} .premium-product-carousel__rail-shell {
     position: relative;
-    padding-inline: clamp(28px, 4vw, 52px);
+    width: 100%;
+    padding-inline: clamp(24px, 3.5vw, 48px);
   }
 
   .premium-product-carousel--{{ section.id }} .premium-product-carousel__viewport {
@@ -346,6 +348,8 @@
     align-items: center;
     justify-content: center;
     transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast);
+    opacity: 0;
+    pointer-events: none;
   }
 
   .premium-product-carousel--{{ section.id }} .premium-product-carousel__nav svg {
@@ -364,6 +368,12 @@
   .premium-product-carousel--{{ section.id }} .premium-product-carousel__nav:hover {
     transform: translateY(-50%) translateY(-1px);
     background: rgba(20, 22, 28, 0.56);
+  }
+
+  .premium-product-carousel--{{ section.id }} .premium-product-carousel__rail-shell:hover .premium-product-carousel__nav,
+  .premium-product-carousel--{{ section.id }} .premium-product-carousel__rail-shell:focus-within .premium-product-carousel__nav {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .premium-product-carousel--{{ section.id }} .premium-product-carousel__nav[disabled] {
@@ -499,7 +509,7 @@
     }
 
     .premium-product-carousel--{{ section.id }} .premium-product-carousel__rail-shell {
-      padding-inline: 20px;
+      padding-inline: 14px;
     }
   }
 
