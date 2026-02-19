@@ -1198,6 +1198,31 @@
 
     function setOption(optionIndex, optionValue) {
       selectedOptions[optionIndex] = optionValue;
+
+      var matchingAvailableVariant = activeProduct.variants.find(function(variant) {
+        if (!variant.available) {
+          return false;
+        }
+        return variant.options.every(function(value, index) {
+          var selected = selectedOptions[index];
+          return selected == null || selected === value;
+        });
+      }) || null;
+
+      if (matchingAvailableVariant) {
+        if (selectedOptions.some(function(value) { return value == null || value === ''; })) {
+          selectedOptions = matchingAvailableVariant.options.slice();
+        }
+      } else {
+        var optionAvailableVariant = activeProduct.variants.find(function(variant) {
+          return variant.available && variant.options[optionIndex] === optionValue;
+        }) || null;
+
+        if (optionAvailableVariant) {
+          selectedOptions = optionAvailableVariant.options.slice();
+        }
+      }
+
       updateOptionStates();
       syncDrawer();
     }
