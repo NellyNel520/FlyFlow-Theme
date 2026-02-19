@@ -1,68 +1,29 @@
 {
   "sections": {
     "hero": {
-      "type": "hero-droproom",
-      "blocks": {
-        "rail-item-1": {
-          "type": "rail_item",
-          "settings": {}
-        },
-        "rail-item-2": {
-          "type": "rail_item",
-          "settings": {}
-        },
-        "rail-item-3": {
-          "type": "rail_item",
-          "settings": {}
-        },
-        "rail-item-4": {
-          "type": "rail_item",
-          "settings": {}
-        },
-        "rail-item-5": {
-          "type": "rail_item",
-          "settings": {}
-        },
-        "rail-item-6": {
-          "type": "rail_item",
-          "settings": {}
-        }
-      },
-      "block_order": [
-        "rail-item-1",
-        "rail-item-2",
-        "rail-item-3",
-        "rail-item-4",
-        "rail-item-5",
-        "rail-item-6"
-      ],
+      "type": "hero-banner",
       "settings": {
         "media_type": "image",
-        "heading": "FlyFlow Droproom",
-        "subheading": "Precision streetwear engineered for movement.",
-        "primary_cta_label": "Shop Drop",
+        "hero_height": "large",
+        "overlay_opacity": 30,
+        "overlay_gradient": "left",
+        "content_alignment_vertical": "center",
+        "content_max_width": 600,
+        "eyebrow": "FlyFlow Droproom",
+        "heading": "Built For Streets, Cut For Impact",
+        "subheading": "Limited chapter drops designed for elevated daily rotation.",
+        "primary_cta_label": "Shop New Arrivals",
         "primary_cta_link": "/collections/new-arrivals",
         "secondary_cta_label": "Explore Collection",
         "secondary_cta_link": "/collections/all",
         "show_drop_label": true,
         "drop_label_text": "DROP 01",
-        "show_drop_meta_chips": true,
-        "drop_chip_1": "Nocturne Capsule",
-        "drop_chip_2": "Limited 240",
-        "drop_chip_3": "Ships in 48h",
-        "rail_title": "Gallery Rail",
-        "rail_source": "products",
-        "rail_item_limit": 8,
-        "show_controls": true,
-        "progress_style": "bar",
-        "peek_next": true,
-        "enable_quick_add": false,
+        "show_hairline_divider": true,
         "section_density": "standard",
-        "container_width": "contained",
+        "container_width": "full",
         "show_divider_top": false,
         "enable_reveal": true,
-        "show_hairline_divider": true,
-        "mobile_sticky_cta": false
+        "section_spacing": "standard"
       }
     },
     "editorial-landing": {
@@ -179,11 +140,17 @@
       },
       "block_order": ["slide-1", "slide-2", "slide-3", "slide-4", "slide-5", "slide-6", "slide-7", "slide-8", "slide-9"],
       "settings": {
-        "autoplay": true,
-        "autoplay_speed": 5,
-        "background_color": "#ffffff",
-        "padding_top": 56,
-        "padding_bottom": 56
+        "heading": "Gallery Rail",
+        "rail_source": "products",
+        "rail_item_limit": 8,
+        "show_controls": true,
+        "show_progress": "bar",
+        "peek_next": true,
+        "enable_quick_add": false,
+        "section_density": "compact",
+        "container_width": "contained",
+        "show_divider_top": false,
+        "enable_reveal": true
       }
     },
     "collection-list": {

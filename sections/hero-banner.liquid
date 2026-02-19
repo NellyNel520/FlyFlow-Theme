@@ -1,178 +1,309 @@
-{% assign media_mode = section.settings.media_mode %}
-{% assign has_carousel = false %}
-{% if media_mode == 'carousel' and section.blocks.size > 0 %}
-  {% assign has_carousel = true %}
-{% endif %}
-{% assign has_video = false %}
-{% if media_mode == 'video' and section.settings.video != blank %}
-  {% assign has_video = true %}
-{% endif %}
-{% assign enable_parallax = section.settings.enable_parallax %}
+{% comment %}
+  FlyFlow Theme - Hero Banner
+  Purpose: Full-bleed hero media with left-aligned overlay content.
+  Last modified: 2026-02-19
+{% endcomment %}
+
+{% liquid
+  assign overlay_alpha = section.settings.overlay_opacity | divided_by: 100.0
+%}
 
 <section
-  class="hero-banner hero-banner--{{ section.id }} section chapter-section chapter-section--spacing-{{ section.settings.section_density | default: section.settings.section_spacing | default: 'standard' }} chapter-section--container-{{ section.settings.container_width | default: 'full' }}{% if section.settings.show_divider_top %} chapter-section--divider-top{% endif %}{% if section.settings.enable_reveal %} chapter-section--reveal{% endif %}"
+  class="hero-banner hero-banner--{{ section.id }} chapter-section chapter-section--spacing-{{ section.settings.section_density | default: section.settings.section_spacing | default: 'standard' }} chapter-section--container-{{ section.settings.container_width | default: 'full' }}{% if section.settings.show_divider_top %} chapter-section--divider-top{% endif %}{% if section.settings.enable_reveal %} chapter-section--reveal{% endif %}"
   data-section-id="{{ section.id }}"
   data-enable-reveal="{{ section.settings.enable_reveal }}"
-  style="padding:0"
 >
-  <div class="hero-banner__inner" style="min-height: {{ section.settings.height }}vh;">
-    <div class="hero-banner__media-stack{% if enable_parallax %} hero-banner__media-stack--parallax{% endif %}" {% if enable_parallax %}data-hero-parallax{% endif %}>
-      {% if has_carousel %}
-        <div
-          class="hero-banner__carousel"
-          data-hero-carousel
-          data-carousel-autoplay="{{ section.settings.carousel_autoplay }}"
-          data-carousel-interval="{{ section.settings.carousel_interval | times: 1000 }}"
-        >
-          {% for block in section.blocks %}
-            <div class="hero-banner__slide{% if forloop.first %} is-active{% endif %}" data-hero-slide {{ block.shopify_attributes }}>
-              <div
-                class="hero-banner__media hero-banner__media--image{% if enable_parallax %} hero-banner__parallax-target{% endif %}"
-                {% if enable_parallax %}data-hero-parallax-target{% endif %}
-                {% if block.settings.image %}
-                  style="background-image: url('{{ block.settings.image | image_url: width: 2400 }}'); background-position: {{ block.settings.image_position }};"
-                {% else %}
-                  style="background: linear-gradient(145deg, #1a1a1a, #0f0f0f);"
-                {% endif %}
-              ></div>
-            </div>
-          {% endfor %}
-          <button class="hero-banner__carousel-btn hero-banner__carousel-btn--prev" type="button" data-hero-carousel-prev aria-label="Previous slide">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-            </svg>
-          </button>
-          <button class="hero-banner__carousel-btn hero-banner__carousel-btn--next" type="button" data-hero-carousel-next aria-label="Next slide">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-            </svg>
-          </button>
-          <div class="hero-banner__dots">
-            {% for block in section.blocks %}
-              <button
-                class="hero-banner__dot{% if forloop.first %} is-active{% endif %}"
-                type="button"
-                data-hero-carousel-dot="{{ forloop.index0 }}"
-                aria-label="Go to slide {{ forloop.index }}"
-              ></button>
-            {% endfor %}
-          </div>
-        </div>
-      {% elsif has_video %}
-        <div class="hero-banner__media hero-banner__media--video{% if enable_parallax %} hero-banner__parallax-target{% endif %}" {% if enable_parallax %}data-hero-parallax-target{% endif %}>
+  <div class="hero-banner__frame hero-banner__frame--{{ section.settings.hero_height }} hero-banner__v-{{ section.settings.content_alignment_vertical }}">
+    <div class="hero-banner__media" aria-hidden="true">
+      {% if section.settings.media_type == 'video' and section.settings.video != blank %}
+        {{
+          section.settings.video
+          | video_tag: autoplay: true, loop: true, muted: true, controls: false, image_size: '2400x'
+        }}
+      {% elsif section.settings.image != blank %}
+        {{
+          section.settings.image
+          | image_url: width: 2400
+          | image_tag:
+            class: 'hero-banner__image hero-banner__image--desktop',
+            loading: 'eager',
+            widths: '900,1200,1600,2000,2400',
+            sizes: '100vw',
+            alt: section.settings.heading
+        }}
+        {% if section.settings.mobile_image != blank %}
           {{
-            section.settings.video
-            | video_tag: autoplay: true, loop: true, muted: true, controls: false, image_size: '2400x'
+            section.settings.mobile_image
+            | image_url: width: 1400
+            | image_tag:
+              class: 'hero-banner__image hero-banner__image--mobile',
+              loading: 'lazy',
+              widths: '420,640,900,1200,1400',
+              sizes: '100vw',
+              alt: section.settings.heading
           }}
-        </div>
+        {% endif %}
       {% else %}
-        <div
-          class="hero-banner__media hero-banner__media--image{% if enable_parallax %} hero-banner__parallax-target{% endif %}"
-          {% if enable_parallax %}data-hero-parallax-target{% endif %}
-          {% if section.settings.image %}
-            style="background-image: url('{{ section.settings.image | image_url: width: 2400 }}'); background-position: {{ section.settings.image_position }};"
-          {% else %}
-            style="background: linear-gradient(145deg, #1a1a1a, #0f0f0f);"
-          {% endif %}
-        ></div>
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'hero-banner__image hero-banner__placeholder' }}
       {% endif %}
     </div>
 
-    <div
-      class="hero-banner__overlay"
-      style="background: linear-gradient(to bottom, rgba(0,0,0,{{ section.settings.overlay_opacity | divided_by: 100.0 | times: 0.6 }}), rgba(0,0,0,{{ section.settings.overlay_opacity | divided_by: 100.0 }}));"
-    ></div>
+    {% if section.settings.overlay_gradient != 'none' and section.settings.overlay_opacity > 0 %}
+      <div class="hero-banner__overlay hero-banner__overlay--{{ section.settings.overlay_gradient }}" style="--hero-overlay-alpha: {{ overlay_alpha }}"></div>
+    {% endif %}
 
-    <div class="hero-banner__content">
-      {% if section.settings.overline != blank %}
-        <p class="hero-banner__overline">{{ section.settings.overline }}</p>
-      {% endif %}
+    {% if section.settings.show_drop_label and section.settings.drop_label_text != blank %}
+      <span class="hero-banner__drop-label">{{ section.settings.drop_label_text }}</span>
+    {% endif %}
 
-      {% if section.settings.heading != blank %}
-        <h1 class="hero-banner__heading">{{ section.settings.heading }}</h1>
-      {% endif %}
+    <div class="container hero-banner__content-wrap">
+      <div class="hero-banner__content" style="--hero-content-max: {{ section.settings.content_max_width }}px;" data-hero-reveal>
+        {% if section.settings.eyebrow != blank %}
+          <p class="hero-banner__eyebrow">{{ section.settings.eyebrow }}</p>
+        {% endif %}
 
-      {% if section.settings.subheading != blank %}
-        <p class="hero-banner__subheading">{{ section.settings.subheading }}</p>
-      {% endif %}
+        {% if section.settings.heading != blank %}
+          <h1 class="hero-banner__heading">{{ section.settings.heading }}</h1>
+        {% endif %}
 
-      {% if section.settings.button_text != blank %}
-        <a href="{{ section.settings.button_link }}" class="btn btn--ghost btn--lg">
-          {{ section.settings.button_text }}
-        </a>
-      {% endif %}
+        {% if section.settings.subheading != blank %}
+          <p class="hero-banner__subheading">{{ section.settings.subheading }}</p>
+        {% endif %}
+
+        <div class="hero-banner__actions">
+          {% if section.settings.primary_cta_label != blank and section.settings.primary_cta_link != blank %}
+            <a href="{{ section.settings.primary_cta_link }}" class="btn btn--primary">{{ section.settings.primary_cta_label }}</a>
+          {% endif %}
+          {% if section.settings.secondary_cta_label != blank and section.settings.secondary_cta_link != blank %}
+            <a href="{{ section.settings.secondary_cta_link }}" class="btn btn--ghost">{{ section.settings.secondary_cta_label }}</a>
+          {% endif %}
+        </div>
+      </div>
     </div>
   </div>
+
+  {% if section.settings.show_hairline_divider %}
+    <div class="hero-banner__hairline" aria-hidden="true"></div>
+  {% endif %}
 </section>
 
 <style>
-  .hero-banner--{{ section.id }} .hero-banner__inner {
+  .hero-banner--{{ section.id }} .hero-banner__frame {
     position: relative;
     overflow: hidden;
+    isolation: isolate;
+    min-height: 72vh;
   }
 
-  .hero-banner--{{ section.id }} .hero-banner__inner::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(circle at 82% 18%, rgba(200, 169, 126, 0.28), transparent 36%),
-      radial-gradient(circle at 12% 78%, rgba(255, 255, 255, 0.09), transparent 28%);
-    pointer-events: none;
-    z-index: 1;
+  .hero-banner--{{ section.id }} .hero-banner__frame--small {
+    min-height: 62vh;
   }
 
+  .hero-banner--{{ section.id }} .hero-banner__frame--medium {
+    min-height: 72vh;
+  }
+
+  .hero-banner--{{ section.id }} .hero-banner__frame--large {
+    min-height: 84vh;
+  }
+
+  .hero-banner--{{ section.id }} .hero-banner__media,
   .hero-banner--{{ section.id }} .hero-banner__overlay {
     position: absolute;
     inset: 0;
+  }
+
+  .hero-banner--{{ section.id }} .hero-banner__media {
+    z-index: -2;
+  }
+
+  .hero-banner--{{ section.id }} .hero-banner__media video,
+  .hero-banner--{{ section.id }} .hero-banner__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-banner--{{ section.id }} .hero-banner__image--mobile {
+    display: none;
+  }
+
+  .hero-banner--{{ section.id }} .hero-banner__overlay {
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .hero-banner--{{ section.id }} .hero-banner__overlay--bottom {
+    background: linear-gradient(180deg, rgba(10, 10, 12, 0) 10%, rgba(10, 10, 12, var(--hero-overlay-alpha)) 100%);
+  }
+
+  .hero-banner--{{ section.id }} .hero-banner__overlay--left {
+    background: linear-gradient(90deg, rgba(10, 10, 12, var(--hero-overlay-alpha)) 0%, rgba(10, 10, 12, 0.08) 58%, rgba(10, 10, 12, 0) 100%);
+  }
+
+  .hero-banner--{{ section.id }} .hero-banner__drop-label {
+    position: absolute;
+    left: var(--space-lg);
+    top: var(--space-lg);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(4px);
+    color: #ffffff;
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .hero-banner--{{ section.id }} .hero-banner__content-wrap {
+    position: relative;
     z-index: 1;
+    height: 100%;
+    min-height: inherit;
+    display: grid;
+    justify-items: start;
+    padding-block: clamp(24px, 5vh, 54px);
+  }
+
+  .hero-banner--{{ section.id }} .hero-banner__v-center .hero-banner__content-wrap {
+    align-items: center;
+  }
+
+  .hero-banner--{{ section.id }} .hero-banner__v-top .hero-banner__content-wrap {
+    align-items: start;
   }
 
   .hero-banner--{{ section.id }} .hero-banner__content {
-    position: relative;
-    z-index: 2;
-    max-width: 42rem;
-    margin: clamp(3rem, 8vh, 6rem) auto;
-    padding: clamp(1.25rem, 2.8vw, 2.5rem);
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    background: linear-gradient(145deg, rgba(16, 16, 16, 0.46), rgba(16, 16, 16, 0.2));
-    backdrop-filter: blur(3px);
+    max-width: min(var(--hero-content-max), 94vw);
+    color: #ffffff;
+    text-align: left;
   }
 
-  .hero-banner--{{ section.id }} .hero-banner__overline {
-    animation: hero-rise-{{ section.id }} 460ms ease both;
+  .hero-banner--{{ section.id }} .hero-banner__eyebrow {
+    margin: 0 0 8px;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.86;
   }
 
   .hero-banner--{{ section.id }} .hero-banner__heading {
-    animation: hero-rise-{{ section.id }} 560ms ease 90ms both;
+    margin: 0;
+    font-size: clamp(2rem, 4.2vw, 4.2rem);
+    line-height: 1.03;
+    text-wrap: balance;
   }
 
   .hero-banner--{{ section.id }} .hero-banner__subheading {
-    animation: hero-rise-{{ section.id }} 620ms ease 150ms both;
+    margin: 10px 0 0;
+    font-size: clamp(0.95rem, 1.25vw, 1.08rem);
+    line-height: 1.45;
+    max-width: 58ch;
+    text-wrap: pretty;
+    opacity: 0.95;
   }
 
-  .hero-banner--{{ section.id }} .hero-banner__content .btn {
-    animation: hero-rise-{{ section.id }} 680ms ease 220ms both;
+  .hero-banner--{{ section.id }} .hero-banner__actions {
+    margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
   }
 
-  @keyframes hero-rise-{{ section.id }} {
-    from {
-      opacity: 0;
-      transform: translateY(14px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .hero-banner--{{ section.id }} .hero-banner__hairline {
+    height: 1px;
+    background: rgba(0, 0, 0, 0.12);
+  }
+
+  .hero-banner--{{ section.id }} [data-hero-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hero-banner--{{ section.id }}.is-pending-reveal [data-hero-reveal] {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  .hero-banner--{{ section.id }}.is-revealed [data-hero-reveal] {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity var(--transition-base), transform var(--transition-base);
   }
 
   @media (max-width: 767px) {
-    .hero-banner--{{ section.id }} .hero-banner__content {
-      margin: clamp(2rem, 7vh, 4rem) var(--space-md);
-      max-width: none;
+    .hero-banner--{{ section.id }} .hero-banner__frame--small {
+      min-height: 54vh;
+    }
+
+    .hero-banner--{{ section.id }} .hero-banner__frame--medium {
+      min-height: 62vh;
+    }
+
+    .hero-banner--{{ section.id }} .hero-banner__frame--large {
+      min-height: 72vh;
+    }
+
+    .hero-banner--{{ section.id }} .hero-banner__image--desktop {
+      display: none;
+    }
+
+    .hero-banner--{{ section.id }} .hero-banner__image--mobile {
+      display: block;
+    }
+
+    .hero-banner--{{ section.id }} .hero-banner__drop-label {
+      left: var(--space-md);
+      top: var(--space-md);
+    }
+
+    .hero-banner--{{ section.id }} .hero-banner__content-wrap {
+      padding-inline: var(--space-md);
+    }
+
+    .hero-banner--{{ section.id }} .hero-banner__actions .btn {
+      min-height: 42px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-banner--{{ section.id }} [data-hero-reveal] {
+      transition: none !important;
+      transform: none !important;
+      opacity: 1 !important;
     }
   }
 </style>
+
+<script>
+  (function() {
+    var section = document.querySelector('.hero-banner--{{ section.id }}');
+    if (!section) return;
+
+    if (section.dataset.enableReveal !== 'true' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    section.classList.add('is-pending-reveal');
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          section.classList.add('is-revealed');
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.22 });
+
+    observer.observe(section);
+  })();
+</script>
 
 {% schema %}
 {
@@ -180,108 +311,138 @@
   "settings": [
     {
       "type": "select",
-      "id": "media_mode",
-      "label": "Hero media mode",
+      "id": "media_type",
+      "label": "Media type",
+      "default": "image",
       "options": [
-        { "value": "image", "label": "Single image" },
-        { "value": "video", "label": "Background video" },
-        { "value": "carousel", "label": "Image carousel" }
-      ],
-      "default": "image"
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" }
+      ]
     },
     {
       "type": "image_picker",
       "id": "image",
-      "label": "Background image",
-      "info": "Recommended: 1920x1080px or larger. High-fashion editorial imagery works best."
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile image"
     },
     {
       "type": "video",
       "id": "video",
-      "label": "Background video",
-      "info": "Used when Hero media mode is set to Background video."
+      "label": "Video"
     },
     {
       "type": "select",
-      "id": "image_position",
-      "label": "Image focal point",
+      "id": "hero_height",
+      "label": "Hero height",
+      "default": "medium",
       "options": [
-        { "value": "center top", "label": "Top" },
-        { "value": "center center", "label": "Center" },
-        { "value": "center bottom", "label": "Bottom" }
-      ],
-      "default": "center center"
-    },
-    {
-      "type": "range",
-      "id": "height",
-      "label": "Banner height",
-      "min": 50,
-      "max": 100,
-      "step": 5,
-      "default": 90,
-      "unit": "vh"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_parallax",
-      "label": "Enable subtle parallax motion",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "carousel_autoplay",
-      "label": "Autoplay carousel",
-      "default": true
-    },
-    {
-      "type": "range",
-      "id": "carousel_interval",
-      "label": "Carousel speed",
-      "min": 3,
-      "max": 8,
-      "step": 1,
-      "default": 5,
-      "unit": "s"
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ]
     },
     {
       "type": "range",
       "id": "overlay_opacity",
-      "label": "Overlay intensity",
+      "label": "Overlay opacity",
       "min": 0,
-      "max": 80,
+      "max": 60,
       "step": 5,
-      "default": 35,
+      "default": 30,
       "unit": "%"
     },
     {
+      "type": "select",
+      "id": "overlay_gradient",
+      "label": "Overlay gradient",
+      "default": "left",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "bottom", "label": "Bottom" },
+        { "value": "left", "label": "Left" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "content_alignment_vertical",
+      "label": "Content vertical alignment",
+      "default": "center",
+      "options": [
+        { "value": "center", "label": "Center" },
+        { "value": "top", "label": "Top" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 480,
+      "max": 720,
+      "step": 20,
+      "default": 600,
+      "unit": "px"
+    },
+    {
       "type": "text",
-      "id": "overline",
-      "label": "Overline text",
-      "default": "New Collection"
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "FlyFlow Droproom"
     },
     {
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Elevate Your Style"
+      "default": "Built For Streets, Cut For Impact"
     },
     {
       "type": "textarea",
       "id": "subheading",
       "label": "Subheading",
-      "default": "Discover curated fashion, designer footwear, and statement accessories crafted for those who move with intention."
+      "default": "Limited chapter drops designed for elevated daily rotation."
     },
     {
       "type": "text",
-      "id": "button_text",
-      "label": "Button text",
-      "default": "Explore the Collection"
+      "id": "primary_cta_label",
+      "label": "Primary CTA label",
+      "default": "Shop Drop"
     },
     {
       "type": "url",
-      "id": "button_link",
-      "label": "Button link"
+      "id": "primary_cta_link",
+      "label": "Primary CTA link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_cta_label",
+      "label": "Secondary CTA label",
+      "default": "Explore Collection"
+    },
+    {
+      "type": "url",
+      "id": "secondary_cta_link",
+      "label": "Secondary CTA link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_drop_label",
+      "label": "Show drop label",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "drop_label_text",
+      "label": "Drop label text",
+      "default": "DROP 01"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hairline_divider",
+      "label": "Show hairline divider",
+      "default": true
     },
     {
       "type": "select",
@@ -325,41 +486,12 @@
       "type": "checkbox",
       "id": "enable_reveal",
       "label": "Enable reveal",
-      "default": false
+      "default": true
     }
   ],
-  "blocks": [
-    {
-      "type": "slide",
-      "name": "Carousel slide",
-      "settings": [
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Slide image"
-        },
-        {
-          "type": "select",
-          "id": "image_position",
-          "label": "Slide focal point",
-          "options": [
-            { "value": "center top", "label": "Top" },
-            { "value": "center center", "label": "Center" },
-            { "value": "center bottom", "label": "Bottom" }
-          ],
-          "default": "center center"
-        }
-      ]
-    }
-  ],
-  "max_blocks": 6,
   "presets": [
     {
-      "name": "Hero Banner",
-      "blocks": [
-        { "type": "slide" },
-        { "type": "slide" }
-      ]
+      "name": "Hero Banner"
     }
   ]
 }
