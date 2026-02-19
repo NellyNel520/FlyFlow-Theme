@@ -153,6 +153,24 @@
         "enable_reveal": true
       }
     },
+    "premium-product-carousel": {
+      "type": "premium-product-carousel",
+      "settings": {
+        "source_mode": "collection",
+        "collection": "best-sellers",
+        "item_limit": 8,
+        "cards_per_view_desktop": 3,
+        "cards_per_view_tablet": 2,
+        "cards_per_view_mobile": 1,
+        "slide_step": 1,
+        "show_price": true,
+        "container_width": "contained",
+        "peek_next": true,
+        "loop": false
+      },
+      "blocks": {},
+      "block_order": []
+    },
     "collection-list": {
       "type": "collection-list",
       "settings": {
@@ -281,6 +299,7 @@
   "order": [
     "hero",
     "brand-carousel",
+    "premium-product-carousel",
     "editorial-landing",
     "featured-collection",
     "instagram-feed",
