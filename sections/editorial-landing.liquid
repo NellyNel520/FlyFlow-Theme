@@ -1,7 +1,7 @@
 {% comment %}
-  FlyFlow Theme - Editorial Asymmetric Feature Grid
-  Purpose: Conversion-focused editorial hero with asymmetric feature tiles.
-  Last modified: 2026-02-19
+  FlyFlow Theme - Editorial Landing Section
+  Purpose: Story-first editorial section with headline, body, CTA, and supporting value points.
+  Last modified: 2026-02-18
 {% endcomment %}
 
 <section
@@ -10,323 +10,112 @@
   data-enable-reveal="{{ section.settings.enable_reveal }}"
 >
   <div class="container">
-    <div class="editorial-landing__grid">
-      <article class="editorial-landing__hero editorial-landing__hero--{{ section.settings.overlay_position }}">
-        <div class="editorial-landing__hero-media" aria-hidden="true">
-          {% if section.settings.media_type == 'video' and section.settings.video != blank %}
-            {{ section.settings.video | video_tag: autoplay: true, muted: true, loop: true, controls: false, image_size: '1800x' }}
-          {% else %}
-            {% if section.settings.mobile_image != blank %}
-              {{ section.settings.mobile_image | image_url: width: 1200 | image_tag: class: 'editorial-landing__hero-image editorial-landing__hero-image--mobile', loading: 'lazy', widths: '420,640,900,1200', sizes: '(max-width: 767px) 100vw, 0px', alt: section.settings.heading }}
-            {% endif %}
-            {% if section.settings.image != blank %}
-              {{ section.settings.image | image_url: width: 1800 | image_tag: class: 'editorial-landing__hero-image editorial-landing__hero-image--desktop', loading: 'lazy', widths: '720,960,1280,1600,1800', sizes: '(min-width: 990px) 58vw, 100vw', alt: section.settings.heading }}
-            {% endif %}
-          {% endif %}
-        </div>
+    <div class="editorial-landing__panel">
+      <div class="editorial-landing__content">
+        {% if section.settings.overline != blank %}
+          <p class="overline" style="margin-bottom:var(--space-md)">{{ section.settings.overline }}</p>
+        {% endif %}
 
-        <div class="editorial-landing__hero-overlay"></div>
+        {% if section.settings.heading != blank %}
+          <h2 class="editorial-landing__heading">{{ section.settings.heading }}</h2>
+        {% endif %}
 
-        <div class="editorial-landing__hero-content">
-          {% if section.settings.overline != blank %}
-            <p class="editorial-landing__overline">{{ section.settings.overline }}</p>
-          {% endif %}
-
-          {% if section.settings.heading != blank %}
-            <h2 class="editorial-landing__heading">{{ section.settings.heading }}</h2>
-          {% endif %}
-
-          {% if section.settings.subheading != blank %}
-            <p class="editorial-landing__subheading">{{ section.settings.subheading }}</p>
-          {% endif %}
-
-          <div class="editorial-landing__actions">
-            {% if section.settings.primary_button_text != blank and section.settings.primary_button_link != blank %}
-              <a href="{{ section.settings.primary_button_link }}" class="btn btn--primary">{{ section.settings.primary_button_text }}</a>
-            {% endif %}
-            {% if section.settings.secondary_button_text != blank and section.settings.secondary_button_link != blank %}
-              <a href="{{ section.settings.secondary_button_link }}" class="btn btn--ghost">{{ section.settings.secondary_button_text }}</a>
-            {% endif %}
+        {% if section.settings.text != blank %}
+          <div class="editorial-landing__text text-secondary">
+            {{ section.settings.text }}
           </div>
+        {% endif %}
 
-          {% if section.settings.show_product_highlight and section.settings.highlight_product != blank %}
-            {% assign highlight_product = section.settings.highlight_product %}
-            <a class="editorial-landing__highlight" href="{{ highlight_product.url }}" aria-label="View featured product {{ highlight_product.title }}">
-              <div class="editorial-landing__highlight-media">
-                {% if highlight_product.featured_image %}
-                  {{ highlight_product.featured_image | image_url: width: 320 | image_tag: class: 'editorial-landing__highlight-image', loading: 'lazy', widths: '160,240,320', sizes: '80px', alt: highlight_product.title }}
-                {% endif %}
-              </div>
-              <div class="editorial-landing__highlight-meta">
-                <p class="editorial-landing__highlight-label">Product Highlight</p>
-                <p class="editorial-landing__highlight-title">{{ highlight_product.title }}</p>
-                <p class="editorial-landing__highlight-price">{{ highlight_product.price | money }}</p>
-              </div>
+        <div class="editorial-landing__actions">
+          {% if section.settings.primary_button_text != blank %}
+            <a href="{{ section.settings.primary_button_link }}" class="btn btn--primary">
+              {{ section.settings.primary_button_text }}
+            </a>
+          {% endif %}
+          {% if section.settings.secondary_button_text != blank %}
+            <a href="{{ section.settings.secondary_button_link }}" class="btn btn--secondary">
+              {{ section.settings.secondary_button_text }}
             </a>
           {% endif %}
         </div>
-      </article>
+      </div>
 
-      <div class="editorial-landing__tiles">
+      <div class="editorial-landing__features">
         {% for block in section.blocks %}
-          <article class="editorial-landing__tile" {{ block.shopify_attributes }}>
-            {% if block.settings.image != blank %}
-              <div class="editorial-landing__tile-media">
-                {{ block.settings.image | image_url: width: 960 | image_tag: class: 'editorial-landing__tile-image', loading: 'lazy', widths: '280,420,640,960', sizes: '(min-width: 990px) 20vw, 100vw', alt: block.settings.title }}
-              </div>
+          <article class="editorial-landing__feature" {{ block.shopify_attributes }}>
+            <h3 class="editorial-landing__feature-title">{{ block.settings.title }}</h3>
+            {% if block.settings.text != blank %}
+              <p class="editorial-landing__feature-text">{{ block.settings.text }}</p>
             {% endif %}
-            <div class="editorial-landing__tile-content">
-              {% if block.settings.title != blank %}
-                <h3 class="editorial-landing__tile-title">{{ block.settings.title }}</h3>
-              {% endif %}
-              {% if block.settings.text != blank %}
-                <p class="editorial-landing__tile-text">{{ block.settings.text }}</p>
-              {% endif %}
-              {% if block.settings.link_label != blank and block.settings.link != blank %}
-                <a href="{{ block.settings.link }}" class="editorial-landing__tile-link">{{ block.settings.link_label }}</a>
-              {% endif %}
-            </div>
           </article>
         {% endfor %}
       </div>
     </div>
-
-    {% if section.settings.show_hairline_divider %}
-      <div class="editorial-landing__hairline" aria-hidden="true"></div>
-    {% endif %}
   </div>
 </section>
 
 <style>
-  .editorial-landing--{{ section.id }} .editorial-landing__grid {
+  .editorial-landing--{{ section.id }} {
+    background:
+      radial-gradient(circle at 10% 10%, rgba(200, 169, 126, 0.16), transparent 45%),
+      radial-gradient(circle at 90% 90%, rgba(26, 26, 26, 0.08), transparent 40%),
+      var(--color-surface);
+  }
+
+  .editorial-landing--{{ section.id }} .editorial-landing__panel {
     display: grid;
-    gap: clamp(14px, 2vw, 22px);
-  }
-
-  @media (min-width: 990px) {
-    .editorial-landing--{{ section.id }} .editorial-landing__grid {
-      grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
-      align-items: stretch;
-    }
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__hero {
-    position: relative;
-    min-height: clamp(420px, 58vw, 700px);
-    overflow: hidden;
-    border-radius: 18px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    background: #0f0f12;
-    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.12);
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__hero-media,
-  .editorial-landing--{{ section.id }} .editorial-landing__hero-overlay,
-  .editorial-landing--{{ section.id }} .editorial-landing__hero-content {
-    position: absolute;
-    inset: 0;
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__hero-media video,
-  .editorial-landing--{{ section.id }} .editorial-landing__hero-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__hero-image--mobile {
-    display: none;
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__hero-overlay {
-    background: linear-gradient(135deg, rgba(10, 10, 12, 0.72), rgba(10, 10, 12, 0.38));
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__hero-content {
-    z-index: 2;
-    display: grid;
-    align-content: end;
-    justify-items: start;
-    gap: 12px;
-    padding: clamp(18px, 2.6vw, 30px);
-    color: #ffffff;
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__hero--center .editorial-landing__hero-content {
-    align-content: center;
-    justify-items: center;
-    text-align: center;
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__hero--right .editorial-landing__hero-content {
-    justify-items: end;
-    text-align: right;
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__overline {
-    margin: 0;
-    font-size: 0.65rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    opacity: 0.84;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: var(--space-2xl);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    padding: clamp(1.25rem, 3.5vw, 3rem);
+    background: var(--color-background);
   }
 
   .editorial-landing--{{ section.id }} .editorial-landing__heading {
-    margin: 0;
-    font-size: clamp(1.8rem, 3.5vw, 3.15rem);
-    line-height: 1.06;
+    margin-bottom: var(--space-md);
   }
 
-  .editorial-landing--{{ section.id }} .editorial-landing__subheading {
-    margin: 0;
-    max-width: 36ch;
-    font-size: clamp(0.95rem, 1.15vw, 1.08rem);
-    line-height: 1.5;
-    opacity: 0.9;
+  .editorial-landing--{{ section.id }} .editorial-landing__text {
+    line-height: 1.8;
+    margin-bottom: var(--space-lg);
   }
 
   .editorial-landing--{{ section.id }} .editorial-landing__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 4px;
+    gap: var(--space-sm);
   }
 
-  .editorial-landing--{{ section.id }} .editorial-landing__highlight {
-    margin-top: 6px;
+  .editorial-landing--{{ section.id }} .editorial-landing__features {
     display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    gap: 10px;
-    min-height: 74px;
-    width: min(100%, 360px);
-    padding: 8px;
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.26);
-    background: rgba(255, 255, 255, 0.14);
-    backdrop-filter: blur(4px);
+    gap: var(--space-sm);
   }
 
-  .editorial-landing--{{ section.id }} .editorial-landing__highlight-media {
-    width: 58px;
-    height: 58px;
-    border-radius: 10px;
-    overflow: hidden;
-    background: rgba(0, 0, 0, 0.2);
+  .editorial-landing--{{ section.id }} .editorial-landing__feature {
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    border-radius: var(--border-radius);
+    padding: var(--space-md);
   }
 
-  .editorial-landing--{{ section.id }} .editorial-landing__highlight-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__highlight-meta {
-    min-width: 0;
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__highlight-label,
-  .editorial-landing--{{ section.id }} .editorial-landing__highlight-price {
-    margin: 0;
-    font-size: 0.68rem;
-    opacity: 0.84;
-    letter-spacing: 0.08em;
+  .editorial-landing--{{ section.id }} .editorial-landing__feature-title {
+    font-size: 0.875rem;
     text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-xs);
   }
 
-  .editorial-landing--{{ section.id }} .editorial-landing__highlight-title {
-    margin: 3px 0;
-    font-size: 0.9rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__tiles {
-    display: grid;
-    gap: clamp(10px, 1.6vw, 16px);
-    grid-template-columns: 1fr;
-  }
-
-  @media (min-width: 990px) {
-    .editorial-landing--{{ section.id }} .editorial-landing__tiles {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-auto-rows: minmax(150px, auto);
-    }
-
-    .editorial-landing--{{ section.id }} .editorial-landing__tile:first-child {
-      grid-column: 1 / -1;
-      min-height: 220px;
-    }
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__tile {
-    overflow: hidden;
-    border-radius: 14px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    background: #ffffff;
-    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.07);
-    display: grid;
-    min-height: 150px;
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__tile-media {
-    max-height: 170px;
-    overflow: hidden;
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__tile-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__tile-content {
-    padding: 12px;
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__tile-title {
-    margin: 0;
-    font-size: 0.9rem;
-    line-height: 1.3;
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__tile-text {
-    margin: 6px 0 0;
-    font-size: 0.82rem;
-    line-height: 1.45;
+  .editorial-landing--{{ section.id }} .editorial-landing__feature-text {
     color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.6;
   }
 
-  .editorial-landing--{{ section.id }} .editorial-landing__tile-link {
-    display: inline-block;
-    margin-top: 10px;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.11em;
-  }
-
-  .editorial-landing--{{ section.id }} .editorial-landing__hairline {
-    margin-top: clamp(14px, 2.2vw, 24px);
-    height: 1px;
-    background: rgba(0, 0, 0, 0.08);
-  }
-
-  @media (max-width: 767px) {
-    .editorial-landing--{{ section.id }} .editorial-landing__hero-image--mobile {
-      display: block;
-    }
-
-    .editorial-landing--{{ section.id }} .editorial-landing__hero-image--desktop {
-      display: none;
-    }
-
-    .editorial-landing--{{ section.id }} .editorial-landing__hero {
-      min-height: 420px;
-    }
-
-    .editorial-landing--{{ section.id }} .editorial-landing__actions .btn {
-      min-height: 42px;
+  @media (max-width: 768px) {
+    .editorial-landing--{{ section.id }} .editorial-landing__panel {
+      grid-template-columns: 1fr;
+      gap: var(--space-lg);
     }
   }
 </style>
@@ -336,97 +125,44 @@
   "name": "Editorial Landing",
   "settings": [
     {
-      "type": "select",
-      "id": "media_type",
-      "label": "Media type",
-      "default": "image",
-      "options": [
-        { "value": "image", "label": "Image" },
-        { "value": "video", "label": "Video" }
-      ]
-    },
-    {
-      "type": "image_picker",
-      "id": "image",
-      "label": "Desktop image"
-    },
-    {
-      "type": "image_picker",
-      "id": "mobile_image",
-      "label": "Mobile image"
-    },
-    {
-      "type": "video",
-      "id": "video",
-      "label": "Video"
-    },
-    {
-      "type": "select",
-      "id": "overlay_position",
-      "label": "Overlay text position",
-      "default": "left",
-      "options": [
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right", "label": "Right" }
-      ]
-    },
-    {
       "type": "text",
       "id": "overline",
       "label": "Overline",
-      "default": "Editorial Chapter"
+      "default": "Manifesto"
     },
     {
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "FlyFlow Feature Grid"
+      "default": "Built for movement. Styled for impact."
     },
     {
-      "type": "textarea",
-      "id": "subheading",
-      "label": "Subheading",
-      "default": "Structured, elevated merchandising with conversion-focused pathways and premium visual rhythm."
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>FlyFlow blends utility and modern design so every look performs as hard as it looks. Curated drops, premium materials, and silhouettes engineered for everyday momentum.</p>"
     },
     {
       "type": "text",
       "id": "primary_button_text",
-      "label": "Primary CTA",
-      "default": "Shop Collection"
+      "label": "Primary button text",
+      "default": "Shop New Arrivals"
     },
     {
       "type": "url",
       "id": "primary_button_link",
-      "label": "Primary CTA link"
+      "label": "Primary button link"
     },
     {
       "type": "text",
       "id": "secondary_button_text",
-      "label": "Secondary CTA",
-      "default": "Explore Story"
+      "label": "Secondary button text",
+      "default": "Read Our Story"
     },
     {
       "type": "url",
       "id": "secondary_button_link",
-      "label": "Secondary CTA link"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_product_highlight",
-      "label": "Show product highlight",
-      "default": true
-    },
-    {
-      "type": "product",
-      "id": "highlight_product",
-      "label": "Highlighted product"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_hairline_divider",
-      "label": "Show hairline divider",
-      "default": true
+      "label": "Secondary button link"
     },
     {
       "type": "select",
@@ -470,41 +206,25 @@
       "type": "checkbox",
       "id": "enable_reveal",
       "label": "Enable reveal",
-      "default": true
+      "default": false
     }
   ],
   "blocks": [
     {
       "type": "feature",
-      "name": "Feature Tile",
+      "name": "Feature Point",
       "settings": [
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Image"
-        },
         {
           "type": "text",
           "id": "title",
           "label": "Title",
-          "default": "Editorial Tile"
+          "default": "Premium Construction"
         },
         {
           "type": "text",
           "id": "text",
           "label": "Text",
-          "default": "Supportive merchandising copy for this tile."
-        },
-        {
-          "type": "text",
-          "id": "link_label",
-          "label": "Link label",
-          "default": "View"
-        },
-        {
-          "type": "url",
-          "id": "link",
-          "label": "Link"
+          "default": "Durable materials selected for comfort, movement, and longevity."
         }
       ]
     }
@@ -517,25 +237,22 @@
         {
           "type": "feature",
           "settings": {
-            "title": "Asymmetric Story Tile",
-            "text": "Dominant chapter visual with clean merchandising pathways.",
-            "link_label": "Explore"
+            "title": "Premium Construction",
+            "text": "Durable materials selected for comfort, movement, and longevity."
           }
         },
         {
           "type": "feature",
           "settings": {
-            "title": "Drop Focus",
-            "text": "Highlight capsule releases and limited quantities.",
-            "link_label": "Shop Drop"
+            "title": "Curated Drops",
+            "text": "Limited releases and capsule edits designed to stand out."
           }
         },
         {
           "type": "feature",
           "settings": {
-            "title": "Material Story",
-            "text": "Showcase fit, fabrication, and performance details.",
-            "link_label": "Read More"
+            "title": "Fast Fulfillment",
+            "text": "Quick dispatch and transparent shipping from checkout to doorstep."
           }
         }
       ]
