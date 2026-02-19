@@ -7,7 +7,7 @@
 
 <section class="section" data-section-id="{{ section.id }}">
   {% assign columns_desktop = section.settings.products_per_row_desktop | default: 4 %}
-  {% assign columns_mobile = section.settings.products_per_row_mobile | default: 2 %}
+  {% assign columns_mobile = section.settings.products_per_row_mobile | default: 2 | plus: 0 %}
   {% assign columns_tablet = columns_desktop | at_most: 3 | at_least: 2 %}
   <div
     class="related-products related-products--{{ section.settings.heading_alignment }}"
@@ -132,13 +132,14 @@
       "default": 4
     },
     {
-      "type": "range",
+      "type": "select",
       "id": "products_per_row_mobile",
       "label": "Products per row (mobile)",
-      "min": 1,
-      "max": 2,
-      "step": 1,
-      "default": 2
+      "default": "2",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ]
     },
     {
       "type": "range",
