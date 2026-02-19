@@ -1,0 +1,59 @@
+{% liquid
+  assign color_option_index = blank
+  for option_name in product.options
+    assign option_name_downcase = option_name | downcase
+    if option_name_downcase contains 'color' or option_name_downcase contains 'colour'
+      assign color_option_index = forloop.index0
+      break
+    endif
+  endfor
+
+  if color_option_index != blank
+    assign swatch_values_csv = ''
+    for variant in product.variants
+      if variant.available
+        assign color_value = variant.options[color_option_index] | strip
+        if color_value != blank
+          assign token = '|' | append: color_value | append: '|'
+          unless swatch_values_csv contains token
+            assign swatch_values_csv = swatch_values_csv | append: token
+          endunless
+        endif
+      endif
+    endfor
+
+    assign swatch_values = swatch_values_csv | split: '|'
+    assign swatch_total = 0
+    for swatch in swatch_values
+      assign swatch_name = swatch | strip
+      if swatch_name != blank
+        assign swatch_total = swatch_total | plus: 1
+      endif
+    endfor
+  endif
+%}
+
+{% if color_option_index != blank and swatch_total > 0 %}
+  <div class="premium-product-carousel__swatches" aria-label="Available colors">
+    {% assign swatch_rendered = 0 %}
+    {% for swatch in swatch_values %}
+      {% assign swatch_name = swatch | strip %}
+      {% if swatch_name == blank %}{% continue %}{% endif %}
+      {% assign swatch_rendered = swatch_rendered | plus: 1 %}
+
+      {% if swatch_rendered <= 4 %}
+        {% capture swatch_color %}{% render 'swatch-color', value: swatch_name %}{% endcapture %}
+        <span
+          class="premium-product-carousel__swatch"
+          style="--swatch-color: {{ swatch_color | strip }}; background-color: {{ swatch_color | strip }};"
+          title="{{ swatch_name | escape }}"
+          aria-label="{{ swatch_name | escape }}"
+        ></span>
+      {% endif %}
+    {% endfor %}
+
+    {% if swatch_total > 4 %}
+      <span class="premium-product-carousel__swatch-overflow">+{{ swatch_total | minus: 4 }}</span>
+    {% endif %}
+  </div>
+{% endif %}

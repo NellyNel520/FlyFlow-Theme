@@ -47,6 +47,7 @@
                     {% if section.settings.show_price %}
                       <p class="premium-product-carousel__price">{{ product.price | money }}</p>
                     {% endif %}
+                    {% render 'premium-product-carousel-swatches', product: product %}
                   </div>
                 </a>
 
@@ -111,6 +112,7 @@
                       {% if section.settings.show_price %}
                         <p class="premium-product-carousel__price">{{ product.price | money }}</p>
                       {% endif %}
+                      {% render 'premium-product-carousel-swatches', product: product %}
                     </div>
                   </a>
 
@@ -295,6 +297,28 @@
     margin: 0;
     font-size: 0.8rem;
     color: var(--color-text-secondary);
+  }
+
+  .premium-product-carousel--{{ section.id }} .premium-product-carousel__swatches {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .premium-product-carousel--{{ section.id }} .premium-product-carousel__swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.14);
+    background: var(--swatch-color, #d4d1cc);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+  }
+
+  .premium-product-carousel--{{ section.id }} .premium-product-carousel__swatch-overflow {
+    font-size: 0.68rem;
+    color: var(--color-text-secondary);
+    letter-spacing: 0.04em;
   }
 
   .premium-product-carousel--{{ section.id }} .premium-product-carousel__overlay {
