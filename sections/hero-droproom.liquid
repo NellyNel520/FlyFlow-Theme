@@ -1,0 +1,830 @@
+{% comment %}
+  FlyFlow Theme - Droproom Hero
+  Purpose: Asymmetric editorial + product-forward hero with embedded gallery rail.
+  Last modified: 2026-02-19
+{% endcomment %}
+
+{% liquid
+  assign rail_limit = section.settings.rail_item_limit | default: 8
+  assign rail_source = section.settings.rail_source | default: 'products'
+  assign show_progress = section.settings.progress_style | default: 'bar'
+  assign peek_next = section.settings.peek_next
+%}
+
+<section
+  class="hero-droproom hero-droproom--{{ section.id }} chapter-section chapter-section--spacing-{{ section.settings.section_density | default: 'standard' }} chapter-section--container-{{ section.settings.container_width | default: 'contained' }}{% if section.settings.show_divider_top %} chapter-section--divider-top{% endif %}{% if section.settings.enable_reveal %} chapter-section--reveal{% endif %}"
+  data-section-id="{{ section.id }}"
+  data-enable-reveal="{{ section.settings.enable_reveal }}"
+>
+  <div class="container">
+    <div class="hero-droproom__layout">
+      <article class="hero-droproom__brand" data-droproom-reveal="brand">
+        <p class="hero-droproom__wordmark ff-wordmark">{{ shop.name }}</p>
+
+        {% if section.settings.heading != blank %}
+          <h1 class="hero-droproom__heading">{{ section.settings.heading }}</h1>
+        {% endif %}
+
+        {% if section.settings.subheading != blank %}
+          <p class="hero-droproom__subheading">{{ section.settings.subheading }}</p>
+        {% endif %}
+
+        <div class="hero-droproom__cta-row">
+          {% if section.settings.primary_cta_label != blank and section.settings.primary_cta_link != blank %}
+            <a href="{{ section.settings.primary_cta_link }}" class="btn btn--primary">{{ section.settings.primary_cta_label }}</a>
+          {% endif %}
+          {% if section.settings.secondary_cta_label != blank and section.settings.secondary_cta_link != blank %}
+            <a href="{{ section.settings.secondary_cta_link }}" class="btn btn--ghost">{{ section.settings.secondary_cta_label }}</a>
+          {% endif %}
+        </div>
+
+        {% if section.settings.show_drop_meta_chips %}
+          <div class="hero-droproom__chips" aria-label="Drop metadata">
+            {% if section.settings.drop_chip_1 != blank %}<span class="hero-droproom__chip">{{ section.settings.drop_chip_1 }}</span>{% endif %}
+            {% if section.settings.drop_chip_2 != blank %}<span class="hero-droproom__chip">{{ section.settings.drop_chip_2 }}</span>{% endif %}
+            {% if section.settings.drop_chip_3 != blank %}<span class="hero-droproom__chip">{{ section.settings.drop_chip_3 }}</span>{% endif %}
+          </div>
+        {% endif %}
+      </article>
+
+      <article class="hero-droproom__media-panel" data-droproom-reveal="media">
+        {% if section.settings.show_drop_label and section.settings.drop_label_text != blank %}
+          <span class="hero-droproom__drop-label">{{ section.settings.drop_label_text }}</span>
+        {% endif %}
+
+        <div class="hero-droproom__media-shell">
+          {% if section.settings.media_type == 'video' and section.settings.video != blank %}
+            {{ section.settings.video | video_tag: autoplay: true, muted: true, loop: true, controls: false, image_size: '1800x' }}
+          {% elsif section.settings.image != blank %}
+            {{ section.settings.image | image_url: width: 1800 | image_tag: class: 'hero-droproom__media-image', loading: 'lazy', widths: '720,960,1280,1600,1800', sizes: '(min-width: 990px) 52vw, 100vw', alt: section.settings.heading }}
+          {% else %}
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'hero-droproom__media-image hero-droproom__media-placeholder' }}
+          {% endif %}
+        </div>
+      </article>
+    </div>
+
+    <div class="hero-droproom__rail-wrap" data-droproom-reveal="rail">
+      <div class="hero-droproom__rail-head">
+        <h2 class="hero-droproom__rail-title">{{ section.settings.rail_title | default: 'Featured Drop Rail' }}</h2>
+
+        {% if section.settings.show_controls %}
+          <div class="hero-droproom__rail-controls">
+            <button type="button" class="hero-droproom__rail-btn" data-droproom-prev aria-label="Previous rail items">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button type="button" class="hero-droproom__rail-btn" data-droproom-next aria-label="Next rail items">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="hero-droproom__rail-viewport{% if peek_next %} is-peek{% endif %}" data-droproom-viewport tabindex="0" aria-label="FlyFlow drop gallery rail">
+        <div class="hero-droproom__rail-track" data-droproom-track>
+          {% assign rendered_items = 0 %}
+          {% for block in section.blocks %}
+            {% if rendered_items >= rail_limit %}{% break %}{% endif %}
+
+            {% if rail_source == 'products' and block.settings.product != blank %}
+              {% assign product = block.settings.product %}
+              <article class="hero-droproom__card" data-droproom-card {{ block.shopify_attributes }}>
+                <a href="{{ product.url }}" class="hero-droproom__card-link">
+                  <div class="hero-droproom__card-media">
+                    {% if product.featured_image %}
+                      {{ product.featured_image | image_url: width: 960 | image_tag: class: 'hero-droproom__card-image', loading: 'lazy', widths: '280,420,640,840,960', sizes: '(min-width: 990px) 24vw, 76vw', alt: product.title }}
+                    {% endif %}
+                  </div>
+                  <div class="hero-droproom__card-meta">
+                    <p class="hero-droproom__card-kicker">Product</p>
+                    <h3 class="hero-droproom__card-title">{{ product.title }}</h3>
+                    <p class="hero-droproom__card-price">{{ product.price | money }}</p>
+                  </div>
+                </a>
+
+                {% if section.settings.enable_quick_add and product.selected_or_first_available_variant != blank %}
+                  <button
+                    type="button"
+                    class="hero-droproom__quick-add"
+                    data-add-to-cart
+                    data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                    data-add-text="Quick add"
+                    aria-label="Quick add {{ product.title }}"
+                  >
+                    Quick add
+                  </button>
+                {% endif %}
+              </article>
+              {% assign rendered_items = rendered_items | plus: 1 %}
+            {% endif %}
+
+            {% if rail_source == 'collections' and block.settings.collection != blank %}
+              {% assign collection = block.settings.collection %}
+              <article class="hero-droproom__card" data-droproom-card {{ block.shopify_attributes }}>
+                <a href="{{ collection.url }}" class="hero-droproom__card-link">
+                  <div class="hero-droproom__card-media">
+                    {% if collection.image %}
+                      {{ collection.image | image_url: width: 960 | image_tag: class: 'hero-droproom__card-image', loading: 'lazy', widths: '280,420,640,840,960', sizes: '(min-width: 990px) 24vw, 76vw', alt: collection.title }}
+                    {% elsif collection.products.first.featured_image %}
+                      {{ collection.products.first.featured_image | image_url: width: 960 | image_tag: class: 'hero-droproom__card-image', loading: 'lazy', widths: '280,420,640,840,960', sizes: '(min-width: 990px) 24vw, 76vw', alt: collection.title }}
+                    {% endif %}
+                  </div>
+                  <div class="hero-droproom__card-meta">
+                    <p class="hero-droproom__card-kicker">Collection</p>
+                    <h3 class="hero-droproom__card-title">{{ collection.title }}</h3>
+                    <p class="hero-droproom__card-price">{{ collection.products_count }} items</p>
+                  </div>
+                </a>
+              </article>
+              {% assign rendered_items = rendered_items | plus: 1 %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      {% if show_progress == 'bar' %}
+        <div class="hero-droproom__progress" aria-hidden="true">
+          <span class="hero-droproom__progress-fill" data-droproom-progress></span>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if section.settings.show_hairline_divider %}
+      <div class="hero-droproom__hairline" aria-hidden="true"></div>
+    {% endif %}
+  </div>
+
+  {% if section.settings.mobile_sticky_cta and section.settings.primary_cta_label != blank and section.settings.primary_cta_link != blank %}
+    <div class="hero-droproom__mobile-sticky">
+      <a href="{{ section.settings.primary_cta_link }}" class="btn btn--primary">{{ section.settings.primary_cta_label }}</a>
+    </div>
+  {% endif %}
+</section>
+
+<style>
+  .hero-droproom--{{ section.id }} .hero-droproom__layout {
+    display: grid;
+    gap: clamp(14px, 2vw, 22px);
+    align-items: stretch;
+  }
+
+  @media (min-width: 990px) {
+    .hero-droproom--{{ section.id }} .hero-droproom__layout {
+      grid-template-columns: minmax(280px, 0.82fr) minmax(0, 1.18fr);
+    }
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__brand,
+  .hero-droproom--{{ section.id }} .hero-droproom__media-panel {
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    background: #ffffff;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__brand {
+    padding: clamp(16px, 2.4vw, 30px);
+    display: grid;
+    align-content: center;
+    gap: 12px;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__wordmark {
+    margin: 0;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    opacity: 0.86;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__heading {
+    margin: 0;
+    font-size: clamp(1.75rem, 3.2vw, 3rem);
+    line-height: 1.05;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__subheading {
+    margin: 0;
+    font-size: clamp(0.9rem, 1.1vw, 1.02rem);
+    line-height: 1.4;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 2px;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.03);
+    font-size: 0.64rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__media-panel {
+    position: relative;
+    min-height: clamp(280px, 42vw, 540px);
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__drop-label {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.38);
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(4px);
+    color: #ffffff;
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__media-shell,
+  .hero-droproom--{{ section.id }} .hero-droproom__media-shell video,
+  .hero-droproom--{{ section.id }} .hero-droproom__media-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__rail-wrap {
+    margin-top: clamp(14px, 2vw, 20px);
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__rail-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__rail-title {
+    margin: 0;
+    font-size: clamp(1rem, 1.8vw, 1.4rem);
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__rail-controls {
+    display: inline-flex;
+    gap: 8px;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__rail-btn {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 0, 0, 0.14);
+    background: #ffffff;
+    transition: transform var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__rail-btn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(0, 0, 0, 0.24);
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__rail-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__rail-viewport {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    min-width: 0;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__rail-viewport::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__rail-track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(200px, 19%);
+    gap: 14px;
+    padding-right: 14px;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__rail-viewport.is-peek .hero-droproom__rail-track {
+    grid-auto-columns: minmax(200px, 19%);
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__rail-viewport:not(.is-peek) .hero-droproom__rail-track {
+    grid-auto-columns: minmax(200px, 20%);
+    padding-right: 0;
+  }
+
+  @media (max-width: 1280px) {
+    .hero-droproom--{{ section.id }} .hero-droproom__rail-track {
+      grid-auto-columns: minmax(200px, 24%);
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .hero-droproom--{{ section.id }} .hero-droproom__rail-track {
+      grid-auto-columns: minmax(200px, 38%);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .hero-droproom--{{ section.id }} .hero-droproom__rail-track {
+      grid-auto-columns: minmax(190px, 72%);
+      gap: 12px;
+    }
+
+    .hero-droproom--{{ section.id }} .hero-droproom__rail-btn {
+      width: 34px;
+      height: 34px;
+    }
+
+    .hero-droproom--{{ section.id }} .hero-droproom__subheading {
+      white-space: normal;
+    }
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__card {
+    scroll-snap-align: start;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: #ffffff;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__card-link {
+    display: block;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__card-media {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--color-surface);
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-base);
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__card-link:hover .hero-droproom__card-image {
+    transform: scale(1.04);
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__card-meta {
+    padding: 11px 12px 13px;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__card-kicker {
+    margin: 0 0 4px;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__card-title {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.3;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__card-price {
+    margin: 5px 0 0;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__quick-add {
+    width: calc(100% - 20px);
+    min-height: 36px;
+    margin: 0 10px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: #ffffff;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__progress {
+    margin-top: 10px;
+    height: 2px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__progress-fill {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: #101014;
+    transition: width var(--transition-fast);
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__hairline {
+    margin-top: clamp(14px, 2vw, 22px);
+    height: 1px;
+    background: rgba(0, 0, 0, 0.08);
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__mobile-sticky {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    .hero-droproom--{{ section.id }} .hero-droproom__mobile-sticky {
+      display: block;
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: calc(12px + env(safe-area-inset-bottom));
+      z-index: 340;
+      padding: 0 var(--space-md);
+      pointer-events: none;
+    }
+
+    .hero-droproom--{{ section.id }} .hero-droproom__mobile-sticky .btn {
+      width: 100%;
+      pointer-events: auto;
+      min-height: 46px;
+      border-radius: 999px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.16);
+    }
+  }
+
+  .hero-droproom--{{ section.id }} .hero-droproom__rail-btn:focus-visible,
+  .hero-droproom--{{ section.id }} .hero-droproom__rail-viewport:focus-visible,
+  .hero-droproom--{{ section.id }} .hero-droproom__quick-add:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .hero-droproom--{{ section.id }} [data-droproom-reveal],
+  .hero-droproom--{{ section.id }} [data-droproom-card] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hero-droproom--{{ section.id }}.is-pending-reveal [data-droproom-reveal],
+  .hero-droproom--{{ section.id }}.is-pending-reveal [data-droproom-card] {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  .hero-droproom--{{ section.id }}.is-revealed [data-droproom-reveal],
+  .hero-droproom--{{ section.id }}.is-revealed [data-droproom-card] {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity var(--transition-base), transform var(--transition-base);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-droproom--{{ section.id }} .hero-droproom__rail-btn,
+    .hero-droproom--{{ section.id }} .hero-droproom__card-image,
+    .hero-droproom--{{ section.id }} .hero-droproom__progress-fill,
+    .hero-droproom--{{ section.id }} [data-droproom-reveal],
+    .hero-droproom--{{ section.id }} [data-droproom-card] {
+      transition: none !important;
+      transform: none !important;
+      opacity: 1 !important;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    var section = document.querySelector('.hero-droproom--{{ section.id }}');
+    if (!section) return;
+
+    var viewport = section.querySelector('[data-droproom-viewport]');
+    var prev = section.querySelector('[data-droproom-prev]');
+    var next = section.querySelector('[data-droproom-next]');
+    var progress = section.querySelector('[data-droproom-progress]');
+    var revealEls = section.querySelectorAll('[data-droproom-reveal]');
+    var cards = section.querySelectorAll('[data-droproom-card]');
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function clamp(n, min, max) {
+      return Math.min(Math.max(n, min), max);
+    }
+
+    function updateProgress() {
+      if (!viewport || !progress) return;
+      var maxScroll = viewport.scrollWidth - viewport.clientWidth;
+      var ratio = maxScroll > 0 ? viewport.scrollLeft / maxScroll : 0;
+      progress.style.width = (clamp(ratio, 0, 1) * 100) + '%';
+    }
+
+    function scrollByPage(direction) {
+      if (!viewport) return;
+      var amount = viewport.clientWidth * ({% if peek_next %}0.86{% else %}1{% endif %});
+      viewport.scrollBy({ left: amount * direction, behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+
+    if (prev) {
+      prev.addEventListener('click', function() { scrollByPage(-1); });
+    }
+
+    if (next) {
+      next.addEventListener('click', function() { scrollByPage(1); });
+    }
+
+    if (viewport) {
+      viewport.addEventListener('scroll', updateProgress, { passive: true });
+      viewport.addEventListener('keydown', function(event) {
+        if (event.key === 'ArrowRight') {
+          event.preventDefault();
+          scrollByPage(1);
+        }
+        if (event.key === 'ArrowLeft') {
+          event.preventDefault();
+          scrollByPage(-1);
+        }
+      });
+      updateProgress();
+    }
+
+    if (section.dataset.enableReveal === 'true' && !reduceMotion) {
+      section.classList.add('is-pending-reveal');
+
+      revealEls.forEach(function(el, idx) {
+        el.style.transitionDelay = (idx * 120) + 'ms';
+      });
+
+      cards.forEach(function(card, idx) {
+        card.style.transitionDelay = (260 + (idx * 56)) + 'ms';
+      });
+
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            section.classList.add('is-revealed');
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.22 });
+
+      observer.observe(section);
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Hero Droproom",
+  "settings": [
+    {
+      "type": "select",
+      "id": "media_type",
+      "label": "Media type",
+      "default": "image",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" }
+      ]
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Hero image"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Hero video"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "FlyFlow Droproom"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Precision streetwear engineered for movement."
+    },
+    {
+      "type": "text",
+      "id": "primary_cta_label",
+      "label": "Primary CTA label",
+      "default": "Shop Drop"
+    },
+    {
+      "type": "url",
+      "id": "primary_cta_link",
+      "label": "Primary CTA link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_cta_label",
+      "label": "Secondary CTA label",
+      "default": "Explore Collection"
+    },
+    {
+      "type": "url",
+      "id": "secondary_cta_link",
+      "label": "Secondary CTA link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_drop_label",
+      "label": "Show drop label",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "drop_label_text",
+      "label": "Drop label text",
+      "default": "DROP 01"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_drop_meta_chips",
+      "label": "Show drop meta chips",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "drop_chip_1",
+      "label": "Drop chip 1",
+      "default": "Nocturne Capsule"
+    },
+    {
+      "type": "text",
+      "id": "drop_chip_2",
+      "label": "Drop chip 2",
+      "default": "Limited 240"
+    },
+    {
+      "type": "text",
+      "id": "drop_chip_3",
+      "label": "Drop chip 3",
+      "default": "Ships in 48h"
+    },
+    {
+      "type": "text",
+      "id": "rail_title",
+      "label": "Rail title",
+      "default": "Gallery Rail"
+    },
+    {
+      "type": "select",
+      "id": "rail_source",
+      "label": "Rail source",
+      "default": "products",
+      "options": [
+        { "value": "products", "label": "Products" },
+        { "value": "collections", "label": "Collections" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "rail_item_limit",
+      "label": "Rail item limit",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "show_controls",
+      "label": "Show controls",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "progress_style",
+      "label": "Progress style",
+      "default": "bar",
+      "options": [
+        { "value": "bar", "label": "Bar" },
+        { "value": "none", "label": "None" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "peek_next",
+      "label": "Peek next card",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_quick_add",
+      "label": "Enable quick add",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "section_density",
+      "label": "Section density",
+      "default": "standard",
+      "options": [
+        { "value": "compact", "label": "Compact" },
+        { "value": "standard", "label": "Standard" },
+        { "value": "spacious", "label": "Spacious" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "container_width",
+      "label": "Container width",
+      "default": "contained",
+      "options": [
+        { "value": "full", "label": "Full" },
+        { "value": "contained", "label": "Contained" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider_top",
+      "label": "Show top divider",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_reveal",
+      "label": "Enable reveal",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hairline_divider",
+      "label": "Show hairline divider",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_sticky_cta",
+      "label": "Enable mobile sticky CTA",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "rail_item",
+      "name": "Rail item",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 16,
+  "presets": [
+    {
+      "name": "FlyFlow Droproom Hero",
+      "blocks": [
+        { "type": "rail_item" },
+        { "type": "rail_item" },
+        { "type": "rail_item" },
+        { "type": "rail_item" },
+        { "type": "rail_item" },
+        { "type": "rail_item" }
+      ]
+    }
+  ]
+}
+{% endschema %}
