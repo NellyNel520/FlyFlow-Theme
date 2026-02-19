@@ -208,7 +208,7 @@
     --ppc-border: rgba(14, 14, 18, 0.08);
     --ppc-shadow: 0 12px 30px rgba(12, 14, 20, 0.08);
     --ppc-overlay: rgba(10, 12, 18, 0.32);
-    --ppc-overlay-blur: blur(4px);
+    --ppc-overlay-blur: none;
     --ppc-peek: {% if section.settings.peek_next %}8%{% else %}0px{% endif %};
     --ppc-cards: {{ desktop_cards }};
     background: transparent;
@@ -308,7 +308,7 @@
     justify-content: center;
     padding: 12px;
     background: linear-gradient(180deg, transparent 35%, var(--ppc-overlay) 100%);
-    backdrop-filter: var(--ppc-overlay-blur);
+    backdrop-filter: none;
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--transition-base);
@@ -949,7 +949,7 @@
       "min": 1,
       "max": 3,
       "step": 1,
-      "default": 1
+      "default": 3
     },
     {
       "type": "checkbox",
