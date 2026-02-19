@@ -77,7 +77,7 @@
                         "id": {{ product.id }},
                         "title": {{ product.title | json }},
                         "image": {{ product.featured_image | image_url: width: 480 | json }},
-                        "description": {{ product.description | strip_html | strip_newlines | truncate: 220 | json }},
+                        "description": {{ product.description | strip_html | strip_newlines | truncate: 520 | json }},
                         "media": [
                           {% assign media_output_count = 0 %}
                           {% for media in product.media %}
@@ -159,7 +159,7 @@
                           "id": {{ product.id }},
                           "title": {{ product.title | json }},
                           "image": {{ product.featured_image | image_url: width: 480 | json }},
-                          "description": {{ product.description | strip_html | strip_newlines | truncate: 220 | json }},
+                          "description": {{ product.description | strip_html | strip_newlines | truncate: 520 | json }},
                           "media": [
                             {% assign media_output_count = 0 %}
                             {% for media in product.media %}
@@ -225,19 +225,23 @@
   <div class="premium-product-carousel__drawer" data-ppc-drawer aria-hidden="true" hidden>
     <button class="premium-product-carousel__drawer-backdrop" type="button" data-ppc-drawer-close tabindex="-1" aria-label="Close quick add"></button>
     <div class="premium-product-carousel__drawer-panel" role="dialog" aria-modal="true" aria-labelledby="ppc-drawer-title-{{ section.id }}">
-      <button class="premium-product-carousel__drawer-close" type="button" data-ppc-drawer-close aria-label="Close quick add">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      </button>
       <div class="premium-product-carousel__drawer-media" data-ppc-drawer-media hidden>
+        <button class="premium-product-carousel__drawer-close" type="button" data-ppc-drawer-close aria-label="Close quick add">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
         <div class="premium-product-carousel__drawer-main-media">
           <img class="premium-product-carousel__drawer-image" data-ppc-drawer-image alt="" loading="lazy" width="720" height="900">
         </div>
         <div class="premium-product-carousel__drawer-thumbs" data-ppc-drawer-thumbs aria-label="Product image thumbnails"></div>
       </div>
+      <button class="premium-product-carousel__drawer-close premium-product-carousel__drawer-close--fallback" type="button" data-ppc-drawer-close aria-label="Close quick add">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
       <p class="premium-product-carousel__drawer-kicker">Quick add</p>
       <h3 class="premium-product-carousel__drawer-title" id="ppc-drawer-title-{{ section.id }}"></h3>
       <p class="premium-product-carousel__drawer-price" data-ppc-drawer-price></p>
       <p class="premium-product-carousel__drawer-description" data-ppc-drawer-description></p>
+      <button class="premium-product-carousel__drawer-description-toggle" type="button" data-ppc-description-toggle hidden>See more</button>
       <form class="premium-product-carousel__drawer-form" data-product-form>
         <input type="hidden" name="id" data-ppc-variant-id value="">
         <div class="premium-product-carousel__drawer-options" data-ppc-drawer-options></div>
@@ -533,19 +537,43 @@
     width: min(430px, 100%);
     height: 100%;
     background: #ffffff;
-    padding: 16px 16px 18px;
+    padding: 12px 12px 14px;
     display: grid;
-    grid-template-rows: auto minmax(280px, 60%) auto auto 1fr auto;
-    gap: 11px;
-    overflow-y: auto;
+    grid-template-rows: minmax(210px, 42%) auto auto auto auto 1fr;
+    gap: 8px;
+    overflow: hidden;
   }
 
   .premium-product-carousel__drawer-close {
-    width: 36px;
-    height: 36px;
-    border: 0;
-    background: transparent;
-    justify-self: end;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 999px;
+    background: rgba(18, 20, 25, 0.28);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    opacity: 0.45;
+    transition: opacity var(--transition-fast), background-color var(--transition-fast);
+  }
+
+  .premium-product-carousel__drawer-panel:hover .premium-product-carousel__drawer-close,
+  .premium-product-carousel__drawer-panel:focus-within .premium-product-carousel__drawer-close {
+    opacity: 1;
+    background: rgba(18, 20, 25, 0.44);
+  }
+
+  .premium-product-carousel__drawer-close--fallback {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 3;
+    display: none;
   }
 
   .premium-product-carousel__drawer-kicker {
@@ -573,15 +601,39 @@
   .premium-product-carousel__drawer-description {
     margin: 0;
     font-size: 0.82rem;
-    line-height: 1.5;
+    line-height: 1.4;
     color: var(--color-text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .premium-product-carousel__drawer-description.is-expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+  }
+
+  .premium-product-carousel__drawer-description-toggle {
+    width: fit-content;
+    margin: -2px 0 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #101218;
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   .premium-product-carousel__drawer-options {
     display: grid;
-    gap: 14px;
+    gap: 10px;
     align-content: start;
-    padding-top: 4px;
+    padding-top: 0;
   }
 
   .premium-product-carousel__drawer-option,
@@ -726,8 +778,9 @@
 
   .premium-product-carousel__drawer-form {
     display: grid;
-    gap: 12px;
+    gap: 9px;
     min-height: 0;
+    align-content: start;
   }
 
   .premium-product-carousel__drawer-quantity {
@@ -780,17 +833,18 @@
     width: 100%;
     display: grid;
     grid-template-rows: minmax(0, 1fr) auto;
-    gap: 10px;
+    gap: 8px;
     min-height: 0;
-    border-radius: 14px;
+    position: relative;
+    border-radius: 10px;
     overflow: hidden;
-    background: #f8f8f9;
+    background: transparent;
   }
 
   .premium-product-carousel__drawer-main-media {
     min-height: 0;
     overflow: hidden;
-    border-radius: 12px;
+    border-radius: 10px;
     background: #f3f3f4;
   }
 
@@ -806,16 +860,16 @@
     align-items: center;
     gap: 8px;
     overflow-x: auto;
-    padding: 2px 2px 2px 0;
+    padding: 0 0 2px;
     scrollbar-width: thin;
   }
 
   .premium-product-carousel__drawer-thumb {
-    width: 58px;
-    height: 72px;
-    border: 1px solid rgba(0, 0, 0, 0.14);
-    border-radius: 8px;
-    background: #ffffff;
+    width: 52px;
+    height: 64px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    background: transparent;
     padding: 0;
     flex: 0 0 auto;
     overflow: hidden;
@@ -831,6 +885,7 @@
 
   .premium-product-carousel__drawer-thumb.is-active {
     border-color: #0f1116;
+    box-shadow: 0 0 0 1px rgba(15, 17, 22, 0.2);
   }
 
   .premium-product-carousel__drawer-thumb:not(.is-active):hover {
@@ -872,10 +927,23 @@
       bottom: 8px;
     }
 
+    .premium-product-carousel__drawer-panel {
+      grid-template-rows: minmax(180px, 34%) auto auto auto auto 1fr;
+      padding: 10px 10px 12px;
+      gap: 6px;
+    }
+
     .premium-product-carousel__drawer-submit {
       position: sticky;
       bottom: 0;
       z-index: 3;
+    }
+
+    .premium-product-carousel__drawer-close {
+      top: 8px;
+      right: 8px;
+      width: 30px;
+      height: 30px;
     }
   }
 
@@ -906,6 +974,7 @@
     var drawerTitle = section.querySelector('.premium-product-carousel__drawer-title');
     var drawerPrice = section.querySelector('[data-ppc-drawer-price]');
     var drawerDescription = section.querySelector('[data-ppc-drawer-description]');
+    var drawerDescriptionToggle = section.querySelector('[data-ppc-description-toggle]');
     var drawerVariantInput = section.querySelector('[data-ppc-variant-id]');
     var drawerOptions = section.querySelector('[data-ppc-drawer-options]');
     var drawerSubmit = section.querySelector('[data-ppc-drawer-submit]');
@@ -1320,6 +1389,11 @@
       if (drawerDescription) {
         drawerDescription.textContent = productData.description || '';
         drawerDescription.hidden = !productData.description;
+        drawerDescription.classList.remove('is-expanded');
+      }
+      if (drawerDescriptionToggle) {
+        drawerDescriptionToggle.hidden = true;
+        drawerDescriptionToggle.textContent = 'See more';
       }
       drawerOptions.innerHTML = '';
       activeProduct = productData;
@@ -1329,6 +1403,8 @@
         var mediaItems = getDrawerMediaItems(productData);
         if (mediaItems.length) {
           drawerMedia.hidden = false;
+          var fallbackClose = section.querySelector('.premium-product-carousel__drawer-close--fallback');
+          if (fallbackClose) fallbackClose.style.display = 'none';
           renderThumbs();
           activeMediaIndex = 0;
           setActiveMedia(0);
@@ -1336,6 +1412,8 @@
           drawerImage.removeAttribute('src');
           drawerImage.alt = '';
           drawerMedia.hidden = true;
+          var fallbackCloseEmpty = section.querySelector('.premium-product-carousel__drawer-close--fallback');
+          if (fallbackCloseEmpty) fallbackCloseEmpty.style.display = 'inline-flex';
           if (drawerThumbs) drawerThumbs.innerHTML = '';
         }
       }
@@ -1406,6 +1484,13 @@
         drawerQtyInput.value = '1';
       }
       syncDrawer();
+
+      if (drawerDescription && drawerDescriptionToggle && !drawerDescription.hidden) {
+        requestAnimationFrame(function() {
+          var needsToggle = drawerDescription.scrollHeight > drawerDescription.clientHeight + 2;
+          drawerDescriptionToggle.hidden = !needsToggle;
+        });
+      }
     }
 
     function openDrawer(trigger, productData) {
@@ -1510,6 +1595,13 @@
       drawerQtyInc.addEventListener('click', function() {
         var value = parseInt(drawerQtyInput.value || '1', 10) || 1;
         drawerQtyInput.value = String(Math.min(99, value + 1));
+      });
+    }
+
+    if (drawerDescriptionToggle && drawerDescription) {
+      drawerDescriptionToggle.addEventListener('click', function() {
+        var isExpanded = drawerDescription.classList.toggle('is-expanded');
+        drawerDescriptionToggle.textContent = isExpanded ? 'See less' : 'See more';
       });
     }
 
