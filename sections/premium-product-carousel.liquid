@@ -77,6 +77,7 @@
                         "id": {{ product.id }},
                         "title": {{ product.title | json }},
                         "image": {{ product.featured_image | image_url: width: 480 | json }},
+                        "description": {{ product.description | strip_html | strip_newlines | truncate: 220 | json }},
                         "media": [
                           {% assign media_output_count = 0 %}
                           {% for media in product.media %}
@@ -158,6 +159,7 @@
                           "id": {{ product.id }},
                           "title": {{ product.title | json }},
                           "image": {{ product.featured_image | image_url: width: 480 | json }},
+                          "description": {{ product.description | strip_html | strip_newlines | truncate: 220 | json }},
                           "media": [
                             {% assign media_output_count = 0 %}
                             {% for media in product.media %}
@@ -235,6 +237,7 @@
       <p class="premium-product-carousel__drawer-kicker">Quick add</p>
       <h3 class="premium-product-carousel__drawer-title" id="ppc-drawer-title-{{ section.id }}"></h3>
       <p class="premium-product-carousel__drawer-price" data-ppc-drawer-price></p>
+      <p class="premium-product-carousel__drawer-description" data-ppc-drawer-description></p>
       <div class="premium-product-carousel__drawer-options" data-ppc-drawer-options></div>
       <button class="premium-product-carousel__drawer-submit" type="button" data-ppc-drawer-submit data-add-text="Add to bag">Add to bag</button>
     </div>
@@ -556,6 +559,13 @@
     color: var(--color-text-secondary);
   }
 
+  .premium-product-carousel__drawer-description {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+  }
+
   .premium-product-carousel__drawer-options {
     display: grid;
     gap: 14px;
@@ -772,6 +782,7 @@
     var drawer = section.querySelector('[data-ppc-drawer]');
     var drawerTitle = section.querySelector('.premium-product-carousel__drawer-title');
     var drawerPrice = section.querySelector('[data-ppc-drawer-price]');
+    var drawerDescription = section.querySelector('[data-ppc-drawer-description]');
     var drawerOptions = section.querySelector('[data-ppc-drawer-options]');
     var drawerSubmit = section.querySelector('[data-ppc-drawer-submit]');
     var drawerMedia = section.querySelector('[data-ppc-drawer-media]');
@@ -1184,6 +1195,10 @@
     function buildDrawer(productData) {
       drawerTitle.textContent = productData.title || '';
       drawerPrice.textContent = formatMoney(productData.price || 0);
+      if (drawerDescription) {
+        drawerDescription.textContent = productData.description || '';
+        drawerDescription.hidden = !productData.description;
+      }
       drawerOptions.innerHTML = '';
       activeProduct = productData;
       selectedOptions = [];
