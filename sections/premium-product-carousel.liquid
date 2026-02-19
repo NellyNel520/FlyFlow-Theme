@@ -239,6 +239,14 @@
       <p class="premium-product-carousel__drawer-price" data-ppc-drawer-price></p>
       <p class="premium-product-carousel__drawer-description" data-ppc-drawer-description></p>
       <div class="premium-product-carousel__drawer-options" data-ppc-drawer-options></div>
+      <div class="premium-product-carousel__drawer-quantity" data-ppc-drawer-quantity>
+        <p class="premium-product-carousel__drawer-option-label">Quantity</p>
+        <div class="premium-product-carousel__drawer-qty-control">
+          <button type="button" class="premium-product-carousel__drawer-qty-btn" data-ppc-qty-dec aria-label="Decrease quantity">-</button>
+          <input class="premium-product-carousel__drawer-qty-input" data-ppc-qty-input type="number" min="1" value="1" inputmode="numeric" aria-label="Quantity">
+          <button type="button" class="premium-product-carousel__drawer-qty-btn" data-ppc-qty-inc aria-label="Increase quantity">+</button>
+        </div>
+      </div>
       <button class="premium-product-carousel__drawer-submit" type="button" data-ppc-drawer-submit data-add-text="Add to bag">Add to bag</button>
     </div>
   </div>
@@ -659,6 +667,52 @@
     opacity: 0.45;
   }
 
+  .premium-product-carousel__drawer-quantity {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+  }
+
+  .premium-product-carousel__drawer-qty-control {
+    width: fit-content;
+    display: grid;
+    grid-template-columns: 34px 52px 34px;
+    align-items: center;
+    border: 1px solid rgba(0, 0, 0, 0.14);
+    border-radius: 999px;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .premium-product-carousel__drawer-qty-btn {
+    width: 34px;
+    height: 34px;
+    border: 0;
+    background: transparent;
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .premium-product-carousel__drawer-qty-input {
+    width: 52px;
+    height: 34px;
+    border: 0;
+    background: transparent;
+    text-align: center;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+  }
+
+  .premium-product-carousel__drawer-qty-input::-webkit-outer-spin-button,
+  .premium-product-carousel__drawer-qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .premium-product-carousel__drawer-qty-input[type=number] {
+    -moz-appearance: textfield;
+  }
+
   .premium-product-carousel__drawer-media {
     width: 100%;
     display: grid;
@@ -788,6 +842,7 @@
     var drawerMedia = section.querySelector('[data-ppc-drawer-media]');
     var drawerImage = section.querySelector('[data-ppc-drawer-image]');
     var drawerThumbs = section.querySelector('[data-ppc-drawer-thumbs]');
+    var drawerQtyInput = section.querySelector('[data-ppc-qty-input]');
 
     var isLoop = section.dataset.loop === 'true';
     var step = Math.max(1, parseInt(section.dataset.step || '1', 10));
@@ -942,20 +997,21 @@
       return '$' + ((Number(cents) || 0) / 100).toFixed(2);
     }
 
-    async function addItem(variantId, trigger) {
+    async function addItem(variantId, quantity, trigger) {
       if (!variantId) return;
       var original = trigger.textContent;
       trigger.disabled = true;
       trigger.textContent = 'Adding...';
+      var qty = Math.max(1, parseInt(quantity || '1', 10) || 1);
 
       try {
         if (window.FlyFlow && typeof window.FlyFlow.fetchAPI === 'function') {
-          await window.FlyFlow.fetchAPI('/cart/add.js', { items: [{ id: variantId, quantity: 1 }] });
+          await window.FlyFlow.fetchAPI('/cart/add.js', { items: [{ id: variantId, quantity: qty }] });
         } else {
           await fetch('/cart/add.js', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ items: [{ id: variantId, quantity: 1 }] })
+            body: JSON.stringify({ items: [{ id: variantId, quantity: qty }] })
           });
         }
 
@@ -1050,17 +1106,7 @@
       }
 
       return activeProduct.variants.some(function(variant) {
-        if (!variant.available || variant.options[optionIndex] !== optionValue) {
-          return false;
-        }
-
-        return variant.options.every(function(value, index) {
-          if (index === optionIndex) {
-            return true;
-          }
-          var selected = selectedOptions[index];
-          return selected == null || selected === value;
-        });
+        return variant.available && variant.options[optionIndex] === optionValue;
       });
     }
 
@@ -1264,6 +1310,9 @@
       }
 
       updateOptionStates();
+      if (drawerQtyInput) {
+        drawerQtyInput.value = '1';
+      }
       syncDrawer();
     }
 
@@ -1332,6 +1381,18 @@
         }
       }
 
+      var qtyDec = event.target.closest('[data-ppc-qty-dec]');
+      if (qtyDec && drawerQtyInput) {
+        var decVal = Math.max(1, (parseInt(drawerQtyInput.value || '1', 10) || 1) - 1);
+        drawerQtyInput.value = String(decVal);
+      }
+
+      var qtyInc = event.target.closest('[data-ppc-qty-inc]');
+      if (qtyInc && drawerQtyInput) {
+        var incVal = Math.min(99, (parseInt(drawerQtyInput.value || '1', 10) || 1) + 1);
+        drawerQtyInput.value = String(incVal);
+      }
+
       var open = event.target.closest('[data-ppc-open-drawer]');
       if (open) {
         var card = open.closest('.premium-product-carousel__card');
@@ -1355,7 +1416,15 @@
       drawerSubmit.addEventListener('click', function() {
         var variantId = parseInt(drawerSubmit.dataset.variantId || '', 10);
         if (!variantId) return;
-        addItem(variantId, drawerSubmit).then(closeDrawer);
+        var qty = drawerQtyInput ? parseInt(drawerQtyInput.value || '1', 10) : 1;
+        addItem(variantId, qty, drawerSubmit).then(closeDrawer);
+      });
+    }
+
+    if (drawerQtyInput) {
+      drawerQtyInput.addEventListener('change', function() {
+        var value = parseInt(drawerQtyInput.value || '1', 10) || 1;
+        drawerQtyInput.value = String(Math.max(1, Math.min(99, value)));
       });
     }
 
