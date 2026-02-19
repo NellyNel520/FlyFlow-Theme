@@ -1122,6 +1122,10 @@ small {
   transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
+.product-gallery__main--zoomed .product-gallery__media-item.is-active .product-gallery__main-image {
+  transform: scale(1.14);
+}
+
 .product-gallery__media-stage {
   position: relative;
   width: 100%;

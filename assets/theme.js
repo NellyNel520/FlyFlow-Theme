@@ -846,7 +846,7 @@ FlyFlow.ProductGallery = (function () {
       return;
     }
 
-    mainImage = gallery.querySelector('[data-gallery-main-image]');
+    mainImage = gallery.querySelector('.product-gallery__main-image');
     thumbnails = Array.from(gallery.querySelectorAll('[data-gallery-thumbnail]'));
     dots = Array.from(gallery.querySelectorAll('[data-gallery-dot]'));
     mediaItems = Array.from(gallery.querySelectorAll('[data-gallery-media-item]'));
@@ -873,11 +873,7 @@ FlyFlow.ProductGallery = (function () {
     if (mainContainer) {
       mainContainer.addEventListener('touchstart', onTouchStart, { passive: true });
       mainContainer.addEventListener('touchend', onTouchEnd, { passive: true });
-    }
-
-    // Image zoom
-    if (mainImage) {
-      mainImage.addEventListener('click', handleZoomClick);
+      mainContainer.addEventListener('click', handleZoomClick);
     }
 
     // Fullscreen
@@ -930,6 +926,14 @@ FlyFlow.ProductGallery = (function () {
         item.classList.toggle('is-active', isActive);
         item.hidden = !isActive;
       });
+
+      const mainContainer = gallery.querySelector('[data-gallery-main]');
+      const activeItem = gallery.querySelector('[data-gallery-media-item].is-active');
+      if (mainContainer) {
+        const isImage = activeItem?.dataset.mediaType === 'image';
+        mainContainer.classList.remove('product-gallery__main--zoomed');
+        mainContainer.style.cursor = isImage ? 'zoom-in' : 'default';
+      }
     } else if (mainImage) {
       const thumb = thumbnails.find((item) => parseInt(item.dataset.mediaId, 10) === mediaId);
       if (thumb) {
@@ -1117,19 +1121,30 @@ FlyFlow.ProductGallery = (function () {
    * @param {Event} e - Click event
    */
   function handleZoomClick(e) {
+    if (e.target.closest('[data-gallery-fullscreen]')) {
+      return;
+    }
+
+    if (e.target.closest('video, iframe, model-viewer, button, a')) {
+      return;
+    }
+
+    const container =
+      e.currentTarget?.closest('[data-gallery-main]') || e.target.closest('[data-gallery-main]');
+    if (!container) {
+      return;
+    }
+
     const activeItem = gallery?.querySelector('[data-gallery-media-item].is-active');
     if (activeItem && activeItem.dataset.mediaType !== 'image') {
       return;
     }
-    // Simple zoom: toggle a zoomed class
-    const container = e.target.closest('[data-gallery-main]');
-    if (container) {
-      container.classList.toggle('product-gallery__main--zoomed');
-      if (container.classList.contains('product-gallery__main--zoomed')) {
-        container.style.cursor = 'zoom-out';
-      } else {
-        container.style.cursor = 'zoom-in';
-      }
+
+    container.classList.toggle('product-gallery__main--zoomed');
+    if (container.classList.contains('product-gallery__main--zoomed')) {
+      container.style.cursor = 'zoom-out';
+    } else {
+      container.style.cursor = 'zoom-in';
     }
   }
 
