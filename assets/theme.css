@@ -242,6 +242,51 @@ small {
   padding-block: var(--section-spacing);
 }
 
+/* Chapter composition controls (homepage-ready section hooks) */
+.chapter-section {
+  position: relative;
+}
+
+.chapter-section--spacing-compact {
+  --chapter-section-space: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.chapter-section--spacing-standard {
+  --chapter-section-space: var(--section-spacing);
+}
+
+.chapter-section--spacing-spacious {
+  --chapter-section-space: clamp(3rem, 6vw, 5.5rem);
+}
+
+.chapter-section.section {
+  padding-block: var(--chapter-section-space, var(--section-spacing));
+}
+
+.chapter-section--divider-top::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: clamp(1rem, 4vw, 3rem);
+  right: clamp(1rem, 4vw, 3rem);
+  height: 1px;
+  background: color-mix(in srgb, var(--color-border) 72%, transparent);
+  pointer-events: none;
+}
+
+.chapter-section--container-full > .container {
+  max-width: none !important;
+}
+
+.chapter-section--container-full .rp-premium__inner {
+  max-width: none;
+}
+
+.chapter-section--container-full .container,
+.chapter-section--container-full .rp-premium__inner {
+  padding-inline: clamp(1rem, 4vw, 4rem);
+}
+
 /* Product grid — mobile first */
 .product-grid {
   display: grid;

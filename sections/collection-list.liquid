@@ -5,7 +5,11 @@
   Last modified: 2026-02-17
 {% endcomment %}
 
-<section class="section collection-list collection-list--{{ section.id }}" data-section-id="{{ section.id }}">
+<section
+  class="section collection-list collection-list--{{ section.id }} chapter-section chapter-section--spacing-{{ section.settings.section_spacing | default: 'standard' }} chapter-section--container-{{ section.settings.container_width | default: 'contained' }}{% if section.settings.show_divider_top %} chapter-section--divider-top{% endif %}{% if section.settings.enable_reveal %} chapter-section--reveal{% endif %}"
+  data-section-id="{{ section.id }}"
+  data-enable-reveal="{{ section.settings.enable_reveal }}"
+>
   <div class="container">
     {% if section.settings.heading != blank %}
       <div class="text-center" style="margin-bottom:var(--space-2xl)">
@@ -168,6 +172,39 @@
         { "value": "4 / 3", "label": "Landscape (4:3)" }
       ],
       "default": "3 / 4"
+    },
+    {
+      "type": "select",
+      "id": "section_spacing",
+      "label": "Section spacing",
+      "default": "standard",
+      "options": [
+        { "value": "compact", "label": "Compact" },
+        { "value": "standard", "label": "Standard" },
+        { "value": "spacious", "label": "Spacious" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider_top",
+      "label": "Show top divider",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "container_width",
+      "label": "Container width",
+      "default": "contained",
+      "options": [
+        { "value": "full", "label": "Full" },
+        { "value": "contained", "label": "Contained" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_reveal",
+      "label": "Enable reveal",
+      "default": false
     }
   ],
   "blocks": [
