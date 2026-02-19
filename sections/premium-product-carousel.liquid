@@ -677,6 +677,17 @@
     cursor: not-allowed;
   }
 
+  .premium-product-carousel__drawer [data-ppc-option-value] {
+    pointer-events: auto !important;
+    cursor: pointer;
+  }
+
+  .premium-product-carousel__drawer .swatch.swatch--sold-out,
+  .premium-product-carousel__drawer .size-btn.size-btn--sold-out {
+    pointer-events: auto !important;
+    cursor: pointer;
+  }
+
   .premium-product-carousel__drawer-swatch:not([disabled]):hover,
   .premium-product-carousel__drawer-size:not([disabled]):hover {
     transform: translateY(-1px);
@@ -1170,14 +1181,14 @@
         var isAvailable = isValueAvailable(optionIndex, optionValue);
 
         button.classList.toggle('is-active', isActive);
-        button.classList.toggle('is-unavailable', !isAvailable);
+        button.classList.toggle('is-unavailable', false);
         button.classList.toggle('swatch--active', isActive && button.classList.contains('swatch'));
         button.classList.toggle('size-btn--active', isActive && button.classList.contains('size-btn'));
-        button.classList.toggle('swatch--sold-out', !isAvailable && button.classList.contains('swatch'));
-        button.classList.toggle('size-btn--sold-out', !isAvailable && button.classList.contains('size-btn'));
+        button.classList.toggle('swatch--sold-out', false);
+        button.classList.toggle('size-btn--sold-out', false);
         button.disabled = false;
         button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-        button.setAttribute('aria-disabled', isAvailable ? 'false' : 'true');
+        button.setAttribute('aria-disabled', 'false');
       });
     }
 
