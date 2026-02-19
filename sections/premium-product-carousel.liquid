@@ -671,6 +671,20 @@
     color: #ffffff;
   }
 
+  .premium-product-carousel__drawer [data-ppc-option-value][data-active='true'] {
+    border-color: #0f1116 !important;
+  }
+
+  .premium-product-carousel__drawer .swatch[data-active='true'] {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.52), 0 0 0 2px #0f1116 !important;
+    transform: scale(1.04);
+  }
+
+  .premium-product-carousel__drawer .size-btn[data-active='true'] {
+    background: #101218 !important;
+    color: #ffffff !important;
+  }
+
   .premium-product-carousel__drawer .swatch.swatch--sold-out,
   .premium-product-carousel__drawer .size-btn.size-btn--sold-out {
     opacity: 0.4;
@@ -1187,6 +1201,7 @@
         button.classList.toggle('swatch--sold-out', false);
         button.classList.toggle('size-btn--sold-out', false);
         button.disabled = false;
+        button.dataset.active = isActive ? 'true' : 'false';
         button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
         button.setAttribute('aria-disabled', 'false');
       });
