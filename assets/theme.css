@@ -1028,7 +1028,7 @@ small {
   margin-inline: auto;
   background: rgba(255, 255, 255, 0.98);
   border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 999px;
+  border-radius: 0;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
   transition:
     border-color var(--transition-base),
@@ -1129,8 +1129,18 @@ small {
 
 @media (max-width: 1023px) {
   .utility-bar__inner {
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto 1fr auto;
     min-height: 34px;
+  }
+
+  .utility-bar__meta {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .utility-bar__inner {
+    grid-template-columns: auto 1fr;
   }
 
   .utility-bar__social,
