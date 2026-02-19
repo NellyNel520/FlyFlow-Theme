@@ -1,19 +1,68 @@
 {
   "sections": {
     "hero": {
-      "type": "hero-banner",
+      "type": "hero-droproom",
+      "blocks": {
+        "rail-item-1": {
+          "type": "rail_item",
+          "settings": {}
+        },
+        "rail-item-2": {
+          "type": "rail_item",
+          "settings": {}
+        },
+        "rail-item-3": {
+          "type": "rail_item",
+          "settings": {}
+        },
+        "rail-item-4": {
+          "type": "rail_item",
+          "settings": {}
+        },
+        "rail-item-5": {
+          "type": "rail_item",
+          "settings": {}
+        },
+        "rail-item-6": {
+          "type": "rail_item",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "rail-item-1",
+        "rail-item-2",
+        "rail-item-3",
+        "rail-item-4",
+        "rail-item-5",
+        "rail-item-6"
+      ],
       "settings": {
-        "media_mode": "image",
-        "overline": "New Collection",
-        "heading": "Elevate Your Style",
-        "subheading": "Discover curated fashion, designer footwear, and statement accessories crafted for those who move with intention.",
-        "button_text": "Explore the Collection",
-        "button_link": "/collections/new-arrivals",
-        "height": 90,
-        "enable_parallax": true,
-        "carousel_autoplay": true,
-        "carousel_interval": 5,
-        "overlay_opacity": 35
+        "media_type": "image",
+        "heading": "FlyFlow Droproom",
+        "subheading": "Precision streetwear engineered for movement.",
+        "primary_cta_label": "Shop Drop",
+        "primary_cta_link": "/collections/new-arrivals",
+        "secondary_cta_label": "Explore Collection",
+        "secondary_cta_link": "/collections/all",
+        "show_drop_label": true,
+        "drop_label_text": "DROP 01",
+        "show_drop_meta_chips": true,
+        "drop_chip_1": "Nocturne Capsule",
+        "drop_chip_2": "Limited 240",
+        "drop_chip_3": "Ships in 48h",
+        "rail_title": "Gallery Rail",
+        "rail_source": "products",
+        "rail_item_limit": 8,
+        "show_controls": true,
+        "progress_style": "bar",
+        "peek_next": true,
+        "enable_quick_add": false,
+        "section_density": "standard",
+        "container_width": "contained",
+        "show_divider_top": false,
+        "enable_reveal": true,
+        "show_hairline_divider": true,
+        "mobile_sticky_cta": false
       }
     },
     "editorial-landing": {
