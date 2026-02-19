@@ -3579,14 +3579,6 @@ small {
   text-transform: uppercase;
 }
 
-.shipping-bar__label {
-  margin: 0 0 6px;
-  font-size: 0.62rem;
-  letter-spacing: 0.12em;
-  color: var(--color-text-secondary);
-  opacity: 0.8;
-}
-
 .shipping-bar__track {
   height: 2px;
   background-color: var(--color-border);
