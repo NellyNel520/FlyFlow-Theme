@@ -1,0 +1,467 @@
+{% liquid
+  assign overlay_alpha = section.settings.overlay_opacity | divided_by: 100.0
+  assign shadow_alpha = section.settings.shadow_strength | divided_by: 100.0
+%}
+
+<section
+  class="section editorial-campaign-collage editorial-campaign-collage--{{ section.id }} chapter-section chapter-section--spacing-{{ section.settings.section_density | default: 'standard' }} chapter-section--container-{{ section.settings.container_width | default: 'contained' }}{% if section.settings.show_divider_top %} chapter-section--divider-top{% endif %}{% if section.settings.enable_reveal %} chapter-section--reveal{% endif %}"
+  data-section-id="{{ section.id }}"
+  data-enable-reveal="{{ section.settings.enable_reveal }}"
+>
+  <div class="container">
+    <div class="editorial-campaign-collage__grid">
+      <article class="editorial-campaign-collage__campaign" data-campaign-reveal data-reveal-order="0">
+        {% if section.settings.media_type == 'video' and section.settings.primary_video != blank %}
+          {{
+            section.settings.primary_video
+            | video_tag: autoplay: true, loop: true, muted: true, controls: false, image_size: '2200x'
+          }}
+        {% elsif section.settings.primary_media != blank %}
+          {{
+            section.settings.primary_media
+            | image_url: width: 2400
+            | image_tag:
+              class: 'editorial-campaign-collage__campaign-image',
+              loading: 'lazy',
+              widths: '720,1080,1440,1800,2200',
+              sizes: '(min-width: 990px) 60vw, 100vw',
+              alt: section.settings.heading
+          }}
+        {% else %}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'editorial-campaign-collage__campaign-image editorial-campaign-collage__placeholder' }}
+        {% endif %}
+
+        {% if section.settings.overlay_opacity > 0 %}
+          <div
+            class="editorial-campaign-collage__overlay"
+            style="--campaign-overlay-color: {{ section.settings.overlay_color }}; --campaign-overlay-alpha: {{ overlay_alpha }}"
+          ></div>
+        {% endif %}
+
+        <div class="editorial-campaign-collage__campaign-copy editorial-campaign-collage__campaign-copy--{{ section.settings.text_position }}">
+          {% if section.settings.label_text != blank %}
+            <p class="editorial-campaign-collage__label" data-campaign-reveal data-reveal-order="1">{{ section.settings.label_text }}</p>
+          {% endif %}
+          {% if section.settings.heading != blank %}
+            <h2 class="editorial-campaign-collage__heading" data-campaign-reveal data-reveal-order="2">{{ section.settings.heading }}</h2>
+          {% endif %}
+          {% if section.settings.subheading != blank %}
+            <p class="editorial-campaign-collage__subheading" data-campaign-reveal data-reveal-order="3">{{ section.settings.subheading }}</p>
+          {% endif %}
+        </div>
+      </article>
+
+      <article class="editorial-campaign-collage__collage" style="--collage-shadow-alpha: {{ shadow_alpha }};">
+        {% for i in (1..5) %}
+          {% capture image_key %}collage_image_{{ i }}{% endcapture %}
+          {% assign collage_image = section.settings[image_key] %}
+          {% if collage_image != blank %}
+            <figure class="editorial-campaign-collage__item editorial-campaign-collage__item--{{ i }}" data-campaign-reveal data-reveal-order="{{ i | plus: 3 }}">
+              {{
+                collage_image
+                | image_url: width: 1200
+                | image_tag:
+                  class: 'editorial-campaign-collage__item-image',
+                  loading: 'lazy',
+                  widths: '280,420,560,760,980',
+                  sizes: '(min-width: 990px) 30vw, 86vw',
+                  alt: section.settings.heading
+              }}
+            </figure>
+          {% endif %}
+        {% endfor %}
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    gap: clamp(var(--space-md), 2.4vw, var(--space-2xl));
+    align-items: stretch;
+  }
+
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__campaign {
+    position: relative;
+    min-height: clamp(420px, 60vw, 760px);
+    overflow: hidden;
+    border-radius: 16px;
+    isolation: isolate;
+  }
+
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__campaign video,
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__campaign-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 18%, color-mix(in srgb, var(--campaign-overlay-color) 100%, transparent) 100%);
+    opacity: var(--campaign-overlay-alpha);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__campaign-copy {
+    position: absolute;
+    left: clamp(var(--space-md), 2.2vw, var(--space-2xl));
+    right: clamp(var(--space-md), 2.2vw, var(--space-2xl));
+    z-index: 2;
+    max-width: min(86%, 620px);
+    color: #fff;
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__campaign-copy--bottom_left {
+    bottom: clamp(var(--space-md), 2.5vw, var(--space-2xl));
+  }
+
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__campaign-copy--center_left {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__label {
+    margin: 0;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.9;
+  }
+
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__heading {
+    margin: 0;
+    font-size: clamp(1.9rem, 3.5vw, 3.2rem);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__subheading {
+    margin: 0;
+    font-size: clamp(0.9rem, 1.15vw, 1.02rem);
+    line-height: 1.4;
+    max-width: 38ch;
+    opacity: 0.92;
+  }
+
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__collage {
+    position: relative;
+    min-height: clamp(420px, 60vw, 760px);
+  }
+
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__item {
+    position: absolute;
+    margin: 0;
+    overflow: hidden;
+    border-radius: 14px;
+    box-shadow: 0 14px 32px rgba(12, 14, 18, var(--collage-shadow-alpha));
+    background: transparent;
+  }
+
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__item-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__item--1 {
+    width: 58%;
+    height: 38%;
+    top: 0;
+    left: 0;
+    z-index: 4;
+  }
+
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__item--2 {
+    width: 48%;
+    height: 34%;
+    top: 8%;
+    right: 0;
+    z-index: 2;
+  }
+
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__item--3 {
+    width: 62%;
+    height: 40%;
+    left: 10%;
+    bottom: 20%;
+    z-index: 5;
+  }
+
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__item--4 {
+    width: 42%;
+    height: 33%;
+    right: 2%;
+    bottom: 18%;
+    z-index: 3;
+  }
+
+  .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__item--5 {
+    width: 54%;
+    height: 28%;
+    left: 22%;
+    bottom: 0;
+    z-index: 6;
+  }
+
+  .editorial-campaign-collage--{{ section.id }} [data-campaign-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .editorial-campaign-collage--{{ section.id }}.is-pending-reveal [data-campaign-reveal] {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .editorial-campaign-collage--{{ section.id }}.is-revealed [data-campaign-reveal] {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity var(--transition-base), transform var(--transition-base);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  @media (max-width: 989px) {
+    .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-lg);
+    }
+
+    .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__campaign {
+      min-height: clamp(340px, 72vw, 520px);
+      border-radius: 12px;
+    }
+
+    .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__campaign-copy {
+      max-width: min(90%, 520px);
+      left: var(--space-md);
+      right: var(--space-md);
+    }
+
+    .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__collage {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-sm);
+    }
+
+    .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__item {
+      position: relative;
+      width: min(88%, 460px);
+      height: auto;
+      aspect-ratio: 4 / 5;
+      box-shadow: 0 10px 24px rgba(12, 14, 18, calc(var(--collage-shadow-alpha) * 0.8));
+    }
+
+    .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__item:nth-child(odd) {
+      margin-left: 0;
+      margin-right: auto;
+    }
+
+    .editorial-campaign-collage--{{ section.id }} .editorial-campaign-collage__item:nth-child(even) {
+      margin-left: auto;
+      margin-right: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .editorial-campaign-collage--{{ section.id }} [data-campaign-reveal] {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    var section = document.querySelector('.editorial-campaign-collage--{{ section.id }}');
+    if (!section) return;
+
+    var revealEnabled = section.dataset.enableReveal === 'true';
+    if (!revealEnabled || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    var revealEls = section.querySelectorAll('[data-campaign-reveal]');
+    if (!revealEls.length) return;
+
+    section.classList.add('is-pending-reveal');
+
+    revealEls.forEach(function(el) {
+      var order = parseInt(el.getAttribute('data-reveal-order') || '0', 10);
+      el.style.setProperty('--reveal-delay', (Math.max(0, order) * 90) + 'ms');
+    });
+
+    if (!('IntersectionObserver' in window)) {
+      section.classList.add('is-revealed');
+      return;
+    }
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          section.classList.add('is-revealed');
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.2 });
+
+    observer.observe(section);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Campaign Collage",
+  "settings": [
+    {
+      "type": "select",
+      "id": "media_type",
+      "label": "Media type",
+      "default": "image",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" }
+      ]
+    },
+    {
+      "type": "image_picker",
+      "id": "primary_media",
+      "label": "Primary media"
+    },
+    {
+      "type": "video",
+      "id": "primary_video",
+      "label": "Primary video"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#0B0D11"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "default": 25
+    },
+    {
+      "type": "text",
+      "id": "label_text",
+      "label": "Label",
+      "default": "FLYFLOW / DROP 02"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Urban layers designed with campaign-level intent."
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Elevated essentials that move through every city chapter."
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text position",
+      "default": "bottom_left",
+      "options": [
+        { "value": "bottom_left", "label": "Bottom left" },
+        { "value": "center_left", "label": "Center left" }
+      ]
+    },
+    {
+      "type": "image_picker",
+      "id": "collage_image_1",
+      "label": "Collage image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "collage_image_2",
+      "label": "Collage image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "collage_image_3",
+      "label": "Collage image 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "collage_image_4",
+      "label": "Collage image 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "collage_image_5",
+      "label": "Collage image 5"
+    },
+    {
+      "type": "range",
+      "id": "shadow_strength",
+      "label": "Collage shadow strength",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "%",
+      "default": 18
+    },
+    {
+      "type": "select",
+      "id": "container_width",
+      "label": "Container width",
+      "default": "contained",
+      "options": [
+        { "value": "full", "label": "Full" },
+        { "value": "contained", "label": "Contained" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "section_density",
+      "label": "Section density",
+      "default": "standard",
+      "options": [
+        { "value": "compact", "label": "Compact" },
+        { "value": "standard", "label": "Standard" },
+        { "value": "spacious", "label": "Spacious" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider_top",
+      "label": "Show top divider",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_reveal",
+      "label": "Enable reveal",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editorial Campaign Collage"
+    }
+  ]
+}
+{% endschema %}
