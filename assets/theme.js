@@ -836,6 +836,8 @@ FlyFlow.ProductGallery = (function () {
   let currentIndex = 0;
   let touchStartX = 0;
   let touchEndX = 0;
+  let fullscreenView;
+  let removeFullscreenTrap;
 
   /**
    * Initialize product gallery
@@ -881,6 +883,28 @@ FlyFlow.ProductGallery = (function () {
     if (fullscreenBtn) {
       fullscreenBtn.addEventListener('click', openFullscreen);
     }
+    fullscreenView = gallery.querySelector('[data-gallery-fullscreen-view]');
+    if (fullscreenView) {
+      const closeBtn = fullscreenView.querySelector('[data-modal-close]');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          closeFullscreen();
+        });
+      }
+
+      fullscreenView.addEventListener('click', function (e) {
+        if (e.target === fullscreenView) {
+          closeFullscreen();
+        }
+      });
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        closeFullscreen();
+      }
+    });
 
     refreshVisibleMediaIds();
     const firstVisibleId = currentMediaIds[0];
@@ -1150,11 +1174,29 @@ FlyFlow.ProductGallery = (function () {
 
   /** Open fullscreen gallery */
   function openFullscreen() {
-    const fullscreen = document.querySelector('[data-gallery-fullscreen-view]');
-    if (fullscreen) {
-      fullscreen.classList.add('product-gallery__fullscreen--open');
+    if (fullscreenView) {
+      fullscreenView.classList.add('product-gallery__fullscreen--open');
+      fullscreenView.setAttribute('aria-hidden', 'false');
       document.body.classList.add('drawer-open');
-      FlyFlow.trapFocus(fullscreen);
+      removeFullscreenTrap = FlyFlow.trapFocus(fullscreenView);
+    }
+  }
+
+  function closeFullscreen() {
+    if (
+      !fullscreenView ||
+      !fullscreenView.classList.contains('product-gallery__fullscreen--open')
+    ) {
+      return;
+    }
+
+    fullscreenView.classList.remove('product-gallery__fullscreen--open');
+    fullscreenView.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('drawer-open');
+
+    if (typeof removeFullscreenTrap === 'function') {
+      removeFullscreenTrap();
+      removeFullscreenTrap = null;
     }
   }
 
