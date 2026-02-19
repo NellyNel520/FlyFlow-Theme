@@ -1,0 +1,152 @@
+{% comment %}
+  Related Product Card (Premium)
+{% endcomment %}
+
+{% assign rating_parts = section.settings.rating_metafield_namespace_key | split: '.' %}
+{% assign rating_ns = rating_parts[0] | default: 'reviews' %}
+{% assign rating_key = rating_parts[1] | default: 'rating' %}
+{% assign rating_field = product.metafields[rating_ns][rating_key] %}
+{% assign rating_value = rating_field.value.rating | default: rating_field.value | default: rating_field %}
+
+{% assign driver_parts = section.settings.driver_size_key | split: '.' %}
+{% assign driver_ns = driver_parts[0] | default: 'custom' %}
+{% assign driver_key = driver_parts[1] | default: 'driver_size' %}
+{% assign driver_size = product.metafields[driver_ns][driver_key].value | default: product.metafields[driver_ns][driver_key] %}
+
+{% assign weight_parts = section.settings.product_weight_key | split: '.' %}
+{% assign weight_ns = weight_parts[0] | default: 'custom' %}
+{% assign weight_key = weight_parts[1] | default: 'product_weight' %}
+{% assign product_weight = product.metafields[weight_ns][weight_key].value | default: product.metafields[weight_ns][weight_key] %}
+
+{% assign battery_parts = section.settings.battery_life_key | split: '.' %}
+{% assign battery_ns = battery_parts[0] | default: 'custom' %}
+{% assign battery_key = battery_parts[1] | default: 'battery_life' %}
+{% assign battery_life = product.metafields[battery_ns][battery_key].value | default: product.metafields[battery_ns][battery_key] %}
+
+{% assign show_specs = false %}
+{% if section.settings.show_specs_row %}
+  {% if driver_size != blank or product_weight != blank or battery_life != blank %}
+    {% assign show_specs = true %}
+  {% endif %}
+{% endif %}
+
+{% assign is_new_product = false %}
+{% if section.settings.show_new_badge %}
+  {% if section.settings.new_badge_rule == 'tag' %}
+    {% assign new_tag_downcase = section.settings.new_badge_tag | downcase %}
+    {% for tag in product.tags %}
+      {% assign tag_downcase = tag | downcase %}
+      {% if tag_downcase == new_tag_downcase %}
+        {% assign is_new_product = true %}
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    {% assign now_ts = 'now' | date: '%s' | plus: 0 %}
+    {% assign published_ts = product.published_at | date: '%s' | plus: 0 %}
+    {% assign diff_days = now_ts | minus: published_ts | divided_by: 86400 %}
+    {% if diff_days <= section.settings.new_badge_days %}
+      {% assign is_new_product = true %}
+    {% endif %}
+  {% endif %}
+{% endif %}
+
+{% assign swatch_values = '' %}
+{% assign swatch_count = 0 %}
+{% assign swatch_option_name = section.settings.swatch_option_name | default: 'Color' %}
+{% assign swatch_option_name_downcase = swatch_option_name | downcase %}
+{% if section.settings.show_swatches %}
+  {% if section.settings.swatch_source == 'variant_option' %}
+    {% for option in product.options_with_values %}
+      {% assign option_name_downcase = option.name | downcase %}
+      {% if option_name_downcase == swatch_option_name_downcase %}
+        {% assign swatch_values = option.values %}
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    {% assign swatch_key = swatch_option_name | downcase | replace: ' ', '_' %}
+    {% assign swatch_values = product.metafields.custom[swatch_key].value | default: product.metafields.custom[swatch_key] %}
+  {% endif %}
+{% endif %}
+
+<article class="rp-card" data-product-id="{{ product.id }}">
+  <div class="rp-card__media-wrap">
+    {% if is_new_product %}
+      <span class="rp-card__badge">New</span>
+    {% endif %}
+    {% if section.settings.show_rating and rating_value != blank %}
+      <span class="rp-card__rating" aria-label="Rated {{ rating_value }} out of 5">
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2.8l2.1 4.3 4.8.7-3.5 3.4.8 4.8L10 13.8 5.8 16l.8-4.8-3.5-3.4 4.8-.7L10 2.8z" stroke="currentColor" stroke-width="1.1" fill="currentColor"/></svg>
+        {{ rating_value }}
+      </span>
+    {% endif %}
+
+    <a class="rp-card__media" href="{{ product.url }}">
+      {% if product.featured_image %}
+        {{ product.featured_image | image_url: width: 900 | image_tag:
+          class: 'rp-card__image',
+          loading: 'lazy',
+          widths: '300, 500, 700, 900',
+          sizes: '(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 82vw',
+          alt: product.featured_image.alt | default: product.title
+        }}
+      {% else %}
+        {{ 'product-1' | placeholder_svg_tag: 'rp-card__image' }}
+      {% endif %}
+    </a>
+  </div>
+
+  <div class="rp-card__content">
+    {% if section.settings.show_vendor and product.vendor != blank %}
+      <p class="rp-card__vendor">{{ product.vendor }}</p>
+    {% endif %}
+    <div class="rp-card__title-row">
+      <h3 class="rp-card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+      <p class="rp-card__price">
+        {% if product.compare_at_price > product.price %}
+          <span class="rp-card__price-current">{{ product.price | money }}</span>
+          <span class="rp-card__price-compare">{{ product.compare_at_price | money }}</span>
+        {% else %}
+          <span class="rp-card__price-current">{{ product.price | money }}</span>
+        {% endif %}
+      </p>
+    </div>
+
+    {% if section.settings.show_swatches and swatch_values != blank %}
+      <div class="rp-card__swatches" aria-label="Available colors">
+        {% for swatch in swatch_values %}
+          {% assign swatch_count = swatch_count | plus: 1 %}
+          {% if forloop.index <= 4 %}
+            {% capture swatch_color %}{% render 'swatch-color', value: swatch %}{% endcapture %}
+            <span class="rp-card__swatch" style="--sw: {{ swatch_color | strip }}; background-color: {{ swatch_color | strip }};" title="{{ swatch }}" aria-label="{{ swatch }}"></span>
+          {% endif %}
+        {% endfor %}
+        {% if swatch_count > 4 %}
+          <span class="rp-card__swatch-overflow">+{{ swatch_count | minus: 4 }}</span>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if show_specs %}
+      <div class="rp-card__specs">
+        {% if driver_size != blank %}
+          <div class="rp-card__spec">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="5.8" stroke="currentColor" stroke-width="1.2"/><path d="M10 6.4v7.2M6.4 10h7.2" stroke="currentColor" stroke-width="1.2"/></svg>
+            <div><strong>{{ driver_size }}</strong><span>Driver</span></div>
+          </div>
+        {% endif %}
+        {% if product_weight != blank %}
+          <div class="rp-card__spec">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 15h10l-1.1-6.8H6.1L5 15z" stroke="currentColor" stroke-width="1.2"/><path d="M8.2 8.2c0-1 .8-1.8 1.8-1.8s1.8.8 1.8 1.8" stroke="currentColor" stroke-width="1.2"/></svg>
+            <div><strong>{{ product_weight }}</strong><span>Weight</span></div>
+          </div>
+        {% endif %}
+        {% if battery_life != blank %}
+          <div class="rp-card__spec">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="4.2" y="6.4" width="10.8" height="7.2" rx="1.2" stroke="currentColor" stroke-width="1.2"/><path d="M15.6 8.4h.9v3.2h-.9" stroke="currentColor" stroke-width="1.2"/></svg>
+            <div><strong>{{ battery_life }}</strong><span>Battery</span></div>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</article>

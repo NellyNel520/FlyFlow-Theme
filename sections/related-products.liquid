@@ -1,58 +1,71 @@
 {% comment %}
-  FlyFlow Theme - Related Products Section
-  Purpose: Display recommended/related products on product pages.
-  Dependencies: snippets/product-card.liquid
-  Last modified: 2026-02-17
+  FlyFlow Theme - Related Products (Premium Carousel)
+  Purpose: Display related products with a premium carousel layout.
+  Notes: Keeps current related-product source logic intact.
 {% endcomment %}
 
-<section class="section" data-section-id="{{ section.id }}">
-  {% assign columns_desktop = section.settings.products_per_row_desktop | default: 4 %}
-  {% assign columns_mobile = section.settings.products_per_row_mobile | default: 2 | plus: 0 %}
-  {% assign columns_tablet = columns_desktop | at_most: 3 | at_least: 2 %}
-  <div
-    class="related-products related-products--{{ section.settings.heading_alignment }}"
-    style="
-      --rp-max-width: {{ section.settings.section_max_width }}px;
-      --rp-padding-top: {{ section.settings.section_padding_top }}px;
-      --rp-padding-bottom: {{ section.settings.section_padding_bottom }}px;
-      --rp-grid-desktop: {{ columns_desktop }};
-      --rp-grid-tablet: {{ columns_tablet }};
-      --rp-grid-mobile: {{ columns_mobile }};
-      --rp-card-radius: {{ section.settings.card_radius }}px;
-      --rp-gap: clamp(1.25rem, 2vw, 2rem);
-    "
-  >
-    <div class="related-products__inner">
-      {% if section.settings.heading != blank or section.settings.subheading != blank %}
-        <header class="related-products__header">
-          {% if section.settings.heading != blank %}
-            <h2 class="related-products__heading">{{ section.settings.heading }}</h2>
-          {% endif %}
-          {% if section.settings.subheading != blank %}
-            <p class="related-products__subheading">{{ section.settings.subheading }}</p>
-          {% endif %}
-        </header>
+{{ 'section-related-products-premium.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'related-products-carousel.js' | asset_url }}" defer></script>
+
+{% assign rp_products = product.collections.first.products %}
+{% assign rp_count = 0 %}
+{% capture rp_cards %}
+  {% for item in rp_products limit: section.settings.products_to_show %}
+    {% if item.id != product.id and rp_count < section.settings.products_to_show %}
+      {% assign rp_count = rp_count | plus: 1 %}
+      {% render 'related-product-card-premium', product: item, section: section %}
+    {% endif %}
+  {% endfor %}
+{% endcapture %}
+
+{% if rp_count == 0 %}
+  {% assign rp_cards = '' %}
+  {% capture rp_cards %}
+    {% for item in collections.all.products limit: section.settings.products_to_show %}
+      {% if item.id != product.id %}
+        {% render 'related-product-card-premium', product: item, section: section %}
       {% endif %}
+    {% endfor %}
+  {% endcapture %}
+{% endif %}
 
-      <div
-        class="related-products__grid{% unless section.settings.card_hover_lift %} related-products__grid--no-lift{% endunless %}{% unless section.settings.image_hover_zoom %} related-products__grid--no-zoom{% endunless %}{% unless section.settings.show_vendor %} related-products__grid--hide-vendor{% endunless %}{% unless section.settings.show_color_swatches %} related-products__grid--hide-swatches{% endunless %}"
-      >
-        {% assign related = product.collections.first.products %}
-        {% assign count = 0 %}
-        {% for item in related limit: section.settings.products_to_show %}
-          {% if item.id != product.id and count < section.settings.products_to_show %}
-            {% render 'product-card', product: item, show_vendor: section.settings.show_vendor, show_color_swatches: section.settings.show_color_swatches %}
-            {% assign count = count | plus: 1 %}
-          {% endif %}
-        {% endfor %}
+<section
+  class="rp-premium section"
+  data-section-id="{{ section.id }}"
+  style="
+    --rp-max-width: {{ section.settings.section_max_width }}px;
+    --rp-padding-top: {{ section.settings.section_padding_top }}px;
+    --rp-padding-bottom: {{ section.settings.section_padding_bottom }}px;
+    --rp-cards-desktop: {{ section.settings.cards_per_view_desktop }};
+    --rp-cards-tablet: {{ section.settings.cards_per_view_tablet }};
+    --rp-card-radius: 17px;
+  "
+>
+  <div class="rp-premium__inner">
+    <header class="rp-premium__header">
+      <div>
+        <h2 class="rp-premium__heading">{{ section.settings.heading | default: 'You may also like' }}</h2>
+      </div>
+      {% if section.settings.enable_carousel %}
+        <div class="rp-premium__controls">
+          <button type="button" class="rp-premium__arrow" data-rp-prev aria-label="Previous related products">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12.5 4.5L7 10l5.5 5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" class="rp-premium__arrow" data-rp-next aria-label="Next related products">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 4.5L13 10l-5.5 5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      {% endif %}
+    </header>
 
-        {% if count == 0 %}
-          {% for item in collections.all.products limit: section.settings.products_to_show %}
-            {% if item.id != product.id %}
-              {% render 'product-card', product: item, show_vendor: section.settings.show_vendor, show_color_swatches: section.settings.show_color_swatches %}
-            {% endif %}
-          {% endfor %}
-        {% endif %}
+    <div
+      class="rp-premium__track-wrap{% unless section.settings.enable_carousel %} rp-premium__track-wrap--grid{% endunless %}"
+      data-rp-carousel
+      tabindex="0"
+      aria-label="Related products"
+    >
+      <div class="rp-premium__track">
+        {{ rp_cards }}
       </div>
     </div>
   </div>
@@ -66,22 +79,40 @@
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Complete the Look"
+      "default": "You may also like"
     },
     {
-      "type": "text",
-      "id": "subheading",
-      "label": "Subheading"
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "default": 9
     },
     {
-      "type": "select",
-      "id": "heading_alignment",
-      "label": "Heading alignment",
-      "default": "left",
-      "options": [
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" }
-      ]
+      "type": "checkbox",
+      "id": "enable_carousel",
+      "label": "Enable carousel",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "cards_per_view_desktop",
+      "label": "Cards per view (desktop)",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "cards_per_view_tablet",
+      "label": "Cards per view (tablet)",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
     },
     {
       "type": "range",
@@ -97,8 +128,8 @@
       "type": "range",
       "id": "section_padding_top",
       "label": "Section padding top",
-      "min": 24,
-      "max": 140,
+      "min": 40,
+      "max": 120,
       "step": 4,
       "default": 72,
       "unit": "px"
@@ -107,60 +138,54 @@
       "type": "range",
       "id": "section_padding_bottom",
       "label": "Section padding bottom",
-      "min": 24,
-      "max": 140,
+      "min": 40,
+      "max": 120,
       "step": 4,
       "default": 84,
       "unit": "px"
     },
     {
-      "type": "range",
-      "id": "products_to_show",
-      "label": "Products to show",
-      "min": 2,
-      "max": 8,
-      "step": 1,
-      "default": 4
-    },
-    {
-      "type": "range",
-      "id": "products_per_row_desktop",
-      "label": "Products per row (desktop)",
-      "min": 3,
-      "max": 5,
-      "step": 1,
-      "default": 4
+      "type": "checkbox",
+      "id": "show_new_badge",
+      "label": "Show new badge",
+      "default": true
     },
     {
       "type": "select",
-      "id": "products_per_row_mobile",
-      "label": "Products per row (mobile)",
-      "default": "2",
+      "id": "new_badge_rule",
+      "label": "New badge rule",
+      "default": "tag",
       "options": [
-        { "value": "1", "label": "1" },
-        { "value": "2", "label": "2" }
+        { "value": "tag", "label": "Tag" },
+        { "value": "days_since_publish", "label": "Days since publish" }
       ]
     },
     {
+      "type": "text",
+      "id": "new_badge_tag",
+      "label": "New badge tag",
+      "default": "new"
+    },
+    {
       "type": "range",
-      "id": "card_radius",
-      "label": "Card corner radius",
-      "min": 8,
-      "max": 24,
+      "id": "new_badge_days",
+      "label": "New badge days",
+      "min": 1,
+      "max": 30,
       "step": 1,
-      "default": 16
+      "default": 14
     },
     {
       "type": "checkbox",
-      "id": "image_hover_zoom",
-      "label": "Enable image hover zoom",
+      "id": "show_rating",
+      "label": "Show rating",
       "default": true
     },
     {
-      "type": "checkbox",
-      "id": "card_hover_lift",
-      "label": "Enable card hover lift",
-      "default": true
+      "type": "text",
+      "id": "rating_metafield_namespace_key",
+      "label": "Rating metafield (namespace.key)",
+      "default": "reviews.rating"
     },
     {
       "type": "checkbox",
@@ -170,9 +195,49 @@
     },
     {
       "type": "checkbox",
-      "id": "show_color_swatches",
-      "label": "Show color swatches",
+      "id": "show_swatches",
+      "label": "Show swatches",
       "default": true
+    },
+    {
+      "type": "select",
+      "id": "swatch_source",
+      "label": "Swatch source",
+      "default": "variant_option",
+      "options": [
+        { "value": "variant_option", "label": "Variant option" },
+        { "value": "metafield", "label": "Metafield" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "swatch_option_name",
+      "label": "Swatch option name",
+      "default": "Color"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_specs_row",
+      "label": "Show specs row",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "driver_size_key",
+      "label": "Driver size metafield key",
+      "default": "custom.driver_size"
+    },
+    {
+      "type": "text",
+      "id": "product_weight_key",
+      "label": "Product weight metafield key",
+      "default": "custom.product_weight"
+    },
+    {
+      "type": "text",
+      "id": "battery_life_key",
+      "label": "Battery life metafield key",
+      "default": "custom.battery_life"
     }
   ],
   "presets": [
