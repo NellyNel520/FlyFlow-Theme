@@ -11,36 +11,40 @@
   data-enable-reveal="{{ section.settings.enable_reveal }}"
   style="background-color:var(--color-surface)"
 >
-  <div class="container text-center" style="max-width:640px">
+  <div class="container newsletter-section text-center" style="max-width:720px">
     {% if section.settings.heading != blank %}
-      <h2 class="mb-sm">{{ section.settings.heading }}</h2>
+      <h2 class="newsletter-section__heading mb-sm">{{ section.settings.heading }}</h2>
     {% endif %}
     {% if section.settings.subheading != blank %}
-      <p class="text-secondary text-sm mb-lg">{{ section.settings.subheading }}</p>
+      <p class="newsletter-section__subheading text-secondary text-sm mb-lg">{{ section.settings.subheading }}</p>
     {% endif %}
 
-    {% form 'customer', class: 'newsletter__form', style: 'max-width:480px;margin-inline:auto' %}
-      {% if form.posted_successfully? %}
-        <p class="text-accent" style="font-weight:600">{{ 'newsletter.success' | t }}</p>
-      {% else %}
-        <input type="hidden" name="contact[tags]" value="newsletter">
-        <input
-          type="email"
-          name="contact[email]"
-          class="newsletter__input"
-          placeholder="{{ 'newsletter.placeholder' | t }}"
-          required
-          autocomplete="email"
-          aria-label="{{ 'newsletter.placeholder' | t }}"
-        >
-        <button type="submit" class="btn btn--primary">
-          {{ 'newsletter.submit' | t }}
-        </button>
-        {% if form.errors %}
-          <p class="text-sale text-sm mt-sm">{{ form.errors.messages['email'] }}</p>
+    <div class="newsletter-section__panel">
+      {% form 'customer', class: 'newsletter-section__form', style: 'max-width:560px;margin-inline:auto' %}
+        {% if form.posted_successfully? %}
+          <p class="newsletter-section__message newsletter-section__message--success">{{ 'newsletter.success' | t }}</p>
+        {% else %}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <div class="newsletter-section__fields">
+            <input
+              type="email"
+              name="contact[email]"
+              class="newsletter-section__input"
+              placeholder="{{ 'newsletter.placeholder' | t }}"
+              required
+              autocomplete="email"
+              aria-label="{{ 'newsletter.placeholder' | t }}"
+            >
+            <button type="submit" class="newsletter-section__button">
+              {{ 'newsletter.submit' | t }}
+            </button>
+          </div>
+          {% if form.errors %}
+            <p class="newsletter-section__message newsletter-section__message--error">{{ form.errors.messages['email'] }}</p>
+          {% endif %}
         {% endif %}
-      {% endif %}
-    {% endform %}
+      {% endform %}
+    </div>
   </div>
 </section>
 

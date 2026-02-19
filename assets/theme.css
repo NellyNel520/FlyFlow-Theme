@@ -940,6 +940,130 @@ small {
   color: var(--color-accent);
 }
 
+/* Newsletter section — premium homepage variant */
+.newsletter-section {
+  text-wrap: balance;
+}
+
+.newsletter-section__heading {
+  letter-spacing: -0.015em;
+}
+
+.newsletter-section__subheading {
+  max-width: 56ch;
+  margin-inline: auto;
+}
+
+.newsletter-section__panel {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.32));
+  border: 1px solid color-mix(in srgb, var(--color-border) 78%, transparent);
+  border-radius: 22px;
+  padding: clamp(1.1rem, 2.2vw, 1.7rem);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.08);
+}
+
+.newsletter-section__fields {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.7rem;
+  align-items: center;
+}
+
+.newsletter-section__input {
+  min-height: 54px;
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 84%, transparent);
+  background: color-mix(in srgb, var(--color-background) 92%, #fff 8%);
+  color: var(--color-text);
+  padding: 0.92rem 1rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.newsletter-section__input::placeholder {
+  color: color-mix(in srgb, var(--color-text-secondary) 75%, transparent);
+}
+
+.newsletter-section__input:focus {
+  border-color: color-mix(in srgb, var(--color-accent) 42%, var(--color-border));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 16%, transparent);
+  outline: none;
+}
+
+.newsletter-section__button {
+  min-height: 54px;
+  border: 1px solid var(--color-primary);
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.78rem 1.35rem;
+  cursor: pointer;
+  transition:
+    transform var(--transition-fast),
+    opacity var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.newsletter-section__button:hover {
+  transform: translateY(-1px);
+  opacity: 0.94;
+}
+
+.newsletter-section__button:focus-visible,
+.newsletter-section__input:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 70%, #fff 30%);
+  outline-offset: 2px;
+}
+
+.newsletter-section__message {
+  margin-top: 0.75rem;
+  font-size: 0.82rem;
+}
+
+.newsletter-section__message--success {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.newsletter-section__message--error {
+  color: var(--color-sale);
+}
+
+@media (max-width: 767px) {
+  .newsletter-section__panel {
+    border-radius: 18px;
+    padding: 1rem;
+  }
+
+  .newsletter-section__fields {
+    grid-template-columns: 1fr;
+  }
+
+  .newsletter-section__button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .newsletter-section__button,
+  .newsletter-section__input {
+    transition: none !important;
+  }
+
+  .newsletter-section__button:hover {
+    transform: none;
+  }
+}
+
 /* ==========================================================================
    8. Product Card — Minimal luxury presentation
    ========================================================================== */
