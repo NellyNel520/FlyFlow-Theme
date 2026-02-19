@@ -177,23 +177,6 @@
         "products_to_show": 8
       }
     },
-    "image-with-text": {
-      "type": "image-with-text",
-      "settings": {
-        "overline": "Our Story",
-        "heading": "Designed to Move",
-        "text": "<p>FlyFlow was born from the belief that fashion should move with you — not hold you back. Every piece in our collection is crafted with intention, blending contemporary design with timeless silhouettes.</p><p>From designer sneakers to statement accessories, we curate for those who refuse to stand still.</p>",
-        "button_text": "Discover More",
-        "button_link": "/collections/best-sellers",
-        "reverse_layout": false
-      }
-    },
-    "shop-the-look": {
-      "type": "shop-the-look",
-      "settings": {
-        "heading": "Style Edit"
-      }
-    },
     "instagram-feed": {
       "type": "instagram-feed",
       "blocks": {
