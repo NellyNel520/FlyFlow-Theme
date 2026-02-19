@@ -105,7 +105,7 @@
 
 .rp-card__media-wrap {
   position: relative;
-  padding: 1rem;
+  padding: 0;
 }
 
 .rp-card__badge,
@@ -127,11 +127,11 @@
 }
 
 .rp-card__badge {
-  left: 0.95rem;
+  left: 0.75rem;
 }
 
 .rp-card__rating {
-  right: 0.95rem;
+  right: 0.75rem;
   letter-spacing: 0.03em;
   text-transform: none;
   font-size: 0.72rem;
@@ -144,16 +144,16 @@
 
 .rp-card__media {
   display: block;
-  border-radius: 14px;
+  border-radius: 0;
   overflow: hidden;
-  background: #f7f7f7;
+  background: transparent;
   aspect-ratio: 3 / 4;
 }
 
 .rp-card__image {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   transition: transform 0.34s ease;
 }
 
