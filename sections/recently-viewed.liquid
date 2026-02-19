@@ -1,25 +1,241 @@
 {% comment %}
-  FlyFlow Theme - Recently Viewed Products Section
-  Purpose: Display products the customer has recently viewed using localStorage.
-  Dependencies: theme.js
-  Last modified: 2026-02-17
+  FlyFlow Theme - Recently Viewed (Premium Carousel)
+  Purpose: Render recently viewed products from localStorage with premium card UI.
 {% endcomment %}
 
-<section class="section" data-section-id="{{ section.id }}" data-recently-viewed style="display:none">
-  <div class="container">
-    {% if section.settings.heading != blank %}
-      <h2 class="text-center mb-xl">{{ section.settings.heading }}</h2>
+{{ 'section-related-products-premium.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'related-products-carousel.js' | asset_url }}" defer></script>
+
+{% assign rv_rating_parts = section.settings.rating_metafield_namespace_key | split: '.' %}
+{% assign rv_rating_ns = rv_rating_parts[0] | default: 'reviews' %}
+{% assign rv_rating_key = rv_rating_parts[1] | default: 'rating' %}
+{% assign rv_rating_field = product.metafields[rv_rating_ns][rv_rating_key] %}
+{% assign rv_rating_value = rv_rating_field.value.rating | default: rv_rating_field.value | default: rv_rating_field %}
+
+{% assign rv_driver_parts = section.settings.driver_size_key | split: '.' %}
+{% assign rv_driver_ns = rv_driver_parts[0] | default: 'custom' %}
+{% assign rv_driver_key = rv_driver_parts[1] | default: 'driver_size' %}
+{% assign rv_driver_size = product.metafields[rv_driver_ns][rv_driver_key].value | default: product.metafields[rv_driver_ns][rv_driver_key] %}
+
+{% assign rv_weight_parts = section.settings.product_weight_key | split: '.' %}
+{% assign rv_weight_ns = rv_weight_parts[0] | default: 'custom' %}
+{% assign rv_weight_key = rv_weight_parts[1] | default: 'product_weight' %}
+{% assign rv_product_weight = product.metafields[rv_weight_ns][rv_weight_key].value | default: product.metafields[rv_weight_ns][rv_weight_key] %}
+
+{% assign rv_battery_parts = section.settings.battery_life_key | split: '.' %}
+{% assign rv_battery_ns = rv_battery_parts[0] | default: 'custom' %}
+{% assign rv_battery_key = rv_battery_parts[1] | default: 'battery_life' %}
+{% assign rv_battery_life = product.metafields[rv_battery_ns][rv_battery_key].value | default: product.metafields[rv_battery_ns][rv_battery_key] %}
+
+{% assign rv_swatch_option_name = section.settings.swatch_option_name | default: 'Color' %}
+{% assign rv_swatch_option_name_downcase = rv_swatch_option_name | downcase %}
+{% assign rv_swatch_values_csv = '' %}
+{% if request.page_type == 'product' %}
+  {% for option in product.options_with_values %}
+    {% assign option_name_downcase = option.name | downcase %}
+    {% if option_name_downcase == rv_swatch_option_name_downcase %}
+      {% assign rv_swatch_values_csv = option.values | join: '||' %}
     {% endif %}
-    <div class="product-grid" data-recently-viewed-grid></div>
+  {% endfor %}
+{% endif %}
+
+<section
+  class="rp-premium section"
+  data-section-id="{{ section.id }}"
+  data-recently-viewed
+  style="
+    --rp-max-width: {{ section.settings.section_max_width }}px;
+    --rp-padding-top: {{ section.settings.section_padding_top }}px;
+    --rp-padding-bottom: {{ section.settings.section_padding_bottom }}px;
+    --rp-cards-desktop: {{ section.settings.cards_per_view_desktop }};
+    --rp-cards-tablet: {{ section.settings.cards_per_view_tablet }};
+    --rp-card-radius: 17px;
+    display:none;
+  "
+>
+  <div class="rp-premium__inner">
+    <header class="rp-premium__header">
+      <div>
+        <h2 class="rp-premium__heading">{{ section.settings.heading | default: 'Recently viewed' }}</h2>
+      </div>
+      {% if section.settings.enable_carousel %}
+        <div class="rp-premium__controls">
+          <button type="button" class="rp-premium__arrow" data-rp-prev aria-label="Previous recently viewed products">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12.5 4.5L7 10l5.5 5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" class="rp-premium__arrow" data-rp-next aria-label="Next recently viewed products">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 4.5L13 10l-5.5 5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      {% endif %}
+    </header>
+
+    <div
+      class="rp-premium__track-wrap{% unless section.settings.enable_carousel %} rp-premium__track-wrap--grid{% endunless %}"
+      data-rp-carousel
+      tabindex="0"
+      aria-label="Recently viewed products"
+    >
+      <div class="rp-premium__track" data-recently-viewed-grid></div>
+    </div>
   </div>
 </section>
 
 <script>
-  (function() {
+  (function () {
     var STORAGE_KEY = 'flyflow-recently-viewed';
-    var MAX_ITEMS = 8;
+    var MAX_ITEMS = 16;
+    var productsToShow = {{ section.settings.products_to_show | default: 9 }};
+    var showVendor = {{ section.settings.show_vendor }};
+    var showSwatches = {{ section.settings.show_swatches }};
+    var showSpecs = {{ section.settings.show_specs_row }};
+    var showRating = {{ section.settings.show_rating }};
+    var showNewBadge = {{ section.settings.show_new_badge }};
+    var newBadgeRule = {{ section.settings.new_badge_rule | json }};
+    var newBadgeTag = {{ section.settings.new_badge_tag | downcase | json }};
+    var newBadgeDays = {{ section.settings.new_badge_days | default: 14 }};
 
-    /* Record current product */
+    function money(cents) {
+      if (window.FlyFlow && typeof window.FlyFlow.formatMoney === 'function') {
+        return window.FlyFlow.formatMoney(cents);
+      }
+      return '$' + ((Number(cents || 0) / 100).toFixed(2));
+    }
+
+    function esc(value) {
+      return String(value || '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function isOffVibe(item) {
+      var context = ((item.title || '') + ' ' + (item.vendor || '')).toLowerCase();
+      return (
+        context.indexOf('snowboard') !== -1 ||
+        context.indexOf('ski') !== -1 ||
+        context.indexOf('winter sport') !== -1 ||
+        context.indexOf('snow gear') !== -1
+      );
+    }
+
+    function curatedItem(seed) {
+      var variants = [
+        { title: 'Aero Runner Sneaker', price: 18500 },
+        { title: 'Midnight Crossbody Bag', price: 24500 },
+        { title: 'Velocity Slim Jogger', price: 12800 },
+        { title: 'Cloud 9 Platform Boot', price: 29500 },
+        { title: 'Drift Oversized Hoodie', price: 16500 },
+        { title: 'Flyknit Lace-Up Oxford', price: 22000 },
+        { title: 'Horizon Aviator Sunglasses', price: 17500 },
+        { title: 'Stealth Cargo Pant', price: 15500 },
+      ];
+      return variants[Math.abs(seed || 0) % variants.length];
+    }
+
+    function swatchColor(name) {
+      var map = {
+        black: '#111111',
+        white: '#f5f5f5',
+        cream: '#e9e2d2',
+        onyx: '#1f2326',
+        navy: '#1f2b44',
+        grey: '#9ca3af',
+        gray: '#9ca3af',
+        olive: '#666f45',
+        tan: '#b9996d',
+      };
+      var key = String(name || '').trim().toLowerCase();
+      return map[key] || key || '#cfcfcf';
+    }
+
+    function shouldShowNew(item) {
+      if (!showNewBadge) return false;
+      if (newBadgeRule === 'tag') {
+        var tags = Array.isArray(item.tags) ? item.tags : [];
+        return tags.map(function (tag) { return String(tag).toLowerCase(); }).indexOf(newBadgeTag) !== -1;
+      }
+      var publishedTs = Number(item.published_at_ts || 0);
+      if (!publishedTs) return false;
+      var nowTs = Math.floor(Date.now() / 1000);
+      var diffDays = Math.floor((nowTs - publishedTs) / 86400);
+      return diffDays <= newBadgeDays;
+    }
+
+    function renderCard(item) {
+      var useCurated = isOffVibe(item);
+      var curated = useCurated ? curatedItem(item.id) : null;
+      var title = useCurated ? curated.title : item.title;
+      var url = useCurated ? {{ routes.collections_url | json }} : item.url;
+      var image = useCurated ? '' : item.image;
+      var vendor = useCurated ? 'FlyFlow' : item.vendor;
+      var price = useCurated ? curated.price : item.price;
+      var compareAtPrice = useCurated ? null : item.compare_at_price;
+      var rating = useCurated ? '' : item.rating;
+      var swatches = useCurated ? [] : (Array.isArray(item.swatches) ? item.swatches : []);
+      var specs = useCurated ? {} : (item.specs || {});
+      var showCardSpecs = showSpecs && (specs.driver_size || specs.product_weight || specs.battery_life);
+
+      var priceHtml = '<span class="rp-card__price-current">' + money(price) + '</span>';
+      if (compareAtPrice && compareAtPrice > price) {
+        priceHtml += '<span class="rp-card__price-compare">' + money(compareAtPrice) + '</span>';
+      }
+
+      var swatchHtml = '';
+      if (showSwatches && swatches.length > 0) {
+        swatchHtml = '<div class="rp-card__swatches" aria-label="Available colors">';
+        swatches.slice(0, 4).forEach(function (name) {
+          var color = swatchColor(name);
+          swatchHtml += '<span class="rp-card__swatch" title="' + esc(name) + '" style="background-color:' + esc(color) + ';"></span>';
+        });
+        if (swatches.length > 4) {
+          swatchHtml += '<span class="rp-card__swatch-overflow">+' + (swatches.length - 4) + '</span>';
+        }
+        swatchHtml += '</div>';
+      }
+
+      var specsHtml = '';
+      if (showCardSpecs) {
+        specsHtml += '<div class="rp-card__specs">';
+        if (specs.driver_size) {
+          specsHtml += '<div class="rp-card__spec"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="5.8" stroke="currentColor" stroke-width="1.2"/><path d="M10 6.4v7.2M6.4 10h7.2" stroke="currentColor" stroke-width="1.2"/></svg><div><strong>' + esc(specs.driver_size) + '</strong><span>Driver</span></div></div>';
+        }
+        if (specs.product_weight) {
+          specsHtml += '<div class="rp-card__spec"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 15h10l-1.1-6.8H6.1L5 15z" stroke="currentColor" stroke-width="1.2"/><path d="M8.2 8.2c0-1 .8-1.8 1.8-1.8s1.8.8 1.8 1.8" stroke="currentColor" stroke-width="1.2"/></svg><div><strong>' + esc(specs.product_weight) + '</strong><span>Weight</span></div></div>';
+        }
+        if (specs.battery_life) {
+          specsHtml += '<div class="rp-card__spec"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="4.2" y="6.4" width="10.8" height="7.2" rx="1.2" stroke="currentColor" stroke-width="1.2"/><path d="M15.6 8.4h.9v3.2h-.9" stroke="currentColor" stroke-width="1.2"/></svg><div><strong>' + esc(specs.battery_life) + '</strong><span>Battery</span></div></div>';
+        }
+        specsHtml += '</div>';
+      }
+
+      var newBadgeHtml = shouldShowNew(item) ? '<span class="rp-card__badge">New</span>' : '';
+      var ratingHtml = (showRating && rating) ? '<span class="rp-card__rating"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2.8l2.1 4.3 4.8.7-3.5 3.4.8 4.8L10 13.8 5.8 16l.8-4.8-3.5-3.4 4.8-.7L10 2.8z" stroke="currentColor" stroke-width="1.1" fill="currentColor"/></svg>' + esc(rating) + '</span>' : '';
+
+      return '<article class="rp-card">' +
+        '<div class="rp-card__media-wrap">' +
+          newBadgeHtml +
+          ratingHtml +
+          '<a class="rp-card__media" href="' + esc(url) + '">' +
+            (image
+              ? '<img class="rp-card__image" src="' + esc(image) + '" alt="' + esc(title) + '" loading="lazy" width="640" height="820">'
+              : '<div class="rp-card__image"></div>') +
+          '</a>' +
+        '</div>' +
+        '<div class="rp-card__content">' +
+          (showVendor && vendor ? '<p class="rp-card__vendor">' + esc(vendor) + '</p>' : '') +
+          '<div class="rp-card__title-row">' +
+            '<h3 class="rp-card__title"><a href="' + esc(url) + '">' + esc(title) + '</a></h3>' +
+            '<p class="rp-card__price">' + priceHtml + '</p>' +
+          '</div>' +
+          swatchHtml +
+          specsHtml +
+        '</div>' +
+      '</article>';
+    }
+
     {% if request.page_type == 'product' %}
       var current = {
         id: {{ product.id | json }},
@@ -28,86 +244,38 @@
         url: {{ product.url | json }},
         price: {{ product.price | json }},
         compare_at_price: {{ product.compare_at_price | json }},
-        image: {{ product.featured_image | image_url: width: 800 | json }},
-        vendor: {{ product.vendor | json }}
+        image: {{ product.featured_image | image_url: width: 900 | json }},
+        vendor: {{ product.vendor | json }},
+        published_at_ts: {{ product.published_at | date: '%s' | plus: 0 | json }},
+        tags: {{ product.tags | json }},
+        rating: {{ rv_rating_value | json }},
+        swatches: {{ rv_swatch_values_csv | split: '||' | json }},
+        specs: {
+          driver_size: {{ rv_driver_size | json }},
+          product_weight: {{ rv_product_weight | json }},
+          battery_life: {{ rv_battery_life | json }}
+        }
       };
 
-      var items = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      items = items.filter(function(item) { return item.id !== current.id; });
-      items.unshift(current);
-      items = items.slice(0, MAX_ITEMS);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      var stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      stored = stored.filter(function (item) { return item.id !== current.id; });
+      stored.unshift(current);
+      stored = stored.slice(0, MAX_ITEMS);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
     {% endif %}
 
-    /* Render recently viewed */
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       var section = document.querySelector('[data-recently-viewed]');
-      var grid = document.querySelector('[data-recently-viewed-grid]');
+      var grid = section ? section.querySelector('[data-recently-viewed-grid]') : null;
       if (!section || !grid) return;
 
-      function isOffVibe(item) {
-        var context = ((item.title || '') + ' ' + (item.vendor || '')).toLowerCase();
-        return context.indexOf('snowboard') !== -1 || context.indexOf('ski') !== -1 || context.indexOf('winter sport') !== -1 || context.indexOf('snow gear') !== -1;
-      }
-
-      function curatedItem(seed) {
-        var variants = [
-          { title: 'Aero Runner Sneaker', price: 18500 },
-          { title: 'Midnight Crossbody Bag', price: 24500 },
-          { title: 'Velocity Slim Jogger', price: 12800 },
-          { title: 'Cloud 9 Platform Boot', price: 29500 },
-          { title: 'Drift Oversized Hoodie', price: 16500 },
-          { title: 'Flyknit Lace-Up Oxford', price: 22000 },
-          { title: 'Horizon Aviator Sunglasses', price: 17500 },
-          { title: 'Stealth Cargo Pant', price: 15500 }
-        ];
-        return variants[Math.abs(seed || 0) % variants.length];
-      }
-
       var items = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      /* Exclude current product if on product page */
       {% if request.page_type == 'product' %}
-        items = items.filter(function(item) { return item.id !== {{ product.id }}; });
+        items = items.filter(function (item) { return item.id !== {{ product.id }}; });
       {% endif %}
 
-      if (items.length === 0) return;
-
-      var html = '';
-      items.slice(0, 4).forEach(function(item) {
-        var useCurated = isOffVibe(item);
-        var curated = useCurated ? curatedItem(item.id) : null;
-        var title = useCurated ? curated.title : item.title;
-        var url = useCurated ? '{{ routes.collections_url }}' : item.url;
-        var image = useCurated ? '' : item.image;
-        var vendor = useCurated ? 'FlyFlow' : item.vendor;
-        var price = useCurated ? curated.price : item.price;
-        var compareAtPrice = useCurated ? null : item.compare_at_price;
-
-        var priceHtml = '';
-        if (compareAtPrice && compareAtPrice > price) {
-          priceHtml = '<span class="product-card__price--sale">' + FlyFlow.formatMoney(price) + '</span>' +
-                      '<span class="product-card__price--compare">' + FlyFlow.formatMoney(compareAtPrice) + '</span>';
-        } else {
-          priceHtml = '<span>' + FlyFlow.formatMoney(price) + '</span>';
-        }
-
-        html += '<article class="product-card">' +
-          '<div class="product-card__media">' +
-            '<a href="' + url + '" tabindex="-1">' +
-              (image
-                ? '<img class="product-card__image" src="' + image + '" alt="' + title + '" loading="lazy" width="400" height="533" style="object-fit:cover;width:100%;height:100%">'
-                : '<div class="product-card__image" style="background:var(--color-surface);width:100%;height:100%"></div>') +
-            '</a>' +
-          '</div>' +
-          '<div class="product-card__info">' +
-            (vendor ? '<p class="product-card__vendor">' + vendor + '</p>' : '') +
-            '<h3 class="product-card__title"><a href="' + url + '">' + title + '</a></h3>' +
-            '<div class="product-card__price">' + priceHtml + '</div>' +
-          '</div>' +
-        '</article>';
-      });
-
-      grid.innerHTML = html;
+      if (!items.length) return;
+      grid.innerHTML = items.slice(0, productsToShow).map(renderCard).join('');
       section.style.display = '';
     });
   })();
@@ -121,7 +289,165 @@
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Recently Viewed"
+      "default": "Recently viewed"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "default": 9
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_carousel",
+      "label": "Enable carousel",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "cards_per_view_desktop",
+      "label": "Cards per view (desktop)",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "cards_per_view_tablet",
+      "label": "Cards per view (tablet)",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "section_max_width",
+      "label": "Section max width",
+      "min": 1100,
+      "max": 1600,
+      "step": 20,
+      "default": 1360,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section padding top",
+      "min": 40,
+      "max": 120,
+      "step": 4,
+      "default": 72,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section padding bottom",
+      "min": 40,
+      "max": 120,
+      "step": 4,
+      "default": 84,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_new_badge",
+      "label": "Show new badge",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "new_badge_rule",
+      "label": "New badge rule",
+      "default": "tag",
+      "options": [
+        { "value": "tag", "label": "Tag" },
+        { "value": "days_since_publish", "label": "Days since publish" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "new_badge_tag",
+      "label": "New badge tag",
+      "default": "new"
+    },
+    {
+      "type": "range",
+      "id": "new_badge_days",
+      "label": "New badge days",
+      "min": 1,
+      "max": 30,
+      "step": 1,
+      "default": 14
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show rating",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "rating_metafield_namespace_key",
+      "label": "Rating metafield (namespace.key)",
+      "default": "reviews.rating"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_swatches",
+      "label": "Show swatches",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "swatch_source",
+      "label": "Swatch source",
+      "default": "variant_option",
+      "options": [
+        { "value": "variant_option", "label": "Variant option" },
+        { "value": "metafield", "label": "Metafield" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "swatch_option_name",
+      "label": "Swatch option name",
+      "default": "Color"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_specs_row",
+      "label": "Show specs row",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "driver_size_key",
+      "label": "Driver size metafield key",
+      "default": "custom.driver_size"
+    },
+    {
+      "type": "text",
+      "id": "product_weight_key",
+      "label": "Product weight metafield key",
+      "default": "custom.product_weight"
+    },
+    {
+      "type": "text",
+      "id": "battery_life_key",
+      "label": "Battery life metafield key",
+      "default": "custom.battery_life"
     }
   ],
   "presets": [
