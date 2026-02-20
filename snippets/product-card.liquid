@@ -20,6 +20,10 @@
   {%- if dual_actions == true -%}
     {%- assign card_dual_actions = true -%}
   {%- endif -%}
+  {%- assign card_force_quick_buy = false -%}
+  {%- if force_quick_buy == true -%}
+    {%- assign card_force_quick_buy = true -%}
+  {%- endif -%}
 
   {%- assign product_context = product.title | append: ' ' | append: product.type | append: ' ' | append: product.vendor | downcase -%}
   {%- assign off_vibe_product = false -%}
@@ -124,7 +128,7 @@
     {% endif %}
 
     {%- comment -%} Quick buy button {%- endcomment -%}
-    {% if settings.collection_quick_buy and product.available and off_vibe_product == false %}
+    {% if (settings.collection_quick_buy or card_force_quick_buy) and product.available and off_vibe_product == false %}
       {% if card_dual_actions %}
         <div class="product-card__quick-buy product-card__quick-buy--dual">
           <div class="product-card__quick-buy-actions">

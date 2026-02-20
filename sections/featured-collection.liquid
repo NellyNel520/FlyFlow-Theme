@@ -25,7 +25,7 @@
     <div class="product-grid featured-collection__grid">
       {% if section.settings.collection %}
         {% for product in section.settings.collection.products limit: section.settings.products_to_show %}
-          {% render 'product-card', product: product, dual_actions: true, show_vendor: false %}
+          {% render 'product-card', product: product, dual_actions: true, show_vendor: false, force_quick_buy: true %}
         {% endfor %}
       {% else %}
         {% for i in (1..section.settings.products_to_show) %}
@@ -96,6 +96,24 @@
     border-radius: 0;
     aspect-ratio: 4 / 4.75;
     background: #fff;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .featured-collection--{{ section.id }} .product-card__image--hover {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+
+    .featured-collection--{{ section.id }} .product-card:hover .product-card__image--hover,
+    .featured-collection--{{ section.id }} .product-card:focus-within .product-card__image--hover {
+      opacity: 1;
+    }
+
+    .featured-collection--{{ section.id }} .product-card:hover .product-card__image {
+      transform: scale(1.03);
+    }
   }
 
   .featured-collection--{{ section.id }} .product-card__info {
