@@ -128,7 +128,11 @@
     {% endif %}
 
     {%- comment -%} Quick buy button {%- endcomment -%}
-    {% if (settings.collection_quick_buy or card_force_quick_buy) and product.available and off_vibe_product == false %}
+    {% assign card_show_quick_buy = false %}
+    {% if settings.collection_quick_buy or card_force_quick_buy %}
+      {% assign card_show_quick_buy = true %}
+    {% endif %}
+    {% if card_show_quick_buy and product.available and off_vibe_product == false %}
       {% if card_dual_actions %}
         <div class="product-card__quick-buy product-card__quick-buy--dual">
           <div class="product-card__quick-buy-actions">
