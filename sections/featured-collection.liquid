@@ -207,15 +207,20 @@
     }
 
     .featured-collection--{{ section.id }} .product-card__quick-buy {
-      position: relative;
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
       opacity: 1;
       transform: none;
       padding: 0;
-      margin-top: 8px;
+      margin-top: 0;
+      z-index: 3;
+      pointer-events: auto;
     }
 
     .featured-collection--{{ section.id }} .product-card__quick-buy--dual {
-      background: transparent;
+      background: none;
     }
   }
 
