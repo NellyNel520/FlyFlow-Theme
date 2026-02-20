@@ -44,7 +44,7 @@
       "blocks": {},
       "block_order": []
     },
-    "editorial-asym-collage": {
+    "editorial-asymmetric": {
       "type": "editorial-asym-collage",
       "blocks": {
         "support-1": {
@@ -232,7 +232,7 @@
   "order": [
     "hero",
     "premium-product-carousel",
-    "editorial-asym-collage",
+    "editorial-asymmetric",
     "featured-collection",
     "instagram-feed",
     "collection-list",
