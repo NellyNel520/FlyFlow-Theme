@@ -6,7 +6,7 @@
 {% endcomment %}
 
 <section
-  class="section chapter-section chapter-section--spacing-{{ section.settings.section_density | default: section.settings.section_spacing | default: 'standard' }} chapter-section--container-{{ section.settings.container_width | default: 'contained' }}{% if section.settings.show_divider_top %} chapter-section--divider-top{% endif %}{% if section.settings.enable_reveal %} chapter-section--reveal{% endif %}"
+  class="section featured-collection featured-collection--{{ section.id }} chapter-section chapter-section--spacing-{{ section.settings.section_density | default: section.settings.section_spacing | default: 'standard' }} chapter-section--container-{{ section.settings.container_width | default: 'contained' }}{% if section.settings.show_divider_top %} chapter-section--divider-top{% endif %}{% if section.settings.enable_reveal %} chapter-section--reveal{% endif %}"
   data-section-id="{{ section.id }}"
   data-enable-reveal="{{ section.settings.enable_reveal }}"
 >
@@ -22,10 +22,10 @@
       </div>
     {% endif %}
 
-    <div class="product-grid">
+    <div class="product-grid featured-collection__grid">
       {% if section.settings.collection %}
         {% for product in section.settings.collection.products limit: section.settings.products_to_show %}
-          {% render 'product-card', product: product %}
+          {% render 'product-card', product: product, dual_actions: true %}
         {% endfor %}
       {% else %}
         {% for i in (1..section.settings.products_to_show) %}
@@ -70,6 +70,74 @@
     </div>
   </div>
 </section>
+
+<style>
+  .featured-collection--{{ section.id }} .featured-collection__grid {
+    gap: clamp(14px, 1.6vw, 24px);
+  }
+
+  .featured-collection--{{ section.id }} .product-card {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 8px 20px rgba(10, 12, 16, 0.05);
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  .featured-collection--{{ section.id }} .product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(10, 12, 16, 0.1);
+  }
+
+  .featured-collection--{{ section.id }} .product-card__media {
+    border-radius: 0;
+  }
+
+  .featured-collection--{{ section.id }} .product-card__info {
+    padding: 0.8rem 0.85rem 0.9rem;
+  }
+
+  .featured-collection--{{ section.id }} .product-card__title {
+    font-size: 1.02rem;
+    line-height: 1.26;
+    margin-bottom: 0.4rem;
+  }
+
+  .featured-collection--{{ section.id }} .product-card__quick-buy--dual {
+    padding: 10px;
+    background: linear-gradient(180deg, rgba(10, 12, 16, 0) 0%, rgba(10, 12, 16, 0.3) 100%);
+  }
+
+  .featured-collection--{{ section.id }} .product-card__quick-buy-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .featured-collection--{{ section.id }} .product-card__quick-buy-actions .btn {
+    min-height: 38px;
+    font-size: 0.66rem;
+    letter-spacing: 0.12em;
+    border-radius: 999px;
+  }
+
+  .featured-collection--{{ section.id }} .product-card__quick-buy-actions .btn--secondary {
+    background: rgba(255, 255, 255, 0.9);
+    color: #111;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .featured-collection--{{ section.id }} .product-card {
+      transition: none;
+    }
+
+    .featured-collection--{{ section.id }} .product-card:hover {
+      transform: none;
+    }
+  }
+</style>
 
 {% schema %}
 {
