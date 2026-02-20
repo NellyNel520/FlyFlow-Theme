@@ -45,59 +45,20 @@
       "block_order": []
     },
     "editorial-asymmetric": {
-      "type": "editorial-asym-collage",
-      "blocks": {
-        "support-1": {
-          "type": "support_tile",
-          "settings": {
-            "tile_size": "wide",
-            "paper_backing": true,
-            "tilt": "0",
-            "aspect_ratio": "3_2"
-          }
-        },
-        "support-2": {
-          "type": "support_tile",
-          "settings": {
-            "tile_size": "small",
-            "paper_backing": true,
-            "tilt": "-2",
-            "aspect_ratio": "4_5"
-          }
-        },
-        "support-3": {
-          "type": "support_tile",
-          "settings": {
-            "tile_size": "micro",
-            "paper_backing": true,
-            "tilt": "2",
-            "aspect_ratio": "1_1"
-          }
-        },
-        "support-4": {
-          "type": "support_tile",
-          "settings": {
-            "tile_size": "wide",
-            "paper_backing": false,
-            "tilt": "0",
-            "aspect_ratio": "3_2"
-          }
-        }
-      },
-      "block_order": ["support-1", "support-2", "support-3", "support-4"],
+      "type": "editorial-asymmetric",
       "settings": {
-        "style_mode": "collage",
-        "collage_layout": "mosaic",
-        "campaign_media_type": "image",
-        "overlay_tint_color": "#0B0D11",
-        "overlay_tint_opacity": 30,
-        "label_text": "FLYFLOW / DROP 02",
-        "headline_text": "STREETWEAR",
-        "subheading_text": "Built for movement. Styled for impact.",
-        "overlay_position": "bottom_left",
-        "show_scribble_overlay": true,
-        "cta_label": "View lookbook",
-        "cta_link": "/pages/brand-story",
+        "media_type": "image",
+        "overlay_gradient": "subtle",
+        "overlay_opacity": 20,
+        "show_overlay_label": true,
+        "overlay_label_text": "LOOKBOOK",
+        "eyebrow_text": "URBAN ESSENTIALS",
+        "heading": "Refined silhouettes built for everyday city movement.",
+        "body_text": "<p>From elevated staples to statement outerwear, each piece is designed to transition seamlessly through your daily rhythm.</p>",
+        "primary_cta_label": "Shop the Collection",
+        "primary_cta_link": "/collections/all",
+        "secondary_cta_label": "View Lookbook",
+        "secondary_cta_link": "/pages/brand-story",
         "section_density": "standard",
         "container_width": "contained",
         "show_divider_top": false,
