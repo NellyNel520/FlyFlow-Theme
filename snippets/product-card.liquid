@@ -136,25 +136,14 @@
       {% if card_dual_actions %}
         <div class="product-card__quick-buy product-card__quick-buy--dual">
           <div class="product-card__quick-buy-actions">
-            {% if product.variants.size == 1 %}
-              <button
-                class="btn btn--primary btn--full btn--sm"
-                data-add-to-cart
-                data-variant-id="{{ product.first_available_variant.id }}"
-                data-add-text="{{ 'products.quick_buy' | t }}"
-              >
-                {{ 'products.quick_buy' | t }}
-              </button>
-            {% else %}
-              <button
-                type="button"
-                class="btn btn--primary btn--full btn--sm"
-                data-quick-view="{{ product.handle }}"
-                aria-label="Quick add {{ product.title | escape }}"
-              >
-                {{ 'products.quick_buy' | t }}
-              </button>
-            {% endif %}
+            <button
+              type="button"
+              class="btn btn--primary btn--full btn--sm"
+              data-quick-view="{{ product.handle }}"
+              aria-label="Quick add {{ product.title | escape }}"
+            >
+              {{ 'products.quick_buy' | t }}
+            </button>
             <a href="{{ card_url }}" class="btn btn--secondary btn--full btn--sm">
               {{ 'products.view_product' | t }}
             </a>
