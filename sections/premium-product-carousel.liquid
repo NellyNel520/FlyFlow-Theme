@@ -619,29 +619,26 @@
 
   .premium-product-carousel__drawer-description-wrap {
     display: grid;
-    gap: 5px;
+    gap: 4px;
     align-content: start;
-    min-height: calc(0.82rem * 1.45 * 2);
-    margin-bottom: 6px;
+    min-height: calc(0.82rem * 1.4 * 2 + 4px);
   }
 
   .premium-product-carousel__drawer-description {
     margin: 0;
     font-size: 0.82rem;
-    line-height: 1.45;
+    line-height: 1.4;
     color: var(--color-text-secondary);
-    display: block;
-    min-height: calc(0.82rem * 1.45 * 2);
-    max-height: calc(0.82rem * 1.45 * 2);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    word-break: break-word;
   }
 
   .premium-product-carousel__drawer-description.is-expanded {
     display: block;
-    max-height: none;
-    min-height: 0;
-    overflow: hidden;
+    -webkit-line-clamp: unset;
+    overflow: visible;
   }
 
   .premium-product-carousel__drawer-description-toggle {
@@ -662,7 +659,7 @@
     display: grid;
     gap: 10px;
     align-content: start;
-    padding-top: 2px;
+    padding-top: 0;
   }
 
   .premium-product-carousel__drawer-option,
@@ -811,7 +808,6 @@
     gap: 8px;
     min-height: 0;
     align-content: stretch;
-    margin-top: 2px;
   }
 
   .premium-product-carousel__drawer-actions {
@@ -1492,18 +1488,13 @@
       drawerTitle.textContent = productData.title || '';
       drawerPrice.textContent = formatMoney(productData.price || 0);
       if (drawerDescription) {
-        var normalizedDescription = (productData.description || '')
-          .replace(/\s+/g, ' ')
-          .replace(/([.!?])([A-Z])/g, '$1 $2')
-          .trim();
-        drawerDescription.textContent = normalizedDescription;
-        drawerDescription.hidden = !normalizedDescription;
+        drawerDescription.textContent = productData.description || '';
+        drawerDescription.hidden = !productData.description;
         drawerDescription.classList.remove('is-expanded');
       }
       if (drawerDescriptionToggle) {
         drawerDescriptionToggle.hidden = true;
         drawerDescriptionToggle.textContent = 'See more';
-        drawerDescriptionToggle.setAttribute('aria-expanded', 'false');
       }
       drawerOptions.innerHTML = '';
       activeProduct = productData;
@@ -1597,10 +1588,8 @@
 
       if (drawerDescription && drawerDescriptionToggle && !drawerDescription.hidden) {
         requestAnimationFrame(function() {
-          drawerDescription.classList.remove('is-expanded');
           var needsToggle = drawerDescription.scrollHeight > drawerDescription.clientHeight + 2;
           drawerDescriptionToggle.hidden = !needsToggle;
-          drawerDescriptionToggle.setAttribute('aria-expanded', 'false');
         });
       }
     }
@@ -1724,7 +1713,6 @@
       drawerDescriptionToggle.addEventListener('click', function() {
         var isExpanded = drawerDescription.classList.toggle('is-expanded');
         drawerDescriptionToggle.textContent = isExpanded ? 'See less' : 'See more';
-        drawerDescriptionToggle.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
       });
     }
 
