@@ -1720,6 +1720,14 @@
       if (event.key === 'Escape') closeDrawer();
     });
 
+    window.FlyFlow = window.FlyFlow || {};
+    window.FlyFlow.PremiumQuickAdd = window.FlyFlow.PremiumQuickAdd || {};
+    window.FlyFlow.PremiumQuickAdd['{{ section.id }}'] = {
+      open: function(trigger, productData) {
+        openDrawer(trigger, productData);
+      }
+    };
+
     window.addEventListener('resize', recalc);
 
     recalc();

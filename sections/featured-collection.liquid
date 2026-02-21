@@ -25,7 +25,7 @@
     <div class="product-grid featured-collection__grid">
       {% if section.settings.collection %}
         {% for product in section.settings.collection.products limit: section.settings.products_to_show %}
-          {% render 'product-card', product: product, dual_actions: true, show_vendor: false, force_quick_buy: true %}
+          {% render 'product-card', product: product, dual_actions: true, show_vendor: false, force_quick_buy: true, use_premium_quick_add: true %}
         {% endfor %}
       {% else %}
         {% for i in (1..section.settings.products_to_show) %}
@@ -273,6 +273,60 @@
     }
   }
 </style>
+
+<script>
+  (function() {
+    var section = document.querySelector('.featured-collection--{{ section.id }}');
+    if (!section) return;
+
+    function parseProductData(trigger) {
+      var card = trigger.closest('[data-product-card]');
+      if (!card) return null;
+      var dataNode = card.querySelector('[data-featured-product-json]');
+      if (!dataNode) return null;
+      try {
+        return JSON.parse(dataNode.textContent);
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function openPremiumQuickAdd(trigger, productData) {
+      var registry = window.FlyFlow && window.FlyFlow.PremiumQuickAdd;
+      if (!registry) return false;
+      var ids = Object.keys(registry);
+      if (!ids.length) return false;
+      for (var i = 0; i < ids.length; i += 1) {
+        var adapter = registry[ids[i]];
+        if (adapter && typeof adapter.open === 'function') {
+          adapter.open(trigger, productData);
+          return true;
+        }
+      }
+      return false;
+    }
+
+    section.addEventListener('click', function(event) {
+      var trigger = event.target.closest('[data-featured-open-drawer]');
+      if (!trigger || !section.contains(trigger)) return;
+      event.preventDefault();
+      var productData = parseProductData(trigger);
+      if (!productData) return;
+
+      if (openPremiumQuickAdd(trigger, productData)) return;
+
+      if (productData.handle) {
+        var fallback = document.createElement('button');
+        fallback.type = 'button';
+        fallback.hidden = true;
+        fallback.setAttribute('data-quick-view', productData.handle);
+        document.body.appendChild(fallback);
+        fallback.click();
+        fallback.remove();
+      }
+    });
+  })();
+</script>
 
 {% schema %}
 {

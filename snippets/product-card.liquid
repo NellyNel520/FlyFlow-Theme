@@ -24,6 +24,10 @@
   {%- if force_quick_buy == true -%}
     {%- assign card_force_quick_buy = true -%}
   {%- endif -%}
+  {%- assign card_use_premium_quick_add = false -%}
+  {%- if use_premium_quick_add == true -%}
+    {%- assign card_use_premium_quick_add = true -%}
+  {%- endif -%}
 
   {%- assign product_context = product.title | append: ' ' | append: product.type | append: ' ' | append: product.vendor | downcase -%}
   {%- assign off_vibe_product = false -%}
@@ -136,14 +140,74 @@
       {% if card_dual_actions %}
         <div class="product-card__quick-buy product-card__quick-buy--dual">
           <div class="product-card__quick-buy-actions">
-            <button
-              type="button"
-              class="btn btn--primary btn--full btn--sm"
-              data-quick-view="{{ product.handle }}"
-              aria-label="Quick add {{ product.title | escape }}"
-            >
-              {{ 'products.quick_buy' | t }}
-            </button>
+            {% if card_use_premium_quick_add %}
+              {% if product.has_only_default_variant %}
+                <button
+                  type="button"
+                  class="btn btn--primary btn--full btn--sm"
+                  data-add-to-cart
+                  data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                  data-add-text="{{ 'products.quick_buy' | t }}"
+                  aria-label="Quick add {{ product.title | escape }}"
+                >
+                  {{ 'products.quick_buy' | t }}
+                </button>
+              {% else %}
+                <button
+                  type="button"
+                  class="btn btn--primary btn--full btn--sm"
+                  data-featured-open-drawer
+                  aria-label="Quick add {{ product.title | escape }}"
+                >
+                  {{ 'products.quick_buy' | t }}
+                </button>
+                <script type="application/json" data-featured-product-json>
+                  {
+                    "id": {{ product.id }},
+                    "handle": {{ product.handle | json }},
+                    "title": {{ product.title | json }},
+                    "image": {{ product.featured_image | image_url: width: 480 | json }},
+                    "description": {{ product.description | strip_html | strip_newlines | truncate: 520 | json }},
+                    "media": [
+                      {% assign media_output_count = 0 %}
+                      {% for media in product.media %}
+                        {% if media.media_type == 'image' %}
+                          {% if media_output_count > 0 %},{% endif %}
+                          {
+                            "id": {{ media.id }},
+                            "src": {{ media | image_url: width: 960 | json }},
+                            "alt": {{ media.alt | default: product.title | json }}
+                          }
+                          {% assign media_output_count = media_output_count | plus: 1 %}
+                        {% endif %}
+                      {% endfor %}
+                    ],
+                    "price": {{ product.price | json }},
+                    "options": [{% for option_name in product.options %}{{ option_name | json }}{% unless forloop.last %},{% endunless %}{% endfor %}],
+                    "variants": [
+                      {% for variant in product.variants %}
+                        {
+                          "id": {{ variant.id }},
+                          "available": {{ variant.available | json }},
+                          "price": {{ variant.price | json }},
+                          "featured_media_id": {{ variant.featured_media.id | default: 0 | json }},
+                          "options": [{% for option_value in variant.options %}{{ option_value | json }}{% unless forloop.last %},{% endunless %}{% endfor %}]
+                        }{% unless forloop.last %},{% endunless %}
+                      {% endfor %}
+                    ]
+                  }
+                </script>
+              {% endif %}
+            {% else %}
+              <button
+                type="button"
+                class="btn btn--primary btn--full btn--sm"
+                data-quick-view="{{ product.handle }}"
+                aria-label="Quick add {{ product.title | escape }}"
+              >
+                {{ 'products.quick_buy' | t }}
+              </button>
+            {% endif %}
             <a href="{{ card_url }}" class="btn btn--secondary btn--full btn--sm">
               {{ 'products.view_product' | t }}
             </a>
