@@ -137,12 +137,14 @@
   .featured-collection--{{ section.id }} .product-card__quick-buy {
     opacity: 0;
     transform: translateY(100%);
+    pointer-events: none;
   }
 
   .featured-collection--{{ section.id }} .product-card:hover .product-card__quick-buy,
   .featured-collection--{{ section.id }} .product-card:focus-within .product-card__quick-buy {
     opacity: 1;
     transform: translateY(0);
+    pointer-events: auto;
   }
 
   .featured-collection--{{ section.id }} .product-card__quick-buy-actions {
@@ -211,12 +213,12 @@
       left: 10px;
       right: 10px;
       bottom: 10px;
-      opacity: 1;
-      transform: none;
+      opacity: 0;
+      transform: translateY(100%);
       padding: 0;
       margin-top: 0;
       z-index: 3;
-      pointer-events: auto;
+      pointer-events: none;
     }
 
     .featured-collection--{{ section.id }} .product-card__quick-buy--dual {
