@@ -622,6 +622,9 @@
     gap: 4px;
     align-content: start;
     min-height: calc(0.82rem * 1.4 * 2 + 4px);
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 2;
   }
 
   .premium-product-carousel__drawer-description {
@@ -642,6 +645,7 @@
   }
 
   .premium-product-carousel__drawer-description-toggle {
+    display: inline-block;
     width: fit-content;
     margin: 0;
     padding: 0;
@@ -808,6 +812,9 @@
     gap: 8px;
     min-height: 0;
     align-content: stretch;
+    margin-top: 2px;
+    position: relative;
+    z-index: 1;
   }
 
   .premium-product-carousel__drawer-actions {
@@ -1488,8 +1495,12 @@
       drawerTitle.textContent = productData.title || '';
       drawerPrice.textContent = formatMoney(productData.price || 0);
       if (drawerDescription) {
-        drawerDescription.textContent = productData.description || '';
-        drawerDescription.hidden = !productData.description;
+        var drawerDescriptionText = (productData.description || '')
+          .replace(/\s+/g, ' ')
+          .replace(/([.!?])([A-Z])/g, '$1 $2')
+          .trim();
+        drawerDescription.textContent = drawerDescriptionText;
+        drawerDescription.hidden = !drawerDescriptionText;
         drawerDescription.classList.remove('is-expanded');
       }
       if (drawerDescriptionToggle) {
